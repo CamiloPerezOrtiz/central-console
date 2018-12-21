@@ -1,0 +1,33 @@
+principal_homepage:
+    path:     /
+    defaults: { _controller: PrincipalBundle:Default:index }
+
+# Login #
+
+login:
+    path:     /login
+    defaults: { _controller: PrincipalBundle:Usuarios:login }
+
+login_check:
+    path:     /login_check
+
+validacionLogin:
+    path:     /validacionLogin
+    defaults: { _controller: PrincipalBundle:Usuarios:validacionLogin }
+
+# Dashboard # 
+
+dashboard:
+    path:     /dashboard
+    defaults: {_controller: PrincipalBundle:Usuarios:dashboard }
+
+# Logout #
+
+logout:
+    path:     /logout
+
+# Usuarios #
+
+registroUsuarios:
+    path:     /registroUsuarios 
+    defaults: { _controller: PrincipalBundle:Usuarios:registroUsuarios }

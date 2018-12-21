@@ -1,0 +1,32 @@
+<!-- 
+    ###########################################################
+    #                                                         #
+    #     This Code Has Been Developedd By Camilo Perez       #
+    #             Company: Warriors Lab's S.A de C.V          #
+    #                 Ciudad de México 2018                   #
+    #                                                         #
+    ###########################################################
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{% block title %}Warriors Lab's{% endblock %}</title>
+    {% block stylesheets %}
+        <!-- Hoja de estilos de bootstrap -->
+        <link href="{{ asset ('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <!-- Hoja de estilos para los iconos del sistema -->
+        <link href="{{ asset ('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+        <!-- Hoja de estilos para las tablas del sistema sistema -->
+        <link href="{{ asset ('vendor/datatables/dataTables.bootstrap4.css') }}" rel="stylesheet">
+        <!-- Hoja de estilos del diseño del sistema -->
+        <link href="{{ asset ('css/sb-admin.css') }}" rel="stylesheet">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('log.ico') }}" />
+</head>
+<body id="page-top">
+    <div class="wrapper">

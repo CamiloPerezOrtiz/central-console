@@ -1,0 +1,29 @@
+html {
+  	position: relative;
+  	min-height: 100%;
+}
+
+body {
+  	background-image: url('../img/slide-1.jpg');
+  	background-repeat:no-repeat;
+	-webkit-background-size:cover;
+	-moz-background-size:cover;
+	-o-background-size:cover;
+	background-size:cover;
+	background-position:center;
+}
+
+.footer {
+  	position: absolute;
+  	bottom: 0;
+ 	 padding-top: 15px;
+  	width: 100%;
+  	height: auto;
+  	background-color: #000;
+  	color: white;
+}
+
+.card-login {
+  	max-width: 30rem;
+  	opacity: 0.9;
+}

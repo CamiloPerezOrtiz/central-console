@@ -1,0 +1,248 @@
+<?php
+
+namespace PrincipalBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * Usuarios
+ *
+ * @ORM\Table(name="usuarios")
+ * @ORM\Entity(repositoryClass="PrincipalBundle\Repository\UsuariosRepository")
+ */
+class Usuarios implements UserInterface
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=20)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 20,
+     *      minMessage = "The name must be at least {{ limit }} characters long",
+     *      maxMessage = "The name cannot be longer than {{ limit }} characters"
+     * )
+     * @Assert\Regex(
+     *     pattern="/\d/",
+     *     match=false,
+     *     message="Your name cannot contain a number"
+     * )
+     */
+    private $nombre;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="apellidos", type="string", length=50, nullable=true)
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 50,
+     *      minMessage = "The name must be at least {{ limit }} characters long",
+     *      maxMessage = "The name cannot be longer than {{ limit }} characters"
+     * )
+     * @Assert\Regex(
+     *     pattern="/\d/",
+     *     match=false,
+     *     message="Your last name cannot contain a number"
+     * )
+     */
+    private $apellidos;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=50)
+     * @Assert\NotBlank
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email.",
+     *     checkMX = true
+     * )
+     */
+    private $email;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="role", type="string", length=18)
+     * @Assert\NotBlank
+     */
+    private $role;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=255)
+     * @Assert\NotBlank
+     */
+    private $password;
+
+    # Implememtacion #
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function getRoles()
+    {
+        return array($this->getRole());
+    }
+
+    public function eraseCredentials()
+    {
+        ;
+    }
+
+    public function __toString()
+    {
+        return $this->nombre;
+    }
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     *
+     * @return Usuarios
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Set apellidos
+     *
+     * @param string $apellidos
+     *
+     * @return Usuarios
+     */
+    public function setApellidos($apellidos)
+    {
+        $this->apellidos = $apellidos;
+
+        return $this;
+    }
+
+    /**
+     * Get apellidos
+     *
+     * @return string
+     */
+    public function getApellidos()
+    {
+        return $this->apellidos;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return Usuarios
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set role
+     *
+     * @param string $role
+     *
+     * @return Usuarios
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * Get role
+     *
+     * @return string
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     *
+     * @return Usuarios
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+}
+

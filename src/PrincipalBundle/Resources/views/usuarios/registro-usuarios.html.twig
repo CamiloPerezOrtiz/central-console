@@ -1,0 +1,81 @@
+{% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
+{% include '@Principal/plantillas/cuerpo.html.twig' %}
+<dir class="container small">
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="#">Dashboard</a>
+                </li>            </ol>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="container">
+                        {# Mensaje a pantalla de notificacion de algun error #}
+                            <div class="container">
+                                <div class="col-md-11">
+                                    {% for msg in app.session.flashbag().get('estatus') %}
+                                        <div class="alert alert-info" aria-label="Close">
+                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                            <strong>Info!</strong> {{ msg }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {# Fin de Mensaje #}
+                        <div class="card card-register mx-auto mt-5">
+                            <div class="card-header bg-dark text-white">Register an Account</div>
+                            <div class="card-body">
+                                {{ form_start(form, {'attr': {'onsubmit':'return validarRegistroAdministrador();'} } ) }}
+                                    <div class="form-group">
+                                        <div class="form-row">
+                                            <div class="col-md-6">
+                                                {{ form_label(form.nombre) }}
+                                                {{ form_widget(form.nombre) }}
+                                                <span class="text-danger">{{ form_errors(form.nombre) }}</span>
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ form_label(form.apellidos) }}
+                                                {{ form_widget(form.apellidos) }}
+                                                <span class="text-danger">{{ form_errors(form.apellidos) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.email) }}
+                                        {{ form_widget(form.email) }}
+                                        <span class="text-danger">{{ form_errors(form.email) }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.role) }}
+                                        {{ form_widget(form.role) }}
+                                        <span class="text-danger">{{ form_errors(form.role) }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.password) }}
+                                        {{ form_widget(form.password) }}
+                                        <span class="text-danger">{{ form_errors(form.password) }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_widget(form.Save) }}
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="reset" class="btn btn-danger btn-block">Clean Form</button>
+                                    </div>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dir>
+{% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
+</script>
+{% include '@Principal/plantillas/declaracionFin.html.twig' %}
