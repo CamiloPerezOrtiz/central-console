@@ -1,0 +1,8 @@
+192.168.0.1|Kasa Santa Clara|Automotriz toyota|
+192.168.0.2|UI plantel Via Morelos|Ubicacion Ecatepec|
+192.168.0.3|UI plantel Viaducto|Ubicacion Alcaldia Benito Juarez|
+192.168.0.4|Crista facil|Volocacion de vidrios|
+192.168.0.5|UI plantel Sur|Ubicacion Alcaldia Venustiano Carranza|
+192.168.0.6|UI plantel Norte|Ubicacion Alcaldia Alavaro Obregon|
+192.168.0.7|UI plantel Coacalco|Ubicacion Alcaldia Miguel Hidalgo|
+192.168.0.8|Kasa Santa Fe|Automotriz Nisan|

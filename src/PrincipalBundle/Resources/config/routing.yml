@@ -28,6 +28,32 @@ logout:
 
 # Usuarios #
 
+listaUsuarios:
+    path:     /listaUsuarios 
+    defaults: { _controller: PrincipalBundle:Usuarios:listaUsuarios }
+
 registroUsuarios:
-    path:     /registroUsuarios 
+    path:     /registroUsuarios
     defaults: { _controller: PrincipalBundle:Usuarios:registroUsuarios }
+
+actualizarEstado:
+    path:     /actualizarEstado/{id}  
+    defaults: { _controller: PrincipalBundle:Usuarios:actualizarEstado }
+
+editarUsuario:
+    path:     /editarUsuario/{id}
+    defaults: { _controller: PrincipalBundle:Usuarios:editarUsuario }
+
+recuperarPassword:
+    path:     /recuperarPassword/{id}
+    defaults: { _controller: PrincipalBundle:Usuarios:recuperarPassword }
+
+# Grupos #
+
+leerArchivoTxt:
+    path:     /leerArchivoTxt 
+    defaults: { _controller: PrincipalBundle:Grupos:leerArchivoTxt }
+
+grupos:
+    path:     /grupos 
+    defaults: { _controller: PrincipalBundle:Grupos:grupos }

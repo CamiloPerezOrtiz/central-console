@@ -1,7 +1,7 @@
 <!-- Inicio nav bar -->
     <div class="overlay"></div>
     <nav class="navbar navbar-expand navbar-dark bg-danger fixed-top">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{{ path('dashboard') }}">
             <img src="{{ asset('img/logoWarriors.png')}}" style="width:85px;" alt="logo">
         </a>
         <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarCollapse">
@@ -14,7 +14,7 @@
         <ul class="navbar-nav ml-auto ml-md-0">
             <li class="nav-item dropdown no-arrow mx-1">
                 <a class="nav-link text-white">                    
-                    Welcome:
+                    Welcome: {{ app.user.nombre }} {{ app.user.apellidos }}
                 </a>
             </li>
             <li class="nav-item dropdown no-arrow">
@@ -44,26 +44,33 @@
             <p>
                 <i class="fa fa-user-circle" aria-hidden="true"></i>
                 <span>
+                    {% if app.user.role == 'ROLE_SUPERUSER' %}
+                        Super user
+                    {% endif %}
+                    {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
+                        Administrator
+                    {% endif %}
+                    {% if app.user.role == 'ROLE_USER' %}
+                        User
+                    {% endif %}
                 </span>
             </p>
             <li>
-                <a class="text-white" href="#">
+                <a class="text-white" href="{{ path('dashboard') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a class="text-white" href="#">
-                    <i class="fas fa-address-card"></i>
-                    <span class="nav-link-text">
-                        All user
-                    </span>
-                </a>
-            </li>
-            <li>
-                <a class="text-white" href="#">
+                <a class="text-white" href="{{ path('grupos') }}">
                     <i class="fa fa-users" aria-hidden="true"></i>
                     <span class="nav-link-text">
+                        {% if app.user.role == 'ROLE_SUPERUSER' %}
+                            All groups
+                        {% endif %}
+                        {% if app.user.role == 'ROLE_ADMINISTRATOR' or app.user.role == 'ROLE_USER' %}
+                            Your Group
+                        {% endif %}
                     </span>
                 </a>
             </li>

@@ -12,7 +12,7 @@
                     <div class="container">
                         {# Mensaje a pantalla de notificacion de algun error #}
                             <div class="container">
-                                <div class="col-md-11">
+                                <div class="col-md-12">
                                     {% for msg in app.session.flashbag().get('estatus') %}
                                         <div class="alert alert-info" aria-label="Close">
                                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -51,15 +51,20 @@
                                         <span class="text-danger">{{ form_errors(form.role) }}</span>
                                     </div>
                                     <div class="form-group">
-                                        {{ form_label(form.password) }}
-                                        {{ form_widget(form.password) }}
-                                        <span class="text-danger">{{ form_errors(form.password) }}</span>
+                                        {{ form_label(form.password.first) }}
+                                        {{ form_widget(form.password.first) }}
+                                        <span class="text-danger">{{ form_errors(form.password.first) }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.password.second) }}
+                                        {{ form_widget(form.password.second) }}
+                                        <span class="text-danger">{{ form_errors(form.password.second) }}</span>
                                     </div>
                                     <div class="form-group">
                                         {{ form_widget(form.Save) }}
                                     </div>
-                                    <div class="text-center">
-                                        <button type="reset" class="btn btn-danger btn-block">Clean Form</button>
+                                    <div class="form-group">
+                                        {{ form_widget(form.Clear) }}
                                     </div>
                                 {{ form_end(form) }}
                             </div>

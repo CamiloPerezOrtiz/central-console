@@ -3,6 +3,7 @@ CREATE DATABASE central_console;
 
 # Sequencias #
 CREATE SEQUENCE usuarios_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
+CREATE SEQUENCE grupos_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 
 # Tabla usuarios #
 CREATE TABLE usuarios(
@@ -14,4 +15,12 @@ CREATE TABLE usuarios(
 	role VARCHAR(18) NOT NULL,
 	estado BOOLEAN DEFAULT TRUE,
 	intentos INT DEFAULT 0
+);
+
+# Tabla de grupos #
+CREATE TABLE grupos(
+	id INT PRIMARY KEY NOT NULL,
+	ip VARCHAR(15) NOT NULL,
+	nombre VARCHAR(50) NOT NULL,
+	descripcion TEXT DEFAULT NULL
 );

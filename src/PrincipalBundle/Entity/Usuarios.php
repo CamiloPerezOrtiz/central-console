@@ -81,6 +81,20 @@ class Usuarios implements UserInterface
     private $role;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="estado", type="boolean")
+     */
+    private $estado;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="intentos", type="integer")
+     */
+    private $intentos;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255)
@@ -219,6 +233,54 @@ class Usuarios implements UserInterface
     public function getRole()
     {
         return $this->role;
+    }
+
+    /**
+     * Set estado
+     *
+     * @param boolean $estado
+     *
+     * @return udsfsf
+     */
+    public function setEstado($estado)
+    {
+        $this->estado = $estado;
+
+        return $this;
+    }
+
+    /**
+     * Get estado
+     *
+     * @return bool
+     */
+    public function getEstado()
+    {
+        return $this->estado;
+    }
+
+    /**
+     * Set intentos
+     *
+     * @param integer $intentos
+     *
+     * @return udsfsf
+     */
+    public function setIntentos($intentos)
+    {
+        $this->intentos = $intentos;
+
+        return $this;
+    }
+
+    /**
+     * Get intentos
+     *
+     * @return int
+     */
+    public function getIntentos()
+    {
+        return $this->intentos;
     }
 
     /**

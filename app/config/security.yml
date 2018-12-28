@@ -35,3 +35,9 @@ security:
 
             # https://symfony.com/doc/current/security/form_login_setup.html
             #form_login: ~
+        
+    access_control:
+        - { path: ^/dashboard, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }
+        - { path: ^/grupos, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }
+        - { path: ^/listaUsuarios, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }
+        - { path: ^/registroUsuarios, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR] }

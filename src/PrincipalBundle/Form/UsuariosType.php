@@ -8,8 +8,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\ResetType;
 
 class UsuariosType extends AbstractType
 {
@@ -21,7 +23,7 @@ class UsuariosType extends AbstractType
         $builder
             ->add('nombre', TextType::class,array(
                 "label"=>"Name: ",
-                "required"=>"required",
+                "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control form-control-sm"
                 )
@@ -35,7 +37,7 @@ class UsuariosType extends AbstractType
             ))
             ->add('email', EmailType::class,array(
                 "label"=>"Email: ",
-                "required"=>"required",
+                "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control form-control-sm"
                 )
@@ -47,22 +49,35 @@ class UsuariosType extends AbstractType
                     "class"=>"form-control"
                 ),'choices' => array(
                     'Super user' => 'ROLE_SUPERUSER',
-                    'Administrator' => 'ROLE_ADMINISTRADOR',
+                    'Administrator' => 'ROLE_ADMINISTRATOR',
                     'User' => 'ROLE_USER',
                 )
             ))
-            ->add('password', PasswordType::class,array(
-                "label"=>"Password: ",
-                "required"=>false,
-                "attr"=>array(
+            ->add('password', RepeatedType::class, array(
+                'type' => PasswordType::class,
+                'invalid_message' => 'The password fields must match.',
+                'options' => array('attr' => array(
+                    'class' => 'password-field',
                     "class"=>"form-control form-control-sm"
-                )
+                )),
+                'required'=>false,
+                'first_options'  => array(
+                    'label' => 'Password'
+                ),
+                'second_options' => array(
+                    'label' => 'Repeat Password'
+                ),
             ))
             ->add('Save', SubmitType::class,array(
                 "attr"=>array(
-                    "class"=>"btn btn-primary btn-block"
+                    "class"=>"btn btn-primary btn-block btn-sm"
                 )
             ))
+            ->add('Clear', ResetType::class, array(
+                'attr' => array(
+                    'class' => 'btn btn-danger btn-block btn-sm'),
+                )
+            )
         ;
     }
     
