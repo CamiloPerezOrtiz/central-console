@@ -13,7 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 
-class UsuariosType extends AbstractType
+class EditarUsuariosType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -44,7 +44,7 @@ class UsuariosType extends AbstractType
             ))
             ->add('role',ChoiceType::class, array(
                 "label"=>"Role: ",
-                "required"=>false,
+                "required"=>"required",
                 "attr"=>array(
                     "class"=>"form-control"
                 ),'choices' => array(
@@ -60,7 +60,7 @@ class UsuariosType extends AbstractType
                     'class' => 'password-field',
                     "class"=>"form-control form-control-sm"
                 )),
-                'required'=>true,
+                'required'=>false,
                 'first_options'  => array(
                     'label' => 'Password'
                 ),
@@ -80,14 +80,13 @@ class UsuariosType extends AbstractType
             )
         ;
     }
-    
     /**
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'PrincipalBundle\Entity\Usuarios'
+            'data_class' => 'PrincipalBundle\Entity\EditarUsuarios'
         ));
     }
 
@@ -96,7 +95,7 @@ class UsuariosType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'principalbundle_usuarios';
+        return 'principalbundle_editarusuarios';
     }
 
 

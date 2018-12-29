@@ -42,7 +42,7 @@
 	            </div>
 			{% endif %}
 			<div class="container">
-                <div class="col-md-11">
+                <div class="col-md-12">
                     {% for msg in app.session.flashbag().get('estatus') %}
                         <div class="alert alert-info" aria-label="Close">
                             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -80,7 +80,7 @@
 			          	<!-- Fin password  -->
 			          	<!-- Inicio Botones  -->
 			          		<div class="form-group">
-								<input type="submit" value="Enter" class="btn btn-success btn-block" name="enviar"/>
+								<input type="submit" value="Enter" class="btn btn-success btn-block"/>
 								<input type="hidden" name="_target_path" value="/validacionLogin"/>
 							</div>
 						<!-- Fin botones -->

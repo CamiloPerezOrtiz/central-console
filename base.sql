@@ -14,7 +14,8 @@ CREATE TABLE usuarios(
 	password VARCHAR(255) NOT NULL,
 	role VARCHAR(18) NOT NULL,
 	estado BOOLEAN DEFAULT TRUE,
-	intentos INT DEFAULT 0
+	intentos INT DEFAULT 0,
+	grupo VARCHAR(50) DEFAULT NULL
 );
 
 # Tabla de grupos #

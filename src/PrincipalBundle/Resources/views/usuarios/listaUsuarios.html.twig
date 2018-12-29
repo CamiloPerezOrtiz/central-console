@@ -35,14 +35,14 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         {% if app.user.role == 'ROLE_SUPERUSER' %}
-                            <a href="{{ path('registroUsuarios') }}">
+                            <a href="{{ path('registroSuperUsuario') }}">
                                 <button type="button" class="btn btn-success">
                                     Add super user <i class="fa fa-user-plus" aria-hidden="true"></i>
                                 </button>
                             </a>
                         <br><br>
                         {% endif %}
-                        <table class="table table-sm table-hover table-bordered text-center" id="dtBasicExample" width="100%" cellspacing="0">
+                        <table class="table table-sm table-hover table-bordered text-center" id="dtBasicExample">
                             <div class="container">
                                 <div class="col-md-12">
                                     {% for msg in app.session.flashbag().get('estatus') %}
@@ -58,6 +58,7 @@
                                     <th>Name</th>                         
                                     <th>Email</th>
                                     <th>Role</th>
+                                    <th>Group</th>
                                     {% if app.user.role == 'ROLE_SUPERUSER' %}
                                         <th>Status</th>
                                     {% endif %}
@@ -73,6 +74,7 @@
                                         <td>{{ usuarios.nombre }} {{ usuarios.apellidos }}</td>
                                         <td>{{ usuarios.email }}</td>
                                         <td>{{ usuarios.role }}</td>
+                                        <td>{{ usuarios.grupo }}</td>
                                         {% if app.user.role == 'ROLE_SUPERUSER' %}
                                             <td>
                                                 <a href="{{ path('actualizarEstado',{id:usuarios.id})}}">
@@ -95,14 +97,14 @@
                                         {% endif %}
                                         {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                             <td>
-                                                <a href="{{ path('editarUsuario',{id:usuarios.id}) }}">
+                                                <a href="{{ path('editarSuperUsuario',{id:usuarios.id}) }}">
                                                     <button class="btn btn-warning btn-sm" type="submit">
                                                         <small><i class="fas fa-user-edit"></i></small>
                                                     </button>
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="#">
+                                                <a href="{{ path('eliminarUsuario',{id:usuarios.id}) }}">
                                                     <button class="btn btn-danger btn-sm" type="submit">
                                                         <i class="fas fa-user-minus"></i>
                                                     </button>

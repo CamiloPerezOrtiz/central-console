@@ -32,21 +32,21 @@ listaUsuarios:
     path:     /listaUsuarios 
     defaults: { _controller: PrincipalBundle:Usuarios:listaUsuarios }
 
-registroUsuarios:
-    path:     /registroUsuarios
-    defaults: { _controller: PrincipalBundle:Usuarios:registroUsuarios }
+registroSuperUsuario:
+    path:     /registroSuperUsuario
+    defaults: { _controller: PrincipalBundle:Usuarios:registroSuperUsuario }
 
 actualizarEstado:
     path:     /actualizarEstado/{id}  
     defaults: { _controller: PrincipalBundle:Usuarios:actualizarEstado }
 
-editarUsuario:
-    path:     /editarUsuario/{id}
-    defaults: { _controller: PrincipalBundle:Usuarios:editarUsuario }
+editarSuperUsuario:
+    path:     /editarSuperUsuario/{id}
+    defaults: { _controller: PrincipalBundle:Usuarios:editarSuperUsuario }
 
-recuperarPassword:
-    path:     /recuperarPassword/{id}
-    defaults: { _controller: PrincipalBundle:Usuarios:recuperarPassword }
+eliminarUsuario:
+    path:     /eliminarUsuario/{id}
+    defaults: { _controller: PrincipalBundle:Usuarios:eliminarUsuario }
 
 # Grupos #
 

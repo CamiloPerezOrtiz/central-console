@@ -7,6 +7,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use PrincipalBundle\Entity\Usuarios;
 use PrincipalBundle\Form\UsuariosType;
+use PrincipalBundle\Entity\EditarUsuarios;
+use PrincipalBundle\Form\EditarUsuariosType;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class UsuariosController extends Controller
@@ -28,45 +30,86 @@ class UsuariosController extends Controller
 		$lastUsername = $authenticationUtils->getLastUsername();
 		if ($error == true) 
 		{ 
-			$em = $this->getDoctrine()->getEntityManager();
-			$db = $em->getConnection();
-			$_SESSION['contadorLogin'] = 0;
-			$query = ("SELECT estado, intentos FROM usuarios WHERE email = '$lastUsername'");
-			$stmt = $db->prepare($query);
-			$params =array();
-			$stmt->execute($params);
-			$resultado=$stmt->fetchAll();
-			foreach ($resultado as $value) 
+			$recuperarEmail = $this->recuperarEmail($lastUsername);
+			if(!count($recuperarEmail) == 0)
 			{
-				$estado = $value['estado'];
-				$intentos = $value['intentos'];
-				if($estado == false)
+				$_SESSION['contadorLogin'] = 0;
+				$recuperarEstado = $this->recuperarEstado($lastUsername);
+				if($recuperarEstado[0]['estado'] === false)
 				{
-			        echo '<script> 
-		                		alert("Your user has been blocked You have exceeded the number of attempts to enter. Communicate with the administrator to be unlocked.");
-		                		window.location.href="logout";
-		             		 </script>
-		             		';
-		            die();
+					$estatus="Your user has been blocked. Communicate with the company to be unlocked.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+					return $this->render('@Principal/Default/index.html.twig', array('error'=> $error, 'last_username' => $lastUsername));
 				}
-			}
-			$_SESSION['contadorLogin'] = $_SESSION['contadorLogin'] + 1;
-			$contador = $_SESSION['contadorLogin'] + $intentos;
-			$actualizarIntentos = ("UPDATE usuarios SET intentos = '$contador' WHERE email = '$lastUsername'");
-			$stmtIntentos = $db->prepare($actualizarIntentos);
-			$stmtIntentos->execute(array());
-			if($contador > 4)
-			{
-				$estatus="Your user is blocked. They have made several attempts to login. Communicate with the admin to change your status.";
-				$this->session->getFlashBag()->add("estatus",$estatus);
-				$em = $this->getDoctrine()->getEntityManager();
-				$db = $em->getConnection();
-				$actualizarEstado = ("UPDATE usuarios set estado = false where email = '$lastUsername'");
-				$stmt = $db->prepare($actualizarEstado);
-				$stmt->execute(array());
-			}
+				$_SESSION['contadorLogin'] = $_SESSION['contadorLogin'] + 1;
+				$contador = $_SESSION['contadorLogin'] + $recuperarEstado[0]['intentos'];
+				$actualizarIntentos = $this->actualizarIntentos($contador, $lastUsername);
+				if($contador > 4)
+				{
+					$estatus="Your user is blocked. They have made several unsuccessful attempts to login. Communicate with the company to be unlocked.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+					$actualizarEstado = $this->actualizarEstado($lastUsername);
+				}
+			}	
 		}
-		return $this->render('@Principal/Default/index.html.twig', array('error'=> $error, 'last_username' => $lastUsername));
+		return $this->render('@Principal/Default/index.html.twig', array(
+			'error'=> $error, 
+			'last_username' => $lastUsername
+		));
+	}
+
+	# Funcion para recuperar el correo electronico #
+	private function recuperarEmail($lastUsername)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.email
+				FROM PrincipalBundle:Usuarios u
+				WHERE  u.email = :email'
+		)->setParameter('email', $lastUsername);
+		$email = $query->getResult();
+		return $email;
+	}
+
+	# Funcion para recuperar el estado y los intentos #
+	private function recuperarEstado($lastUsername)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.estado, u.intentos
+				FROM PrincipalBundle:Usuarios u
+				WHERE  u.email = :email'
+		)->setParameter('email', $lastUsername);
+		$estado = $query->getResult();
+		return $estado;
+	}
+
+	# Funcion para actualizar los intentos #
+	private function actualizarIntentos($contador, $lastUsername)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'UPDATE PrincipalBundle:Usuarios u
+				SET u.intentos = :intentos
+				WHERE  u.email = :email'
+		)->setParameter('intentos', $contador)
+		->setParameter('email', $lastUsername);
+		$intentos = $query->getResult();
+		return $intentos;
+	}
+
+	# Funcion para actualizar el estado #
+	private function actualizarEstado($lastUsername)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'UPDATE PrincipalBundle:Usuarios u
+				SET u.estado = :estado
+				WHERE  u.email = :email'
+		)->setParameter('estado', false)
+		->setParameter('email', $lastUsername);
+		$estado = $query->getResult();
+		return $estado;
 	}
 
 	# Funcion para validar el inicio de session #
@@ -74,32 +117,13 @@ class UsuariosController extends Controller
 	{
 		$usuario = $this->getUser();
 		$email=$usuario->getEmail();
-		$em = $this->getDoctrine()->getEntityManager();
-		$db = $em->getConnection();
-		$query = ("SELECT estado FROM usuarios WHERE email = '$email'");
-		$stmt = $db->prepare($query);
-		$params =array();
-		$stmt->execute($params);
-		$resultado=$stmt->fetchAll();
-		foreach ($resultado as $value) 
-		{
-			$res = $value['estado'];
-		}
-		if($res == true)
-		{
-			$update = ("UPDATE usuarios SET intentos = 0 WHERE email = '$email'");
-			$stmt2 = $db->prepare($update);
-			$stmt2->execute(array());
-	        return $this->redirectToRoute("dashboard");
-		}
+		$recuperarEstado = $this->recuperarEstado($email);
+		if($recuperarEstado[0]['estado'] == false)
+			echo '<script> alert("Your user has been blocked. Communicate with the company to be unlocked.");window.location.href="logout";</script>';
 		else
 		{
-			echo '<script> 
-                		alert("Your user is blocked. Communicate with the admin to change your status.");
-                		window.location.href="logout";
-             		 </script>
-             		';
-            die();
+			$actualizarIntentos = $this->actualizarIntentos($contador = 0, $email);
+			return $this->redirectToRoute("dashboard");	
 		}
 	}
 
@@ -125,7 +149,9 @@ class UsuariosController extends Controller
 				$params =array();
 				$stmt->execute($params);
 				$usuarios=$stmt->fetchAll();
-				return $this->render('@Principal/usuarios/listaUsuarios.html.twig', array("usuario"=>$usuarios));
+				return $this->render('@Principal/usuarios/listaUsuarios.html.twig', array(
+					"usuario"=>$usuarios
+				));
 	        }
 	        if($role == "ROLE_ADMINISTRATOR")
 	        {
@@ -134,7 +160,9 @@ class UsuariosController extends Controller
 				$params =array();
 				$stmt->execute($params);
 				$usuarios=$stmt->fetchAll();
-				return $this->render('@Principal/usuarios/listaUsuarios.html.twig', array("usuario"=>$usuarios));
+				return $this->render('@Principal/usuarios/listaUsuarios.html.twig', array(
+					"usuario"=>$usuarios
+				));
 	        }
 	        if($role == "ROLE_USER")
 	        {
@@ -143,28 +171,30 @@ class UsuariosController extends Controller
 				$params =array();
 				$stmt->execute($params);
 				$usuarios=$stmt->fetchAll();
-				return $this->render('@Principal/usuarios/listaUsuarios.html.twig', array("usuario"=>$usuarios));
+				return $this->render('@Principal/usuarios/listaUsuarios.html.twig', array(
+					"usuario"=>$usuarios
+				));
 	        }
 	    }
 	}
 
 	# Funcion para agregar un nuevo usuario #
-	public function registroUsuariosAction(Request $request)
+	public function registroSuperUsuarioAction(Request $request)
 	{
 		$usuarios =  new Usuarios();
 		$form = $this->createForm(UsuariosType::class,$usuarios);
+		$form->remove('role');
 		$form->handleRequest($request);
 		if($form->isSubmitted() && $form->isValid())
 		{
-			$em = $this->getDoctrine()->getEntityManager(); 
-			$query = $em->createQuery("SELECT u FROM PrincipalBundle:Usuarios u WHERE u.email = :email")
-				->setParameter("email",$form->get("email")
-				->getData());
-			$resultado = $query->getResult();
-			if(count($resultado)==0)
+			$em = $this->getDoctrine()->getEntityManager();
+			$recuperarEmail = $this->recuperarEmail($form->get("email")->getData());
+			if(count($recuperarEmail)==0)
 			{
 				$usuarios->setEstado(true);
 				$usuarios->setIntentos(0);
+				$usuarios->setGrupo("NULL");
+				$usuarios->setRole("ROLE_SUPERUSER");
 				$factory = $this->get("security.encoder_factory");
 				$encoder = $factory->getEncoder($usuarios);
 				$password = $encoder->encodePassword($form->get("password")->getData(),$usuarios->getSalt());
@@ -177,8 +207,11 @@ class UsuariosController extends Controller
 					$this->session->getFlashBag()->add("estatus",$estatus);
 					return $this->redirectToRoute("listaUsuarios");
 				}
-				echo "Problems with the server";
-				die();
+				else
+				{
+					$estatus="Problems with the server try later.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+				}
 			}
 			else
 			{
@@ -186,7 +219,7 @@ class UsuariosController extends Controller
 				$this->session->getFlashBag()->add("estatus",$estatus);
 			}
 		}
-		return $this->render("@Principal/usuarios/registroUsuarios.html.twig",
+		return $this->render("@Principal/usuarios/registroSuperUsuario.html.twig",
 			array(
 				"form"=>$form->createView()
 		));
@@ -195,64 +228,60 @@ class UsuariosController extends Controller
 	# Funcion para actualizar el status cualquier actor #
 	public function actualizarEstadoAction($id)
 	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$db = $em->getConnection();
-		$query = ("SELECT estado FROM usuarios WHERE id = '$id'");
-		$stmt = $db->prepare($query);
-		$params =array();
-		$stmt->execute($params);
-		$estado=$stmt->fetchAll();
-		foreach ($estado as $tipoEstado) 
+		$recuperarEstadoId = $this->recuperarEstadoId($id);
+		if($recuperarEstadoId[0]['estado'] === true)
 		{
-			$resultado = $tipoEstado['estado'];
-			if($resultado == true)
-			{
-		        $query = ("UPDATE usuarios SET estado = false WHERE id = '$id'");
-				$stmt = $db->prepare($query);
-				$stmt->execute(array());
-				$queyIntenteos = ("UPDATE usuarios SET intentos = 0 WHERE id = '$id'");
-				$stmtIntentos = $db->prepare($queyIntenteos);
-				$stmtIntentos->execute(array());
-				if($stmtIntentos == null)
-				{
-					$estatus="Problems with the server try later.";	
-					$this->session->getFlashBag()->add("estatus",$estatus);			
-				}
-				else
-				{
-					$estatus="Successfully updated status.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
-				}
-			}
-			if($resultado == false)
-			{
-		        $query = ("UPDATE usuarios SET estado = true WHERE id = '$id'");
-				$stmt = $db->prepare($query);
-				$stmt->execute(array());
-				#Reiniciar los intentos #
-				$queyIntenteos = ("UPDATE usuarios SET intentos = 0 WHERE id = '$id'");
-				$stmtIntentos = $db->prepare($queyIntenteos);
-				$stmtIntentos->execute(array());
-				if($stmtIntentos == null)
-				{
-					$estatus="Problems with the server try later.";
-				}
-				else
-				{
-					$estatus="Successfully updated status.";
-				}
-				$this->session->getFlashBag()->add("estatus",$estatus);
-			}
-		}	
+			if($actualizarIntentosEstadosId = $this->actualizarIntentosEstadosId($estado = false , $contador = 0, $id))
+				$estatus="Successfully updated status.";	
+			else
+				$estatus="Problems with the server try later.";
+		}
+		else
+		{
+			if($actualizarIntentosEstadosId = $this->actualizarIntentosEstadosId($estado = true , $contador = 0, $id))
+				$estatus="Successfully updated status.";
+			else
+				$estatus="Problems with the server try later.";
+		}
+		$this->session->getFlashBag()->add("estatus",$estatus);
 		return $this->redirectToRoute("listaUsuarios");
 	}
 
-	# Funcion para editar usuarios #
-	public function editarUsuarioAction(Request $request, $id)
+	# Funcion para recuperar el estado por id #
+	private function recuperarEstadoId($id)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$usuarios = $em->getRepository("PrincipalBundle:Usuarios")->find($id);
-		$form = $this->createForm(UsuariosType::class,$usuarios);
+		$query = $em->createQuery(
+			'SELECT u.estado
+				FROM PrincipalBundle:Usuarios u
+				WHERE  u.id = :id'
+		)->setParameter('id', $id);
+		$estado = $query->getResult();
+		return $estado;
+	}
+
+	# Funcion para actualizar los intentos y el estado po id #
+	private function actualizarIntentosEstadosId($estado, $contador, $id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'UPDATE PrincipalBundle:Usuarios u
+				SET u.estado = :estado, u.intentos = :intentos
+				WHERE  u.id = :id'
+		)->setParameter('estado', $estado)
+		->setParameter('intentos', $contador)
+		->setParameter('id', $id);
+		$intentos = $query->getResult();
+		return $intentos;
+	}
+
+	# Funcion para editar usuarios #
+	public function editarSuperUsuarioAction(Request $request, $id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$usuarios = $em->getRepository("PrincipalBundle:EditarUsuarios")->find($id);
+		$form = $this->createForm(EditarUsuariosType::class,$usuarios);
+		$form->remove('role');
 		$form->handleRequest($request);
 		if($form->isSubmitted() && $form->isValid())
 		{			
@@ -288,7 +317,7 @@ class UsuariosController extends Controller
 				$this->session->getFlashBag()->add("estatus",$estatus);
 			}
 		}
-		return $this->render("@Principal/usuarios/registroUsuarios.html.twig",array("form"=>$form->createView()));
+		return $this->render("@Principal/usuarios/registroSuperUsuario.html.twig",array("form"=>$form->createView()));
 	}
 
 	# Funcion para recuperar la contraseña #
@@ -302,5 +331,63 @@ class UsuariosController extends Controller
 		)->setParameter('id', $id);
 		$passwordEncrypt = $query->getResult();
 		return $passwordEncrypt;
+	}
+
+	# Funcion para eliminar un usuario #
+	public function eliminarUsuarioAction($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$formato = $em->getRepository("PrincipalBundle:Usuarios")->find($id);
+		$em->remove($formato);
+		$flush=$em->flush();
+		if($flush == null)
+			$estatus="Successfully delete registration";
+		else
+			$estatus="Problems with the server try later.";
+		$this->session->getFlashBag()->add("estatus",$estatus);
+		return $this->redirectToRoute("listaUsuarios");
+	}
+
+	# Funcion para agregar un usuario en un grupo #
+	public function registerUserAdministratorAction(Request $request, $id)
+	{
+		$usuarios =  new Usuarios();
+		$form = $this->createForm(UsuariosType::class,$usuarios);
+		$form->handleRequest($request);
+		if($form->isSubmitted() && $form->isValid())
+		{
+			$em = $this->getDoctrine()->getEntityManager();
+			$query = $em->createQuery("SELECT u FROM PrincipalBundle:Administrator u WHERE u.email = :email")->setParameter("email",$form->get("email")->getData());
+			$resultado = $query->getResult();
+			$query2 = $em->createQuery("SELECT u FROM PrincipalBundle:Administrator u WHERE u.name = :name")->setParameter("name",$form->get("name")->getData());
+			$resultado2 = $query2->getResult();
+			if(count($resultado)==0 && count($resultado2)==0)
+			{
+				$usuarios->setNameGroup($id);
+				$factory = $this->get("security.encoder_factory");
+				$encoder = $factory->getEncoder($usuarios);
+				$p = $encoder->encodePassword($form->get("password")->getData(),$usuarios->getSalt());
+				$usuarios->setPassword($p);
+				$em->persist($usuarios);
+				$flush=$em->flush();
+				if($flush == null)
+				{
+					$estatus="Successfully registration";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+					return $this->redirectToRoute("listusuarios");
+				}
+				else
+				{
+					$estatus="Problems with the server try later.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+				}
+			}
+			else
+			{
+				$estatus="The name or email you are trying to register already exists try again.";
+				$this->session->getFlashBag()->add("estatus",$estatus);
+			}
+		}
+		return $this->render("@Principal/usuarios/registerUserAdministrator.html.twig",array("form"=>$form->createView()));
 	}
 }

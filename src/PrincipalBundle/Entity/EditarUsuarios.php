@@ -7,12 +7,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Usuarios
+ * EditarUsuarios
  *
  * @ORM\Table(name="usuarios")
- * @ORM\Entity(repositoryClass="PrincipalBundle\Repository\UsuariosRepository")
+ * @ORM\Entity(repositoryClass="PrincipalBundle\Repository\EditarUsuariosRepository")
  */
-class Usuarios implements UserInterface
+class EditarUsuarios implements UserInterface
 {
     /**
      * @var int
@@ -76,6 +76,7 @@ class Usuarios implements UserInterface
      * @var string
      *
      * @ORM\Column(name="role", type="string", length=18)
+     * @Assert\NotBlank
      */
     private $role;
 
@@ -96,15 +97,7 @@ class Usuarios implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="grupo", type="string", length=50)
-     */
-    private $grupo;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="password", type="string", length=255)
-     * @Assert\NotBlank
      */
     private $password;
 
@@ -150,7 +143,7 @@ class Usuarios implements UserInterface
      *
      * @param string $nombre
      *
-     * @return Usuarios
+     * @return editarUsuarios
      */
     public function setNombre($nombre)
     {
@@ -174,7 +167,7 @@ class Usuarios implements UserInterface
      *
      * @param string $apellidos
      *
-     * @return Usuarios
+     * @return editarUsuarios
      */
     public function setApellidos($apellidos)
     {
@@ -198,7 +191,7 @@ class Usuarios implements UserInterface
      *
      * @param string $email
      *
-     * @return Usuarios
+     * @return editarUsuarios
      */
     public function setEmail($email)
     {
@@ -222,7 +215,7 @@ class Usuarios implements UserInterface
      *
      * @param string $role
      *
-     * @return Usuarios
+     * @return editarUsuarios
      */
     public function setRole($role)
     {
@@ -246,7 +239,7 @@ class Usuarios implements UserInterface
      *
      * @param boolean $estado
      *
-     * @return udsfsf
+     * @return editarUsuarios
      */
     public function setEstado($estado)
     {
@@ -270,7 +263,7 @@ class Usuarios implements UserInterface
      *
      * @param integer $intentos
      *
-     * @return udsfsf
+     * @return editarUsuarios
      */
     public function setIntentos($intentos)
     {
@@ -290,35 +283,11 @@ class Usuarios implements UserInterface
     }
 
     /**
-     * Set grupo
-     *
-     * @param string $grupo
-     *
-     * @return Usuarios
-     */
-    public function setGrupo($grupo)
-    {
-        $this->grupo = $grupo;
-
-        return $this;
-    }
-
-    /**
-     * Get grupo
-     *
-     * @return string
-     */
-    public function getGrupo()
-    {
-        return $this->grupo;
-    }
-
-    /**
      * Set password
      *
      * @param string $password
      *
-     * @return Usuarios
+     * @return editarUsuarios
      */
     public function setPassword($password)
     {

@@ -4,7 +4,10 @@ security:
     encoders:
         PrincipalBundle\Entity\Usuarios: # Se hace mecnion sobre que entidad se va a trabajar 
             algorithm: bcrypt # Se estable el metodo de encrytamiento de la contraseña 
-            cost: 4 # El numero de cost el cual se encryṕtara la contraseña 
+            cost: 4 # El numero de cost el cual se encryṕtara la contraseña
+        PrincipalBundle\Entity\EditarUsuarios: # Se hace mecnion sobre que entidad se va a trabajar 
+            algorithm: bcrypt # Se estable el metodo de encrytamiento de la contraseña 
+            cost: 4 # El numero de cost el cual se encryṕtara la contraseña  
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
@@ -40,4 +43,5 @@ security:
         - { path: ^/dashboard, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }
         - { path: ^/grupos, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }
         - { path: ^/listaUsuarios, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }
-        - { path: ^/registroUsuarios, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR] }
+        - { path: ^/registroSuperUsuario, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR] }
+        - { path: ^/editarSuperUsuario/, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR] }
