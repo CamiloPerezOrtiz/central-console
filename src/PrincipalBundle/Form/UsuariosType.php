@@ -44,11 +44,10 @@ class UsuariosType extends AbstractType
             ))
             ->add('role',ChoiceType::class, array(
                 "label"=>"Role: ",
-                "required"=>false,
+                "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control"
                 ),'choices' => array(
-                    'Super user' => 'ROLE_SUPERUSER',
                     'Administrator' => 'ROLE_ADMINISTRATOR',
                     'User' => 'ROLE_USER',
                 )

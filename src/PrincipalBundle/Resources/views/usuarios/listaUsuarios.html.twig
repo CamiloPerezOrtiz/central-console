@@ -35,7 +35,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         {% if app.user.role == 'ROLE_SUPERUSER' %}
-                            <a href="{{ path('registroSuperUsuario') }}">
+                            <a href="{{ path('registroUsuario') }}">
                                 <button type="button" class="btn btn-success">
                                     Add super user <i class="fa fa-user-plus" aria-hidden="true"></i>
                                 </button>
@@ -97,7 +97,7 @@
                                         {% endif %}
                                         {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                             <td>
-                                                <a href="{{ path('editarSuperUsuario',{id:usuarios.id}) }}">
+                                                <a href="{{ path('editarUsuario',{id:usuarios.id}) }}">
                                                     <button class="btn btn-warning btn-sm" type="submit">
                                                         <small><i class="fas fa-user-edit"></i></small>
                                                     </button>

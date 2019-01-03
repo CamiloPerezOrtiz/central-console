@@ -5,8 +5,14 @@
         <div class="container-fluid">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="#">Dashboard</a>
-                </li>            </ol>
+                    <a href="{{ path('dashboard') }}">Dashboard</a>
+                </li>     
+                <li class="breadcrumb-item">
+                    <a href="{{ path('listaUsuarios') }}">
+                        List Administrator
+                    </a>
+                </li>       
+            </ol>
             <div class="card mb-3">
                 <div class="card-body">
                     <div class="container">
@@ -23,14 +29,14 @@
                             </div>
                         {# Fin de Mensaje #}
                         <div class="card card-register mx-auto mt-5">
-                            <div class="card-header bg-dark text-white">Register an Account</div>
+                            <div class="card-header bg-dark text-white">Account</div>
                             <div class="card-body">
-                                {{ form_start(form, {'attr': {'onsubmit':'return validarRegistroAdministrador();'} } ) }}
+                                {{ form_start(form, {'attr': {'onsubmit':'return validarUsuario();'} } ) }}
                                     <div class="form-group">
                                         <div class="form-row">
                                             <div class="col-md-6">
                                                 {{ form_label(form.nombre) }}
-                                                {{ form_widget(form.nombre) }}
+                                                {{ form_widget(form.nombre, { 'id': 'nombre' }) }}
                                                 <span class="text-danger">{{ form_errors(form.nombre) }}</span>
                                             </div>
                                             <div class="col-md-6">
@@ -42,7 +48,7 @@
                                     </div>
                                     <div class="form-group">
                                         {{ form_label(form.email) }}
-                                        {{ form_widget(form.email) }}
+                                        {{ form_widget(form.email, { 'id': 'email' }) }}
                                         <span class="text-danger">{{ form_errors(form.email) }}</span>
                                     </div>
                                     <div class="form-group">
@@ -52,12 +58,12 @@
                                     </div>
                                     <div class="form-group">
                                         {{ form_label(form.password.first) }}
-                                        {{ form_widget(form.password.first) }}
+                                        {{ form_widget(form.password.first, { 'id': 'passwordUno' }) }}
                                         <span class="text-danger">{{ form_errors(form.password.first) }}</span>
                                     </div>
                                     <div class="form-group">
                                         {{ form_label(form.password.second) }}
-                                        {{ form_widget(form.password.second) }}
+                                        {{ form_widget(form.password.second, { 'id': 'passwordDos' }) }}
                                         <span class="text-danger">{{ form_errors(form.password.second) }}</span>
                                     </div>
                                     <div class="form-group">
@@ -76,6 +82,7 @@
     </div>
 </dir>
 {% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
+<script src="{{ asset ('js/jsPagina/usuarios/validarUsuario.js') }}"></script>
 <script>
     window.setTimeout(function() {
         $(".alert").fadeTo(500, 0).slideUp(500, function(){

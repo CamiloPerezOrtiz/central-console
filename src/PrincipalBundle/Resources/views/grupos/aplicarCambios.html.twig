@@ -5,16 +5,10 @@
         <div class="container-fluid">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="{{path('dashboard')}}">Dashboard</a>
+                    <a href="{{ path('dashboard') }}">Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active">
-                    <a href="{{path('grupos')}}">Groups list</a>
-                </li>
-                <li class="breadcrumb-item active">
-                    Ip list group:
-                    {% if grupoIp == true %} 
-                        {{ grupoIp[0]['cliente'] }} 
-                    {% endif %}  
+                    <a href="{{ path('grupos') }}">Groups list</a>
                 </li>
             </ol>
             <div class="card mb-3">
@@ -24,13 +18,12 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMIN" %}
+                        {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMINISTRATOR" %}
                             <h1>Instructions</h1>      
                             <p>Select the Ip to which you want to apply the change.</p>
                             <form method="post">
                                 <button class="btn btn-success" name="reset" type="submit" data-toggle="tooltip" data-placement="right" title="Press this button after having made some change.">Reset configuration</button>
                             </form>
-                            </div>
                             <hr>
                         {% endif %}
                         <table class="table table-hover table-bordered table-sm text-center" width="100%" cellspacing="0">
@@ -41,33 +34,29 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <form method="post">
-                                {% for listaGrupoIp in grupoIp %}
-                                    <tr>
-                                        <td>
-                                            {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMIN" %}
-                                                <input type="checkbox" class="form-check-input" name="ids[]" value="{{ listaGrupoIp.ip }}" checked> 
-                                            {% endif %}
-                                            {{ listaGrupoIp.ip }}</td>
-                                        <td>{{ listaGrupoIp.description }}</td>
-                                    </tr>
-                                {% endfor %}
+                                {{ form_start(apply) }}
+                                    {% for grupo in grupos %}
+                                        <tr>
+                                            <td>
+                                                {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMINISTRATOR" %}
+                                                    <input type="checkbox" class="form-check-input" name="ip[]" value="{{ grupo.ip }}" checked> 
+                                                {% endif %}
+                                                {{ grupo.ip }}
+                                            </td>
+                                            <td>{{ grupo.descripcion }}</td>
+                                        </tr>
+                                    {% endfor %}
                             </tbody>
                         </table>
-                        {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMIN" %}
+                        {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMINISTRATOR" %}
                             <br>
                             <div class="card-header small bg-dark text-white">Save the configuration</div>
                             <br>
                             <div class="panel-body text-center">
                                 When you do click on save button you are saving the IP List and if you do click on apply button, the process about new configuration changes will be starting. <br>
-                                <b><span style="color: #800000;">Both the save and apply button must be clicked</span></b>. <br><br>
+                                <b><span style="color: #800000;">Both the save and apply button must be clicked</span></b>.<br><br>
                                 <div class="responsive" align="center">
-                                    <button type="submit" class="btn btn-primary" name="enviar">
-                                        <b>  
-                                            Apply change <i class="fas fa-save"></i>
-                                        </b>
-                                    </button>
-                                    </form>
+                                {{ form_end(apply) }}
                                 </div>
                             </div>
                         {% endif %}

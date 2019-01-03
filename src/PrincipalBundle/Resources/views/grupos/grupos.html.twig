@@ -37,14 +37,14 @@
                                         </div>
                                         <div class="mr-5">{{ grupos.nombre }}</div>
                                     </div>
-                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="#">
+                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="{{ path('aplicarCambiosSuperUsuario',{ id:grupos.nombre }) }}">
                                         <span class="float-left">Show ip</span>
                                         <span class="float-right">
                                             <i class="fa fa-angle-right"></i>
                                         </span>
                                     </a>
                                     {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMINISTRATOR" %}
-                                        <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="#">
+                                        <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="{{ path('registroUsuarioGrupo',{ id:grupos.nombre }) }}">
                                             <span class="float-left">Register an administrator or user</span>
                                             <span class="float-right">
                                                 <i class="fa fa-angle-right"></i>

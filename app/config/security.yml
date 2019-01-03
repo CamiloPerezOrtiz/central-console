@@ -11,7 +11,7 @@ security:
 
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
-        centralconsole: # Se coloca el nombre de base detoas con la cual se va a trabajar 
+        central_console: # Se coloca el nombre de base detoas con la cual se va a trabajar 
             entity:
                 class: PrincipalBundle:Usuarios # El nombre de la entidad sobre la cual se va a trabajar 
                 property: email # el campo sobre el cual se va trabajar 
@@ -24,7 +24,7 @@ security:
 
         main:
             anonymous: ~
-            #provider: centralconsole # Se coloca el nombre de base detoas con la cual se va a trabajar
+            provider: central_console # Se coloca el nombre de base detoas con la cual se va a trabajar
             form_login:
                 login_path: /login
                 check_path: /login_check
@@ -40,8 +40,11 @@ security:
             #form_login: ~
         
     access_control:
+        - { path: ^/registroUsuarioGrupo, roles: ROLE_SUPERUSER }
+        - { path: ^/aplicarCambiosSuperUsuario, roles: ROLE_SUPERUSER }
+        - { path: ^/aplicarCambios, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR] }
+        - { path: ^/registroUsuario, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR] }
+        - { path: ^/editarUsuario, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR] }
         - { path: ^/dashboard, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }
-        - { path: ^/grupos, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }
         - { path: ^/listaUsuarios, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }
-        - { path: ^/registroSuperUsuario, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR] }
-        - { path: ^/editarSuperUsuario/, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR] }
+        - { path: ^/grupos, roles: [ROLE_SUPERUSER, ROLE_ADMINISTRATOR, ROLE_USER] }

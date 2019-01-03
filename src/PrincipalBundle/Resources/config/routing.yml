@@ -32,21 +32,25 @@ listaUsuarios:
     path:     /listaUsuarios 
     defaults: { _controller: PrincipalBundle:Usuarios:listaUsuarios }
 
-registroSuperUsuario:
-    path:     /registroSuperUsuario
-    defaults: { _controller: PrincipalBundle:Usuarios:registroSuperUsuario }
+registroUsuario:
+    path:     /registroUsuario
+    defaults: { _controller: PrincipalBundle:Usuarios:registroUsuario }
 
 actualizarEstado:
     path:     /actualizarEstado/{id}  
     defaults: { _controller: PrincipalBundle:Usuarios:actualizarEstado }
 
-editarSuperUsuario:
-    path:     /editarSuperUsuario/{id}
-    defaults: { _controller: PrincipalBundle:Usuarios:editarSuperUsuario }
+editarUsuario:
+    path:     /editarUsuario/{id}
+    defaults: { _controller: PrincipalBundle:Usuarios:editarUsuario }
 
 eliminarUsuario:
     path:     /eliminarUsuario/{id}
     defaults: { _controller: PrincipalBundle:Usuarios:eliminarUsuario }
+
+registroUsuarioGrupo:
+    path:     /registroUsuarioGrupo/{id}
+    defaults: { _controller: PrincipalBundle:Usuarios:registroUsuarioGrupo }
 
 # Grupos #
 
@@ -57,3 +61,11 @@ leerArchivoTxt:
 grupos:
     path:     /grupos 
     defaults: { _controller: PrincipalBundle:Grupos:grupos }
+
+aplicarCambiosSuperUsuario:
+    path:     /aplicarCambiosSuperUsuario/{id} 
+    defaults: { _controller: PrincipalBundle:Grupos:aplicarCambiosSuperUsuario }
+
+aplicarCambios:
+    path:     /aplicarCambios
+    defaults: { _controller: PrincipalBundle:Grupos:aplicarCambios }

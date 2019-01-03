@@ -48,7 +48,6 @@ class EditarUsuariosType extends AbstractType
                 "attr"=>array(
                     "class"=>"form-control"
                 ),'choices' => array(
-                    'Super user' => 'ROLE_SUPERUSER',
                     'Administrator' => 'ROLE_ADMINISTRATOR',
                     'User' => 'ROLE_USER',
                 )

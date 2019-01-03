@@ -139,38 +139,25 @@ class UsuariosController extends Controller
 		$u = $this->getUser();
 		if($u != null)
 		{
-			$em = $this->getDoctrine()->getEntityManager();
-	        $db = $em->getConnection();
 	        $role=$u->getRole();
+	        $grupo=$u->getGrupo();
 	        if($role == "ROLE_SUPERUSER")
 	        {
-				$query = "SELECT * FROM usuarios ORDER BY usuarios";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$usuarios=$stmt->fetchAll();
+				$usuarios = $this->recuperarTodosUsuarios();
 				return $this->render('@Principal/usuarios/listaUsuarios.html.twig', array(
 					"usuario"=>$usuarios
 				));
 	        }
 	        if($role == "ROLE_ADMINISTRATOR")
 	        {
-	        	$query = "SELECT * FROM usuarios ORDER BY usuarios";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$usuarios=$stmt->fetchAll();
+	        	$usuarios = $this->recuperarUsuarios($grupo);
 				return $this->render('@Principal/usuarios/listaUsuarios.html.twig', array(
 					"usuario"=>$usuarios
 				));
 	        }
 	        if($role == "ROLE_USER")
 	        {
-	        	$query = "SELECT * FROM usuarios ORDER BY usuarios";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$usuarios=$stmt->fetchAll();
+	        	$usuarios = $this->recuperarUsuarios($grupo);
 				return $this->render('@Principal/usuarios/listaUsuarios.html.twig', array(
 					"usuario"=>$usuarios
 				));
@@ -178,12 +165,47 @@ class UsuariosController extends Controller
 	    }
 	}
 
+	# Funcion para recuperar los usuarios #
+	private function recuperarUsuarios($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.id, u.nombre, u.apellidos, u.email, u.role, u.estado, u.grupo
+				FROM PrincipalBundle:Usuarios u
+				WHERE  u.role = :roleAdministrator
+				AND u.grupo = :grupo
+				Or u.role = :roleUser
+				AND u.grupo = :grupo'
+		)->setParameter('roleAdministrator', 'ROLE_ADMINISTRATOR')
+		->setParameter('grupo', $grupo)
+		->setParameter('roleUser', 'ROLE_USER')
+		->setParameter('grupo', $grupo);
+		$usuarios = $query->getResult();
+		return $usuarios;
+	}
+
+	# Funcion para recuperar los todos los usuarios #
+	private function recuperarTodosUsuarios()
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.id, u.nombre, u.apellidos, u.email, u.role, u.estado, u.grupo
+				FROM PrincipalBundle:Usuarios u'
+		);
+		$usuarios = $query->getResult();
+		return $usuarios;
+	}
+
 	# Funcion para agregar un nuevo usuario #
-	public function registroSuperUsuarioAction(Request $request)
+	public function registroUsuarioAction(Request $request)
 	{
 		$usuarios =  new Usuarios();
 		$form = $this->createForm(UsuariosType::class,$usuarios);
-		$form->remove('role');
+		$u = $this->getUser();
+		$grupo=$u->getGrupo();
+		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
+			$form->remove('role');
 		$form->handleRequest($request);
 		if($form->isSubmitted() && $form->isValid())
 		{
@@ -193,8 +215,12 @@ class UsuariosController extends Controller
 			{
 				$usuarios->setEstado(true);
 				$usuarios->setIntentos(0);
-				$usuarios->setGrupo("NULL");
-				$usuarios->setRole("ROLE_SUPERUSER");
+				if($role == 'ROLE_SUPERUSER')
+					$usuarios->setGrupo("NULL");
+				else
+					$usuarios->setGrupo($grupo);
+				if($role == 'ROLE_SUPERUSER')
+					$usuarios->setRole("ROLE_SUPERUSER");
 				$factory = $this->get("security.encoder_factory");
 				$encoder = $factory->getEncoder($usuarios);
 				$password = $encoder->encodePassword($form->get("password")->getData(),$usuarios->getSalt());
@@ -219,10 +245,16 @@ class UsuariosController extends Controller
 				$this->session->getFlashBag()->add("estatus",$estatus);
 			}
 		}
-		return $this->render("@Principal/usuarios/registroSuperUsuario.html.twig",
-			array(
-				"form"=>$form->createView()
-		));
+		if($role == 'ROLE_SUPERUSER')
+			return $this->render("@Principal/usuarios/registroSuperUsuario.html.twig",
+				array(
+					"form"=>$form->createView()
+			));
+		else
+			return $this->render("@Principal/usuarios/registroUsuarios.html.twig",
+				array(
+					"form"=>$form->createView()
+			));
 	}
 
 	# Funcion para actualizar el status cualquier actor #
@@ -276,12 +308,14 @@ class UsuariosController extends Controller
 	}
 
 	# Funcion para editar usuarios #
-	public function editarSuperUsuarioAction(Request $request, $id)
+	public function editarUsuarioAction(Request $request, $id)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$usuarios = $em->getRepository("PrincipalBundle:EditarUsuarios")->find($id);
 		$form = $this->createForm(EditarUsuariosType::class,$usuarios);
-		$form->remove('role');
+		$recuperarGrupoId = $this->recuperarGrupoId($id);
+		if($recuperarGrupoId[0]['grupo'] == "NULL")
+			$form->remove('role');
 		$form->handleRequest($request);
 		if($form->isSubmitted() && $form->isValid())
 		{			
@@ -317,7 +351,27 @@ class UsuariosController extends Controller
 				$this->session->getFlashBag()->add("estatus",$estatus);
 			}
 		}
-		return $this->render("@Principal/usuarios/registroSuperUsuario.html.twig",array("form"=>$form->createView()));
+		if($recuperarGrupoId[0]['grupo'] == "NULL")
+			return $this->render("@Principal/usuarios/registroSuperUsuario.html.twig",array(
+				"form"=>$form->createView()
+			));
+		else
+			return $this->render("@Principal/usuarios/registroUsuarios.html.twig",array(
+				"form"=>$form->createView()
+			));
+	}
+
+	# Funcion para recuperar el grupo por id #
+	private function recuperarGrupoId($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.grupo
+				FROM PrincipalBundle:Usuarios u
+				WHERE  u.id = :id'
+		)->setParameter('id', $id);
+		$grupo = $query->getResult();
+		return $grupo;
 	}
 
 	# Funcion para recuperar la contraseña #
@@ -348,8 +402,8 @@ class UsuariosController extends Controller
 		return $this->redirectToRoute("listaUsuarios");
 	}
 
-	# Funcion para agregar un usuario en un grupo #
-	public function registerUserAdministratorAction(Request $request, $id)
+	# Funcion para agregar un nuevo usuario #
+	public function registroUsuarioGrupoAction(Request $request, $id)
 	{
 		$usuarios =  new Usuarios();
 		$form = $this->createForm(UsuariosType::class,$usuarios);
@@ -357,24 +411,23 @@ class UsuariosController extends Controller
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
-			$query = $em->createQuery("SELECT u FROM PrincipalBundle:Administrator u WHERE u.email = :email")->setParameter("email",$form->get("email")->getData());
-			$resultado = $query->getResult();
-			$query2 = $em->createQuery("SELECT u FROM PrincipalBundle:Administrator u WHERE u.name = :name")->setParameter("name",$form->get("name")->getData());
-			$resultado2 = $query2->getResult();
-			if(count($resultado)==0 && count($resultado2)==0)
+			$recuperarEmail = $this->recuperarEmail($form->get("email")->getData());
+			if(count($recuperarEmail)==0)
 			{
-				$usuarios->setNameGroup($id);
+				$usuarios->setEstado(true);
+				$usuarios->setIntentos(0);
+				$usuarios->setGrupo($id);
 				$factory = $this->get("security.encoder_factory");
 				$encoder = $factory->getEncoder($usuarios);
-				$p = $encoder->encodePassword($form->get("password")->getData(),$usuarios->getSalt());
-				$usuarios->setPassword($p);
+				$password = $encoder->encodePassword($form->get("password")->getData(),$usuarios->getSalt());
+				$usuarios->setPassword($password);
 				$em->persist($usuarios);
 				$flush=$em->flush();
 				if($flush == null)
 				{
-					$estatus="Successfully registration";
+					$estatus="Successfully registration.";
 					$this->session->getFlashBag()->add("estatus",$estatus);
-					return $this->redirectToRoute("listusuarios");
+					return $this->redirectToRoute("listaUsuarios");
 				}
 				else
 				{
@@ -384,10 +437,13 @@ class UsuariosController extends Controller
 			}
 			else
 			{
-				$estatus="The name or email you are trying to register already exists try again.";
+				$estatus="The email you are trying to register already exists try again.";
 				$this->session->getFlashBag()->add("estatus",$estatus);
 			}
 		}
-		return $this->render("@Principal/usuarios/registerUserAdministrator.html.twig",array("form"=>$form->createView()));
+		return $this->render("@Principal/usuarios/registroUsuarios.html.twig",
+			array(
+				"form"=>$form->createView()
+		));
 	}
 }

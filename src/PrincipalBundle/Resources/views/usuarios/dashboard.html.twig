@@ -14,14 +14,18 @@
                         <i class="fas fa-table"></i>
                         Dashboard
                     </div>
-                    
                     <div class="card-body">
                         <div class="row">
                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                 <div class="box-part text-center">
                                     <i class="fas fa-users-cog fa-3x"></i>
                                     <div class="title">
-                                        <h4>All groups</h4>
+                                        {% if app.user.role == 'ROLE_SUPERUSER' %}
+                                            <h4>All groups</h4>
+                                        {% endif %}
+                                        {% if app.user.role == 'ROLE_ADMINISTRATOR' or app.user.role == 'ROLE_USER'%}
+                                            <h4>Your group</h4>
+                                        {% endif %}
                                     </div>
                                     <div class="text">
                                         <span>
@@ -35,7 +39,12 @@
                                 <div class="box-part text-center">
                                     <i class="fas fa-users fa-3x"></i>
                                     <div class="title">
-                                        <h4>All users</h4>
+                                        {% if app.user.role == 'ROLE_SUPERUSER' %}
+                                            <h4>All users</h4>
+                                        {% endif %}
+                                        {% if app.user.role == 'ROLE_ADMINISTRATOR' or app.user.role == 'ROLE_USER'%}
+                                            <h4>Your users</h4>
+                                        {% endif %}                                    
                                     </div>
                                     <div class="text">
                                         <span>

@@ -4,6 +4,11 @@ namespace PrincipalBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use PrincipalBundle\Entity\Grupos;
+use PrincipalBundle\Form\GruposType;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class GruposController extends Controller
 {
@@ -12,7 +17,7 @@ class GruposController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$db = $em->getConnection();
-		# Query para borrar la tabla txtip de la base de datos #
+		# Query para borrar la tabla grupos de la base de datos #
 		$queryDrop = "DELETE FROM grupos";
 		$stmtDrop = $db->prepare($queryDrop);
 		$paramsDrop =array();
@@ -47,50 +52,124 @@ class GruposController extends Controller
 		$u = $this->getUser();
 		if($u != null)
 		{
-			$em = $this->getDoctrine()->getEntityManager();
-	        $db = $em->getConnection();
 	        $role=$u->getRole();
+	        $grupo=$u->getGrupo();
 	        if($role == "ROLE_SUPERUSER")
 	        {
-				$query = "SELECT nombre FROM grupos ORDER BY nombre ASC";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$grupos=$stmt->fetchAll();
-				return $this->render("@Principal/grupos/grupos.html.twig", array("grupo"=>$grupos));
+	        	$grupos = $this->recuperarTodosGrupos();
+				return $this->render("@Principal/grupos/grupos.html.twig", array(
+					"grupo"=>$grupos
+				));
 	        }
-	        if($role == "ROLE_ADMINISTRATOR")
+	        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
 	        {
-	        	$query = "SELECT nombre FROM grupos ORDER BY nombre ASC";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$grupos=$stmt->fetchAll();
-				return $this->render("@Principal/grupos/grupos.html.twig", array("grupo"=>$grupos));
-	        }
-	        if($role == "ROLE_USER")
-	        {
-	        	$query = "SELECT nombre FROM grupos ORDER BY nombre ASC";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$grupos=$stmt->fetchAll();
-				return $this->render("@Principal/grupos/grupos.html.twig", array("grupo"=>$grupos));
+	        	return $this->redirectToRoute("aplicarCambios");
 	        }
 	    }
 	}
 
-	# Funcion para listar las Ip #
-	public function aplicarCambiosAction()
+	# Funcion para recuperar el todos los grupos #
+	private function recuperarTodosGrupos()
 	{
-		$u = $this->getUser();
 		$em = $this->getDoctrine()->getEntityManager();
-		$db = $em->getConnection();
-		$query = "SELECT * FROM grupos";
-		$stmt = $db->prepare($query);
-		$params =array();
-		$stmt->execute($params);
-		$grupo=$stmt->fetchAll();
-		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array("grupos"=>$grupo));
+		$query = $em->createQuery(
+			'SELECT DISTINCT g.nombre
+				FROM PrincipalBundle:Grupos g
+				ORDER BY g.nombre ASC'
+		);
+		$grupos = $query->getResult();
+		return $grupos;
+	}
+	
+
+	# Funcion para listar las Ip #
+	public function aplicarCambiosSuperUsuarioAction(Request $request, $id)
+	{
+		$grupo =  new Grupos();
+		$apply = $this->createForm(GruposType::class,$grupo);
+		$apply->handleRequest($request);
+		if($apply->isSubmitted() && $apply->isValid())
+		{
+			$ip = $_POST['ip'];
+			$file=fopen("centralizedConsole/changes.txt","w") or die("Problemas");
+			foreach ($ip as $ipSelecion) 
+			{
+				fputs($file,$ipSelecion."\n");
+			}
+			fclose($file);
+			$process = new Process('python centralizedConsole/apply.py');
+			$process->run();
+			if (!$process->isSuccessful()) {
+			    throw new ProcessFailedException($process);
+			}
+			echo '<script>alert("Successfully executed changes.");window.history.go(-1);</script>';
+		}
+		if(isset($_POST['reset']))
+		{
+			$process = new Process('python centralizedConsole/ctrlz.py');
+			$process->run();
+			if (!$process->isSuccessful()) {
+			    throw new ProcessFailedException($process);
+			}
+			echo '<script>alert("Successfully executed changes.");window.history.go(-1);</script>';
+		}
+		$grupos = $this->aplicarCambiosGrupo($id);
+		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
+			"grupos"=>$grupos,
+			"apply"=>$apply->createView()
+		));
+	}
+
+	# Funcion para aplicar cambios #
+	private function aplicarCambiosGrupo($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT g.id, g.ip, g.nombre, g.descripcion
+				FROM PrincipalBundle:Grupos g
+				WHERE g.nombre = :nombre'
+		)->setParameter('nombre', $grupo);
+		$grupos = $query->getResult();
+		return $grupos;
+	}
+
+	# Funcion para listar las Ip #
+	public function aplicarCambiosAction(Request $request)
+	{
+		$grupo =  new Grupos();
+		$apply = $this->createForm(GruposType::class,$grupo);
+		$apply->handleRequest($request);
+		if($apply->isSubmitted() && $apply->isValid())
+		{
+			$ip = $_POST['ip'];
+			$file=fopen("centralizedConsole/changes.txt","w") or die("Problemas");
+			foreach ($ip as $ipSelecion) 
+			{
+				fputs($file,$ipSelecion."\n");
+			}
+			fclose($file);
+			$process = new Process('python centralizedConsole/apply.py');
+			$process->run();
+			if (!$process->isSuccessful()) {
+			    throw new ProcessFailedException($process);
+			}
+			echo '<script>alert("Successfully executed changes.");window.history.go(-1);</script>';
+		}
+		if(isset($_POST['reset']))
+		{
+			$process = new Process('python centralizedConsole/ctrlz.py');
+			$process->run();
+			if (!$process->isSuccessful()) {
+			    throw new ProcessFailedException($process);
+			}
+			echo '<script>alert("Successfully executed changes.");window.history.go(-1);</script>';
+		}
+		$u = $this->getUser();
+		$grupo=$u->getGrupo();
+		$grupos = $this->aplicarCambiosGrupo($grupo);
+		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
+			"grupos"=>$grupos,
+			"apply"=>$apply->createView()
+		));
 	}
 }
