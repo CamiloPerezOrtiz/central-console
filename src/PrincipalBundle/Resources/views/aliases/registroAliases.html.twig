@@ -1,0 +1,75 @@
+{% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
+{% include '@Principal/plantillas/cuerpo.html.twig' %}
+<dir class="container small">
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('dashboard') }}">Dashboard</a>
+                </li>     
+                <li class="breadcrumb-item">
+                    <a href="{{ path('listaUsuarios') }}">
+                        List aliases
+                    </a>
+                </li>       
+            </ol>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="container">
+                            <div class="col-md-12">
+                                {% for msg in app.session.flashbag().get('estatus') %}
+                                    <div class="alert alert-info" aria-label="Close">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>Info!</strong> {{ msg }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="card card-register mx-auto mt-">
+                            <div class="card-header bg-dark text-white">Aliases</div>
+                            <div class="card-body">
+                                {{ form_start(form) }}
+                                    <div class="form-group">   
+                                        {{ form_label(form.nombre) }}
+                                        {{ form_widget(form.nombre) }}
+                                        <span class="text-danger">{{ form_errors(form.nombre) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.descripcion) }}
+                                        {{ form_widget(form.descripcion) }}
+                                        <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.tipo) }}
+                                        {{ form_widget(form.tipo) }}
+                                    </div>
+                                    {{ form_label(form.tipo) }}
+                                    <div class="card-body" id="exp_list" data-prototype="{{ form_widget(form.id_aliases_descripcion.vars.prototype)|e('html_attr') }}">
+                                        {% for row in form.id_aliases_descripcion %}
+                                            <div class="panel panel-warning">
+                                                <div class="panel-body">
+                                                    {{ form_row(row) }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dir>
+{% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
+<script src="{{ asset ('js/jsPagina/aliases/registroAliases.js') }}"></script>
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
+</script>
+{% include '@Principal/plantillas/declaracionFin.html.twig' %}

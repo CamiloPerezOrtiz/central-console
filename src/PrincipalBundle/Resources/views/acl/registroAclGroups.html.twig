@@ -1,0 +1,118 @@
+{% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
+{% include '@Principal/plantillas/cuerpo.html.twig' %}
+<dir class="container small">
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('dashboard') }}">Dashboard</a>
+                </li>     
+                <li class="breadcrumb-item">
+                    <a href="{{ path('listaUsuarios') }}">
+                        List aliases
+                    </a>
+                </li>       
+            </ol>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="container">
+                            <div class="col-md-12">
+                                {% for msg in app.session.flashbag().get('estatus') %}
+                                    <div class="alert alert-info" aria-label="Close">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>Info!</strong> {{ msg }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="card card-register mx-auto mt-">
+                            <div class="card-header bg-dark text-white">Aliases</div>
+                            <div class="card-body">
+                                {{ form_start(form) }}
+                                    <div class="form-group">   
+                                        {{ form_label(form.estatus) }}
+                                        {{ form_widget(form.estatus) }} <label>Check this to disable this ACL rule.</label>
+                                        <span class="text-danger">{{ form_errors(form.estatus) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.nombre) }}
+                                        <footer class="blockquote-footer">
+                                            Enter a unique name of this rule here.
+                                        </footer>
+                                       <footer class="blockquote-footer">
+                                            The name must consist between 2 and 15 symbols [a-Z_0-9]. The first one must be a letter.
+                                        </footer>
+                                        {{ form_widget(form.nombre) }} 
+                                        <span class="text-danger">{{ form_errors(form.nombre) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.cliente) }}
+                                        <footer class="blockquote-footer">
+                                            Enter client's IP address or domain here. To separate them use space.
+                                        </footer>
+                                       <footer class="blockquote-footer">
+                                            Example: 192.168.0.1 192.168.0.2 192.168.0.3 192.168.0.4
+                                        </footer>
+                                        {{ form_widget(form.cliente) }} 
+                                        <span class="text-danger">{{ form_errors(form.cliente) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.notAllowIp) }}
+                                        {{ form_widget(form.notAllowIp) }} <label>To make sure that people do not bypass the URL filter by simply using the IP-Addresses instead of the FQDN(is the combination of host name and domain name) you can check this option.</label>
+                                        <span class="text-danger">{{ form_errors(form.notAllowIp) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.redirectMode) }}
+                                        <footer class="blockquote-footer">
+                                            Enter the external redirection URL or error message here.
+                                        </footer>
+                                        {{ form_widget(form.redirectMode) }} 
+                                        <span class="text-danger">{{ form_errors(form.redirectMode) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.redirect) }}
+                                        <footer class="blockquote-footer">
+                                            Enter the external redirection URL or error message here.
+                                        </footer>
+                                        {{ form_widget(form.redirect) }} 
+                                        <span class="text-danger">{{ form_errors(form.redirect) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.descripcion) }}
+                                        <footer class="blockquote-footer">
+                                            You may enter any description here for your reference.
+                                        </footer>
+                                        {{ form_widget(form.descripcion) }} 
+                                        <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.log) }}
+                                        {{ form_widget(form.log) }} <label>Check this option to enable logging for this ACL.</label>
+                                        <span class="text-danger">{{ form_errors(form.log) }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_widget(form.Save) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_widget(form.Reset) }}
+                                    </div>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dir>
+{% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
+<script src="{{ asset ('js/jsPagina/aliases/registroAliases.js') }}"></script>
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
+</script>
+{% include '@Principal/plantillas/declaracionFin.html.twig' %}

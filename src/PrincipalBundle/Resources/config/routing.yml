@@ -69,3 +69,15 @@ aplicarCambiosSuperUsuario:
 aplicarCambios:
     path:     /aplicarCambios
     defaults: { _controller: PrincipalBundle:Grupos:aplicarCambios }
+
+# Aliases #
+
+registroAliases:
+    path:     /registroAliases 
+    defaults: { _controller: PrincipalBundle:Aliases:registroAliases }
+
+# Acl groups #
+
+registroAclGroups:
+    path:     /registroAclGroups 
+    defaults: { _controller: PrincipalBundle:AclGroups:registroAclGroups }
