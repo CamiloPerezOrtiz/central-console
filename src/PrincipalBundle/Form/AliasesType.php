@@ -32,26 +32,9 @@ class AliasesType extends AbstractType
                     "class"=>"form-control form-control-sm"
                 )
             ))
-            ->add('tipo', TextType::class,array(
-                "label"=>"Type ",
-                "required"=>true,
-                "attr"=>array(
-                    "class"=>"form-control form-control-sm"
-                )
-            ))
-            ->add('id_aliases_descripcion', CollectionType::class,[
-                "label"=>false,
-                'entry_type' => AliasesDescripcionType::class,
-                'entry_options' => [
-                    'label' => false
-                ],
-            'by_reference' => false,
-            'allow_add' => true,
-            'allow_delete' => true
-            ])
             ->add('Save', SubmitType::class,[
                 'attr' =>[
-                    'class' => 'btn btn-success btn-sm'
+                    'class' => 'btn btn-primary btn-block btn-sm'
                 ]
             ])
         ;

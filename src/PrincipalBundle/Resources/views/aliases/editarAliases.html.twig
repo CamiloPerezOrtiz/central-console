@@ -46,7 +46,7 @@
                                         <label>Type</label>
                                         <select id="id_aliases_tipo" name="id_aliases_tipo" class="form-control form-control-sm" onChange="mostrar(this.value);">
                                             {% for id_aliases_tipo in tipo %}
-                                                <option value="{{ id_aliases_tipo.id }}" {% if id_aliases_tipo.valor == "host" %}selected{% endif %}>{{ id_aliases_tipo.nombre }}</option>
+                                                <option value="{{ id_aliases_tipo.id }}">{{ id_aliases_tipo.nombre }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
@@ -87,12 +87,16 @@
                                         <div id="items" class="form-group">
                                             <div class="form-row">
                                                 <div class="col-md-6">  
-                                                    <input type="text" name="ip_port[]" class="form-control form-control-sm" placeholder="Addres">
-                                                    <br>
+                                                    {% for array1 in ip_port %}
+                                                        <input type="text" name="ip_port[]" class="form-control form-control-sm" value="{{ array1 }}">
+                                                        <br>
+                                                    {% endfor %}
                                                 </div>
                                                 <div class="col-md-6">  
-                                                    <input type="text" name="descripcion_ip_port[]" class="form-control form-control-sm" placeholder="Description">
-                                                    <br>
+                                                    {% for array2 in descripcion_ip_port %}
+                                                        <input type="text" name="descripcion_ip_port[]" class="form-control form-control-sm" value="{{ array2 }}">
+                                                        <br>
+                                                    {% endfor %}
                                                 </div>
                                             </div>
                                         </div>

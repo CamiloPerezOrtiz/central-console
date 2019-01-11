@@ -24,29 +24,44 @@ class Aliases
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=20)
+     * @ORM\Column(name="nombre", type="string", length=20, nullable=true)
      */
     private $nombre;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="descripcion", type="string", length=50)
+     * @ORM\Column(name="descripcion", type="string", length=50, nullable=true)
      */
     private $descripcion;
 
     /**
-     * @var string
+     * @var int
      *
-     * @ORM\Column(name="tipo", type="string", length=20)
+     * @ORM\Column(name="id_aliases_tipo", type="integer")
      */
-    private $tipo;
+    private $id_aliases_tipo;
 
     /**
-     * @ORM\OneToMany(targetEntity="AliasesDescripcion", mappedBy="aliases_descripcion", cascade={"persist", "remove"})
+     * @var string
+     *
+     * @ORM\Column(name="ip_port", type="text")
      */
-    private $id_aliases_descripcion;
+    private $ip_port;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="descripcion_ip_port", type="text")
+     */
+    private $descripcion_ip_port;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="grupo", type="string", length=50)
+     */
+    private $grupo;
 
     /**
      * Get id
@@ -107,69 +122,99 @@ class Aliases
     }
 
     /**
-     * Set tipo
+     * Set id_aliases_tipo
      *
-     * @param string $tipo
+     * @param int $id_aliases_tipo
      *
      * @return Aliases
      */
-    public function setTipo($tipo)
+    public function setId_aliases_tipo($id_aliases_tipo)
     {
-        $this->tipo = $tipo;
+        $this->id_aliases_tipo = $id_aliases_tipo;
 
         return $this;
     }
 
     /**
-     * Get tipo
+     * Get id_aliases_tipo
+     *
+     * @return int
+     */
+    public function getId_aliases_tipo()
+    {
+        return $this->id_aliases_tipo;
+    }
+
+    /**
+     * Set ip_port
+     *
+     * @param string $ip_port
+     *
+     * @return Aliases
+     */
+    public function setIp_port($ip_port)
+    {
+        $this->ip_port = $ip_port;
+
+        return $this;
+    }
+
+    /**
+     * Get ip_port
      *
      * @return string
      */
-    public function getTipo()
+    public function getIp_port()
     {
-        return $this->tipo;
-    }
-
-    
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->id_aliases_descripcion = new \Doctrine\Common\Collections\ArrayCollection();
+        return $this->ip_port;
     }
 
     /**
-     * Add idAliasesDescripcion
+     * Set descripcion_ip_port
      *
-     * @param \PrincipalBundle\Entity\AliasesDescripcion $idAliasesDescripcion
+     * @param string $descripcion_ip_port
      *
      * @return Aliases
      */
-    public function addIdAliasesDescripcion(\PrincipalBundle\Entity\AliasesDescripcion $idAliasesDescripcion)
+    public function setDescripcion_ip_port($descripcion_ip_port)
     {
-        $this->id_aliases_descripcion[] = $idAliasesDescripcion;
-        $idAliasesDescripcion->setAliasesDescripcion($this);
+        $this->descripcion_ip_port = $descripcion_ip_port;
+
         return $this;
     }
 
     /**
-     * Remove idAliasesDescripcion
+     * Get descripcion_ip_port
      *
-     * @param \PrincipalBundle\Entity\AliasesDescripcion $idAliasesDescripcion
+     * @return string
      */
-    public function removeIdAliasesDescripcion(\PrincipalBundle\Entity\AliasesDescripcion $idAliasesDescripcion)
+    public function getDescripcion_ip_port()
     {
-        $this->id_aliases_descripcion->removeElement($idAliasesDescripcion);
+        return $this->descripcion_ip_port;
     }
 
     /**
-     * Get idAliasesDescripcion
+     * Set grupo
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @param string $grupo
+     *
+     * @return Usuarios
      */
-    public function getIdAliasesDescripcion()
+    public function setGrupo($grupo)
     {
-        return $this->id_aliases_descripcion;
+        $this->grupo = $grupo;
+
+        return $this;
     }
+
+    /**
+     * Get grupo
+     *
+     * @return string
+     */
+    public function getGrupo()
+    {
+        return $this->grupo;
+    }
+
 }

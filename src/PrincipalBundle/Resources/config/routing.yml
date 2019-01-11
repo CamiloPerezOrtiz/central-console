@@ -76,6 +76,10 @@ registroAliases:
     path:     /registroAliases 
     defaults: { _controller: PrincipalBundle:Aliases:registroAliases }
 
+editarAliases:
+    path:     /editarAliases/{id} 
+    defaults: { _controller: PrincipalBundle:Aliases:editarAliases }
+
 # Acl groups #
 
 registroAclGroups:

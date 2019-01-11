@@ -3,6 +3,7 @@
 namespace PrincipalBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * AclGroups
@@ -32,6 +33,14 @@ class AclGroups
      * @var string
      *
      * @ORM\Column(name="nombre", type="string", length=20)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 15,
+     *      minMessage = "The name must be at least {{ limit }} characters long",
+     *      maxMessage = "The name cannot be longer than {{ limit }} characters"
+     * )
+     * @Assert\Regex("/^\w+/")
      */
     private $nombre;
 
@@ -52,16 +61,16 @@ class AclGroups
     /**
      * @var string
      *
-     * @ORM\Column(name="redirect", type="string", length=50)
+     * @ORM\Column(name="redirectMode", type="string", length=50)
      */
-    private $redirect;
+    private $redirectMode;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="redirectMode", type="string", length=50)
+     * @ORM\Column(name="redirect", type="string", length=50)
      */
-    private $redirectMode;
+    private $redirect;
 
     /**
      * @var string
@@ -215,7 +224,7 @@ class AclGroups
      *
      * @return AclGroups
      */
-    public function setRedirectMode($redirect)
+    public function setRedirectMode($redirectMode)
     {
         $this->redirectMode = $redirectMode;
 
