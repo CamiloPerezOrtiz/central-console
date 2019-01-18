@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 
-class AclGroupsType extends AbstractType
+class TargetType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -19,41 +19,45 @@ class AclGroupsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('estatus')
-            ->add('nombre',TextType::class,array(
+            ->add('nombre', TextType::class,array(
                 "label"=>"Name ",
                 "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control form-control-sm",
-                    'placeholder' => 'Write the name'
+                    'placeholder' => 'Write the list'
                 )
             ))
-            ->add('cliente',TextareaType::class,array(
-                "label"=>"Client ",
+            ->add('domainList',TextareaType::class,array(
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control",
-                    'rows' => '2',
+                    "class"=>"form-control form-control-sm",
+                    'rows' => '4',
+                    'placeholder' => 'Write the list'
+                )
+            ))
+            ->add('urlList',TextareaType::class,array(
+                "required"=>true,
+                "attr"=>array(
+                    "class"=>"form-control form-control-sm",
+                    'rows' => '4',
+                    'placeholder' => 'Write the list'
+                )
+            ))
+            ->add('regularExpression',TextareaType::class,array(
+                "required"=>true,
+                "attr"=>array(
+                    "class"=>"form-control form-control-sm",
+                    'rows' => '4',
                     'placeholder' => 'Write the IP'
                 )
             ))
-            ->add('notAllowIp')
-            ->add('redirect',TextareaType::class,array(
-                "label"=>"Redirect ",
+            ->add('redirectMode',ChoiceType::class, array(
+                "label"=>"Redirect mode ",
                 "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control",
-                    'rows' => '2',
-                    'placeholder' => 'Write the redirect option'
-                )
-            ))
-            ->add('redirectMode',ChoiceType::class, array(
-                "label"=>"Redirect mode: ",
-                "required"=>true,
-                "attr"=>array(
-                    "class"=>"form-control form-control-sm"
-                ),
-                'choices' => array(
+                    'onChange' => 'mostrar(this.value);'
+                ),'choices' => array(
                     'none' => 'rmod_none',
                     'int error page (enter error message)' => 'rmod_int',
                     'int blank page ' => 'rmod_int_bpg',
@@ -64,25 +68,33 @@ class AclGroupsType extends AbstractType
                     'ext url found (enter URL)' => 'rmod_ext_fnd',
                 )
             ))
-            ->add('descripcion',TextType::class,array(
+            ->add('redirect',TextareaType::class,array(
+                "required"=>true,
+                "attr"=>array(
+                    "class"=>"form-control form-control-sm",
+                    'rows' => '2',
+                    'placeholder' => 'Write the error message'
+                )
+            ))
+            ->add('descripcion', TextType::class,array(
                 "label"=>"Description ",
-                "required"=>false,
+                "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control form-control-sm",
                     'placeholder' => 'Write the description'
                 )
             ))
             ->add('log')
-            ->add('Save',SubmitType::class,array(
-                "attr"=>array("
-                    class"=>"btn btn-primary btn-sm btn-block"
+            ->add('Save', SubmitType::class,array(
+                "attr"=>array(
+                    "class"=>"btn btn-primary btn-block btn-sm"
                 )
             ))
-            ->add('Reset', ResetType::class, array(
+            ->add('Clear', ResetType::class, array(
                 'attr' => array(
-                    'class' => 'btn btn-danger btn-sm btn-block'
+                    'class' => 'btn btn-danger btn-block btn-sm'),
                 )
-            ))
+            )
         ;
     }/**
      * {@inheritdoc}
@@ -90,7 +102,7 @@ class AclGroupsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'PrincipalBundle\Entity\AclGroups'
+            'data_class' => 'PrincipalBundle\Entity\Target'
         ));
     }
 
@@ -99,7 +111,7 @@ class AclGroupsType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'principalbundle_aclgroups';
+        return 'principalbundle_target';
     }
 
 

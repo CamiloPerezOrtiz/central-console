@@ -6,12 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * AclGroups
+ * Acl
  *
- * @ORM\Table(name="acl_groups")
- * @ORM\Entity(repositoryClass="PrincipalBundle\Repository\AclGroupsRepository")
+ * @ORM\Table(name="acl")
+ * @ORM\Entity(repositoryClass="PrincipalBundle\Repository\AclRepository")
  */
-class AclGroups
+class Acl
 {
     /**
      * @var int
@@ -52,6 +52,13 @@ class AclGroups
     private $cliente;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="target_rules_list", type="text")
+     */
+    private $targetRulesList;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="not_allow_ip", type="boolean")
@@ -86,6 +93,13 @@ class AclGroups
      */
     private $log;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="grupo", type="string", length=50)
+     */
+    private $grupo;
+
 
     /**
      * Get id
@@ -102,7 +116,7 @@ class AclGroups
      *
      * @param boolean $estatus
      *
-     * @return AclGroups
+     * @return Acl
      */
     public function setEstatus($estatus)
     {
@@ -126,7 +140,7 @@ class AclGroups
      *
      * @param string $nombre
      *
-     * @return AclGroups
+     * @return Acl
      */
     public function setNombre($nombre)
     {
@@ -150,7 +164,7 @@ class AclGroups
      *
      * @param string $cliente
      *
-     * @return AclGroups
+     * @return Acl
      */
     public function setCliente($cliente)
     {
@@ -170,11 +184,35 @@ class AclGroups
     }
 
     /**
+     * Set targetRulesList
+     *
+     * @param string $targetRulesList
+     *
+     * @return Acl
+     */
+    public function setTargetRulesList($targetRulesList)
+    {
+        $this->targetRulesList = $targetRulesList;
+
+        return $this;
+    }
+
+    /**
+     * Get targetRulesList
+     *
+     * @return string
+     */
+    public function getTargetRulesList()
+    {
+        return $this->targetRulesList;
+    }
+
+    /**
      * Set notAllowIp
      *
      * @param boolean $notAllowIp
      *
-     * @return AclGroups
+     * @return Acl
      */
     public function setNotAllowIp($notAllowIp)
     {
@@ -198,7 +236,7 @@ class AclGroups
      *
      * @param string $redirect
      *
-     * @return AclGroups
+     * @return Acl
      */
     public function setRedirect($redirect)
     {
@@ -222,7 +260,7 @@ class AclGroups
      *
      * @param string $redirectMode
      *
-     * @return AclGroups
+     * @return Acl
      */
     public function setRedirectMode($redirectMode)
     {
@@ -246,7 +284,7 @@ class AclGroups
      *
      * @param string $descripcion
      *
-     * @return AclGroups
+     * @return Acl
      */
     public function setDescripcion($descripcion)
     {
@@ -270,7 +308,7 @@ class AclGroups
      *
      * @param boolean $log
      *
-     * @return AclGroups
+     * @return Acl
      */
     public function setLog($log)
     {
@@ -287,6 +325,30 @@ class AclGroups
     public function getLog()
     {
         return $this->log;
+    }
+
+    /**
+     * Set grupo
+     *
+     * @param string $grupo
+     *
+     * @return Acl
+     */
+    public function setGrupo($grupo)
+    {
+        $this->grupo = $grupo;
+
+        return $this;
+    }
+
+    /**
+     * Get grupo
+     *
+     * @return string
+     */
+    public function getGrupo()
+    {
+        return $this->grupo;
     }
 }
 

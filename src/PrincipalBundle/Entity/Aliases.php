@@ -3,6 +3,7 @@
 namespace PrincipalBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Aliases
@@ -24,7 +25,14 @@ class Aliases
     /**
      * @var string
      *
-     * @ORM\Column(name="nombre", type="string", length=20, nullable=true)
+     * @ORM\Column(name="nombre", type="string", length=50)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 20,
+     *      minMessage = "The name must be at least {{ limit }} characters long",
+     *      maxMessage = "The name cannot be longer than {{ limit }} characters"
+     * )
      */
     private $nombre;
 
@@ -32,15 +40,21 @@ class Aliases
      * @var string
      *
      * @ORM\Column(name="descripcion", type="string", length=50, nullable=true)
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 50,
+     *      minMessage = "The name must be at least {{ limit }} characters long",
+     *      maxMessage = "The name cannot be longer than {{ limit }} characters"
+     * )
      */
     private $descripcion;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="id_aliases_tipo", type="integer")
+     * @ORM\Column(name="tipo", type="string", length=50)
      */
-    private $id_aliases_tipo;
+    private $tipo;
 
     /**
      * @var string
@@ -122,30 +136,6 @@ class Aliases
     }
 
     /**
-     * Set id_aliases_tipo
-     *
-     * @param int $id_aliases_tipo
-     *
-     * @return Aliases
-     */
-    public function setId_aliases_tipo($id_aliases_tipo)
-    {
-        $this->id_aliases_tipo = $id_aliases_tipo;
-
-        return $this;
-    }
-
-    /**
-     * Get id_aliases_tipo
-     *
-     * @return int
-     */
-    public function getId_aliases_tipo()
-    {
-        return $this->id_aliases_tipo;
-    }
-
-    /**
      * Set ip_port
      *
      * @param string $ip_port
@@ -215,6 +205,30 @@ class Aliases
     public function getGrupo()
     {
         return $this->grupo;
+    }
+
+    /**
+     * Set tipo
+     *
+     * @param string $tipo
+     *
+     * @return Aliases
+     */
+    public function setTipo($tipo)
+    {
+        $this->tipo = $tipo;
+
+        return $this;
+    }
+
+    /**
+     * Get tipo
+     *
+     * @return string
+     */
+    public function getTipo()
+    {
+        return $this->tipo;
     }
 
 }

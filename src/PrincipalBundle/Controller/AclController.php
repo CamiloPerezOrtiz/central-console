@@ -5,11 +5,11 @@ namespace PrincipalBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-use PrincipalBundle\Entity\Aliases;
-use PrincipalBundle\Form\AliasesType;
+use PrincipalBundle\Entity\Acl;
+use PrincipalBundle\Form\AclType;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class AliasesController extends Controller
+class AclController extends Controller
 {
 	# Variables #
 	private $session; 
@@ -21,11 +21,13 @@ class AliasesController extends Controller
 	}
 
 	# Funcion para registrar un nuevo aliases #
-	public function registroAliasesAction(Request $request)
+	public function registroAclAction(Request $request)
 	{
-		$alias = new Aliases();
-		$form = $this ->createForm(AliasesType::class, $alias);
+		$acl = new Acl();
+		$form = $this ->createForm(AclType::class, $acl);
 		$form->handleRequest($request);
+		$id=$_REQUEST['id'];
+		$target = $this->recuperarNombreTarget($id);
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
@@ -33,26 +35,28 @@ class AliasesController extends Controller
 			if(count($verificarNombre)==0)
 			{
 				$u = $this->getUser();
-				$grupo=$u->getGrupo();
 				$role=$u->getRole();
-				$ip_port = implode(" ",$_POST['ip_port']);
-				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-				$alias->setIp_port($ip_port);
-				$alias->setDescripcion_ip_port($descripcion_ip_port);
 				if($role == 'ROLE_SUPERUSER')
 				{
-					$id=$_REQUEST['id'];
-					$alias->setGrupo($id);
+					//$id=$_REQUEST['id'];
+					$acl->setGrupo($id);
 				}
 				if($role == 'ROLE_ADMINISTRATOR')
-					$alias->setGrupo($grupo);
-				$em->persist($alias);
+					$acl->setGrupo($u->getGrupo());
+				if($_POST['target_rule'] == "none")
+				 	$acl->setTargetRulesList("all [ all]");
+				else
+				{
+					$target_rule = implode(" ",$_POST['target_rule']);
+					$acl->setTargetRulesList($target_rule." all [ all]");
+				}
+				$em->persist($acl);
 				$flush=$em->flush();
 				if($flush == null)
 				{
 					$estatus="Successfully registration.";
 					$this->session->getFlashBag()->add("estatus",$estatus);
-					return $this->redirectToRoute("gruposAliases");
+					return $this->redirectToRoute("gruposAcl");
 				}
 				else
 				{
@@ -66,8 +70,9 @@ class AliasesController extends Controller
 				$this->session->getFlashBag()->add("estatus",$estatus);
 			}
 		}
-		return $this->render('@Principal/aliases/registroAliases.html.twig', array(
-			'form'=>$form->createView()
+		return $this->render('@Principal/acl/registroAcl.html.twig', array(
+			'form'=>$form->createView(),
+			"target"=>$target
 		));
 	}
 
@@ -77,15 +82,28 @@ class AliasesController extends Controller
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
 			'SELECT u.nombre
-				FROM PrincipalBundle:Aliases u
+				FROM PrincipalBundle:Acl u
 				WHERE  u.nombre = :nombre'
 		)->setParameter('nombre', $nombre);
 		$datos = $query->getResult();
 		return $datos;
 	}
 
+	# Funcion para recuperar los todos los aliases #
+	private function recuperarNombreTarget($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.id, u.nombre, u.descripcion
+				FROM PrincipalBundle:Target u
+				WHERE  u.grupo = :grupo'
+		)->setParameter('grupo', $grupo);
+		$target = $query->getResult();
+		return $target;
+	}
+
 	# Funcion para mostrar los grupos #
-	public function gruposAliasesAction()
+	public function gruposAclAction()
 	{
 		$u = $this->getUser();
 		if($u != null)
@@ -95,13 +113,13 @@ class AliasesController extends Controller
 	        if($role == "ROLE_SUPERUSER")
 	        {
 	        	$grupos = $this->recuperarTodosGrupos();
-				return $this->render("@Principal/aliases/gruposAliases.html.twig", array(
+				return $this->render("@Principal/acl/gruposAcl.html.twig", array(
 					"grupo"=>$grupos
 				));
 	        }
 	        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
 	        {
-	        	return $this->redirectToRoute("listaAliases");
+	        	return $this->redirectToRoute("listaAcl");
 	        }
 	    }
 	}
@@ -119,8 +137,8 @@ class AliasesController extends Controller
 		return $grupos;
 	}
 
-	# Funcion para mostrar los aliases #
-	public function listaAliasesAction()
+	# Funcion para mostrar los acl #
+	public function listaAclAction()
 	{
 		$u = $this->getUser();
 		if($u != null)
@@ -130,84 +148,65 @@ class AliasesController extends Controller
 	        if($role == "ROLE_SUPERUSER")
 	        {
 	        	$id=$_REQUEST['id'];
-				$aliases = $this->recuperarTodoAliasesGrupo($id);
-				return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-					"aliases"=>$aliases
+				$acl = $this->recuperarTodoAclGrupo($id);
+				return $this->render('@Principal/acl/listaAcl.html.twig', array(
+					"acl"=>$acl
 				));
 	        }
 	        if($role == "ROLE_ADMINISTRATOR")
 	        {
-	        	$aliases = $this->recuperarTodoAliasesGrupo($grupo);
-				return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-					"aliases"=>$aliases
+	        	$acl = $this->recuperarTodoAclGrupo($grupo);
+				return $this->render('@Principal/acl/listaAcl.html.twig', array(
+					"acl"=>$acl
 				));
 	        }
 	        if($role == "ROLE_USER")
 	        {
-	        	$aliases = $this->recuperarTodoAliasesGrupo($grupo);
-				return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-					"aliases"=>$aliases
+	        	$acl = $this->recuperarTodoAclGrupo($grupo);
+				return $this->render('@Principal/acl/listaAcl.html.twig', array(
+					"acl"=>$acl
 				));
 	        }
 	    }
 	}
 
 	# Funcion para recuperar los todos los aliases #
-	private function recuperarTodoAliasesGrupo($grupo)
+	private function recuperarTodoAclGrupo($grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.ip_port, u.grupo
-				FROM PrincipalBundle:Aliases u
+			'SELECT u.id, u.estatus, u.nombre, u.descripcion, u.grupo
+				FROM PrincipalBundle:Acl u
 				WHERE  u.grupo = :grupo'
 		)->setParameter('grupo', $grupo);
-		$grupoAliases = $query->getResult();
-		return $grupoAliases;
+		$acl = $query->getResult();
+		return $acl;
 	}
 
-	public function editarAliasesAction(Request $request, $id)
+	public function editarAclAction(Request $request, $id)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$alias = $em->getRepository("PrincipalBundle:Aliases")->find($id);
-		$form = $this->createForm(AliasesType::class,$alias);
+		$acl = $em->getRepository("PrincipalBundle:Acl")->find($id);
+		$form = $this->createForm(AclType::class,$acl);
+		$target = $this->recuperarNombreTarget($id);
 		$form->handleRequest($request);
-		$recuperarDatosId = $this->recuperarDatosId($id);
-		$ip_port= explode(' ',$recuperarDatosId[0]['ip_port']);
-		$descripcion_ip_port = explode(" ||",$recuperarDatosId[0]['descripcion_ip_port']);
 		if($form->isSubmitted() && $form->isValid())
 		{
-			$ip_port = implode(" ",$_POST['ip_port']);
-			$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-			$alias->setIp_port($ip_port);
-			$alias->setDescripcion_ip_port($descripcion_ip_port);
-			$em->persist($alias);
+			$em->persist($acl);
 			$flush=$em->flush();
-			return $this->redirectToRoute("gruposAliases");
+			return $this->redirectToRoute("gruposAcl");
 		}
-		return $this->render("@Principal/aliases/editarAliases.html.twig",array(
-			"form"=>$form->createView(),
-			"ip_port"=>$ip_port,
-			"descripcion_ip_port"=>$descripcion_ip_port
+		return $this->render('@Principal/acl/registroAcl.html.twig', array(
+			'form'=>$form->createView(),
+			"target"=>$target
 		));
 	}
 
-	private function recuperarDatosId($id)
+	# Funcion para eliminar un target #
+	public function eliminarAclAction($id)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.ip_port, u.descripcion_ip_port
-				FROM PrincipalBundle:Aliases u
-				WHERE  u.id = :id'
-		)->setParameter('id', $id);
-		$datos = $query->getResult();
-		return $datos;
-	}
-
-	# Funcion para eliminar un aliases #
-	public function eliminarAliasesAction($id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$formato = $em->getRepository("PrincipalBundle:Aliases")->find($id);
+		$formato = $em->getRepository("PrincipalBundle:Acl")->find($id);
 		$em->remove($formato);
 		$flush=$em->flush();
 		if($flush == null)
@@ -215,26 +214,32 @@ class AliasesController extends Controller
 		else
 			$estatus="Problems with the server try later.";
 		$this->session->getFlashBag()->add("estatus",$estatus);
-		return $this->redirectToRoute("gruposAliases");
+		return $this->redirectToRoute("gruposAcl");
 	}
 
-	# Funcion para crear el XML de aliases #
-	public function crearXMLAliasesAction($id)
+	# Funcion para crear el XML de target #
+	public function crearXMLAclAction($id)
 	{
 		$recuperarTodoDatos = $this->recuperarTodoDatos($id);
 		$contenido = "<?xml version='1.0'?>\n";
-		$contenido .= "\t<aliases>\n";
-		foreach ($recuperarTodoDatos as $alias) 
+		$contenido .= "\t<squidguardacl>\n";
+		foreach ($recuperarTodoDatos as $target) 
 		{
-			$contenido .= "\t\t<alias>\n";
-		    $contenido .= "\t\t\t<name>" . $alias['nombre'] . "</name>\n";
-		    $contenido .= "\t\t\t<type>" . $alias['tipo'] . "</type>\n";
-		    $contenido .= "\t\t\t<address>" . $alias['ip_port'] . "</address>\n";
-		    $contenido .= "\t\t\t<descr>" . $alias['descripcion'] . "</descr>\n";
-		    $contenido .= "\t\t\t<detail>" . $alias['descripcion_ip_port'] . "</detail>\n";
-		    $contenido .= "\t\t</alias>\n";
+		    $contenido .= "\t\t\t<config>\n";
+		    $contenido .= "\t\t\t\t<name>" . $target['nombre'] . "</name>\n";
+		    $contenido .= "\t\t\t\t<domains>" . $target['domainList'] . "</domains>\n";
+		    $contenido .= "\t\t\t\t<urls>" . $target['urlList'] . "</urls>\n";
+		    $contenido .= "\t\t\t\t<expressions>" . $target['regularExpression'] . "</expressions>\n";
+		    $contenido .= "\t\t\t\t<redirect_mode>" . $target['redirectMode'] . "</redirect_mode>\n";
+		    $contenido .= "\t\t\t\t<redirect>" . $target['redirect'] . "</redirect>\n";
+		    $contenido .= "\t\t\t\t<description>" . $target['descripcion'] . "</description>\n";
+		    if($target['log'] == true)
+		    	$contenido .= "\t\t\t\t<enablelog>on</enablelog>\n";
+		    else
+		    	$contenido .= "\t\t\t\t<enablelog>" . $target['log'] . "</enablelog>\n";
+		    $contenido .= "\t\t\t</config>\n";
 		}
-		$contenido .= "\t</aliases>";
+		$contenido .= "\t</squidguardacl>";
 		$archivo = fopen("conf.xml", 'w');
 		fwrite($archivo, $contenido);
 		fclose($archivo); 
@@ -246,7 +251,7 @@ class AliasesController extends Controller
 		unlink("conf.xml");
 		$estatus="The configuration has been saved";
 		$this->session->getFlashBag()->add("estatus",$estatus);
-		return $this->redirectToRoute("gruposAliases");
+		return $this->redirectToRoute("gruposTarget");
 	}
 
 	# Funcion para recuperar toda la informacion de target #
@@ -254,19 +259,19 @@ class AliasesController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.nombre, u.tipo, u.descripcion, u.ip_port, u.descripcion_ip_port
-				FROM PrincipalBundle:Aliases u
+			'SELECT u.nombre, u.domainList, u.urlList, u.regularExpression, u.redirectMode, u.redirect, u.descripcion, u.log
+				FROM PrincipalBundle:Target u
 				WHERE  u.grupo = :grupo'
 		)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;
 	}
 
-	# funcion para correr el script aplicar cambios en aliases #
-	public function aplicarXMLAliasesAction($id)
+	# funcion para correr el script aplicar cambios en target #
+	public function aplicarXMLTargetAction($id)
 	{
     	$archivo = fopen("change_to_do.txt", 'w');
-		fwrite($archivo, "aliases.py");
+		fwrite($archivo, "targetcategories.py");
 		fwrite ($archivo, "\n");
 		fclose($archivo); 
 		# Mover el archivo a la carpeta #
@@ -275,6 +280,6 @@ class AliasesController extends Controller
 	   	if (!copy($archivoConfig, $destinoConfig)) 
 		   echo "Error al copiar $archivoConfig...\n";
 		unlink("change_to_do.txt");
-    	return $this->redirectToRoute('grupos');
+    	return $this->redirectToRoute('gruposTarget');
 	}
 }

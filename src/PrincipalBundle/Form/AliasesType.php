@@ -27,9 +27,25 @@ class AliasesType extends AbstractType
             ))
             ->add('descripcion', TextType::class,array(
                 "label"=>"Description ",
-                "required"=>true,
+                "required"=>false,
                 "attr"=>array(
                     "class"=>"form-control form-control-sm"
+                )
+            ))
+            ->add('tipo',ChoiceType::class, array(
+                "label"=>"Type: ",
+                "required"=>true,
+                "attr"=>array(
+                    "class"=>"form-control",
+                    'onChange' => 'mostrar(this.value);'
+                ),'choices' => array(
+                    'Host' => 'host',
+                    'Network(s)' => 'network',
+                    'Port(s)' => 'port',
+                    'URL (Ips)' => 'url',
+                    'URL (Ports)' => 'url_ports',
+                    'URL Table (Ips)' => 'urltable',
+                    'URL Table (Ports)' => 'urltable_ports'
                 )
             ))
             ->add('Save', SubmitType::class,[

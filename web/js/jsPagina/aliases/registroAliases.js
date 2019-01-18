@@ -86,3 +86,81 @@ function mostrar(id)
         $("#items").show();
     }
 }
+
+if ($("#principalbundle_aliases_tipo option:selected").val() == "host") 
+{
+    $("#host").show();
+    $("#network").hide();
+    $("#port").hide();
+    $("#url").hide();
+    $("#url_ports").hide();
+    $("#urltable").hide();
+    $("#urltable_ports").hide();
+    $("#items").show();
+}
+if ($("#principalbundle_aliases_tipo option:selected").val() == "network") 
+{
+    $("#host").hide();
+    $("#network").show();
+    $("#port").hide();
+    $("#url").hide();
+    $("#url_ports").hide();
+    $("#urltable").hide();
+    $("#urltable_ports").hide();
+    $("#items").show();
+}
+if ($("#principalbundle_aliases_tipo option:selected").val() == "port") 
+{
+    $("#host").hide();
+    $("#network").hide();
+    $("#port").show();
+    $("#url").hide();
+    $("#url_ports").hide();
+    $("#urltable").hide();
+    $("#urltable_ports").hide();
+    $("#items").show();
+}
+if ($("#principalbundle_aliases_tipo option:selected").val() == "url") 
+{
+    $("#host").hide();
+    $("#network").hide();
+    $("#port").hide();
+    $("#url").show();
+    $("#url_ports").hide();
+    $("#urltable").hide();
+    $("#urltable_ports").hide();
+    $("#items").show();
+}
+if ($("#principalbundle_aliases_tipo option:selected").val() == "url_ports") 
+{
+    $("#host").hide();
+    $("#network").hide();
+    $("#port").hide();
+    $("#url").hide();
+    $("#url_ports").show();
+    $("#urltable").hide();
+    $("#urltable_ports").hide();
+    $("#items").show();
+}
+if ($("#principalbundle_aliases_tipo option:selected").val() == "urltable") 
+{
+    $("#host").hide();
+    $("#network").hide();
+    $("#port").hide();
+    $("#url").hide();
+    $("#url_ports").hide();
+    $("#urltable").show();
+    $("#urltable_ports").hide();
+    $("#items").show();
+}
+if ($("#principalbundle_aliases_tipo option:selected").val() == "urltable_ports") 
+{
+    $("#host").hide();
+    $("#network").hide();
+    $("#port").hide();
+    $("#url").hide();
+    $("#url_ports").hide();
+    $("#urltable").hide();
+    $("#urltable_ports").show();
+    $("#items").show();
+}

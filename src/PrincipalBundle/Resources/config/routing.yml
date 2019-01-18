@@ -72,6 +72,10 @@ aplicarCambios:
 
 # Aliases #
 
+gruposAliases:
+    path:     /gruposAliases 
+    defaults: { _controller: PrincipalBundle:Aliases:gruposAliases }
+
 registroAliases:
     path:     /registroAliases 
     defaults: { _controller: PrincipalBundle:Aliases:registroAliases }
@@ -80,8 +84,78 @@ editarAliases:
     path:     /editarAliases/{id} 
     defaults: { _controller: PrincipalBundle:Aliases:editarAliases }
 
+listaAliases:
+    path:     /listaAliases 
+    defaults: { _controller: PrincipalBundle:Aliases:listaAliases }
+
+eliminarAliases:
+    path:     /eliminarAliases/{id} 
+    defaults: { _controller: PrincipalBundle:Aliases:eliminarAliases }
+
+crearXMLAliases:
+    path:     /crearXMLAliases/{id}
+    defaults: { _controller: PrincipalBundle:Aliases:crearXMLAliases }
+
+aplicarXMLAliases:
+    path:     /aplicarXMLAliases/{id}
+    defaults: { _controller: PrincipalBundle:Aliases:aplicarXMLAliases }
+
 # Acl groups #
 
-registroAclGroups:
-    path:     /registroAclGroups 
-    defaults: { _controller: PrincipalBundle:AclGroups:registroAclGroups }
+gruposAcl:
+    path:     /gruposAcl 
+    defaults: { _controller: PrincipalBundle:Acl:gruposAcl }
+
+registroAcl:
+    path:     /registroAcl 
+    defaults: { _controller: PrincipalBundle:Acl:registroAcl }
+
+editarAcl:
+    path:     /editarAcl/{id} 
+    defaults: { _controller: PrincipalBundle:Acl:editarAcl }
+
+listaAcl:
+    path:     /listaAcl 
+    defaults: { _controller: PrincipalBundle:Acl:listaAcl }
+
+eliminarAcl:
+    path:     /eliminarAcl/{id} 
+    defaults: { _controller: PrincipalBundle:Acl:eliminarAcl }
+
+crearXMLAcl:
+    path:     /crearXMLAcl/{id}
+    defaults: { _controller: PrincipalBundle:Acl:crearXMLAcl }
+
+aplicarXMLAcl:
+    path:     /aplicarXMLAcl/{id}
+    defaults: { _controller: PrincipalBundle:Acl:aplicarXMLAcl }
+
+# Target #
+
+gruposTarget:
+    path:     /gruposTarget 
+    defaults: { _controller: PrincipalBundle:Target:gruposTarget }
+
+registroTarget:
+    path:     /registroTarget 
+    defaults: { _controller: PrincipalBundle:Target:registroTarget }
+
+editarTarget:
+    path:     /editarTarget/{id} 
+    defaults: { _controller: PrincipalBundle:Target:editarTarget }
+
+listaTarget:
+    path:     /listaTarget 
+    defaults: { _controller: PrincipalBundle:Target:listaTarget }
+
+eliminarTarget:
+    path:     /eliminarTarget/{id} 
+    defaults: { _controller: PrincipalBundle:Target:eliminarTarget }
+
+crearXMLTarget:
+    path:     /crearXMLTarget/{id}
+    defaults: { _controller: PrincipalBundle:Target:crearXMLTarget }
+
+aplicarXMLTarget:
+    path:     /aplicarXMLTarget/{id}
+    defaults: { _controller: PrincipalBundle:Target:aplicarXMLTarget }

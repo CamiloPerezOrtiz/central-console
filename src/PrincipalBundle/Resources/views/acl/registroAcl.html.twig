@@ -57,6 +57,35 @@
                                         {{ form_widget(form.cliente) }} 
                                         <span class="text-danger">{{ form_errors(form.cliente) }}</span>
                                     </div>
+                                    <div class="form-group">  
+                                        <label>Target Rules List</label><br>
+                                        <label>ACCESS: 'whitelist' - always pass; 'deny' - block; 'allow' - pass, if not blocked.</label>
+                                        <center><div class="col-md-6">
+                                            <table class="table table-sm table-hover table-bordered">
+                                                <thead class="bg-dark text-white">
+                                                    <tr>
+                                                        <th>Target Categories</th>                                  
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for target_categories in target %}
+                                                        <tr>
+                                                            <td>
+                                                                {{ target_categories.descripcion }} [{{ target_categories.nombre }}] 
+                                                                access 
+                                                                <select name="target_rule[]">
+                                                                    <option value="">----</option>
+                                                                    <option value="^{{ target_categories.nombre }}">whitelist</option>
+                                                                    <option value="!{{ target_categories.nombre }}">deny</option>
+                                                                    <option value="{{ target_categories.nombre }}">allow</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div></center>
                                     <div class="form-group">   
                                         {{ form_label(form.notAllowIp) }}
                                         {{ form_widget(form.notAllowIp) }} <label>To make sure that people do not bypass the URL filter by simply using the IP-Addresses instead of the FQDN(is the combination of host name and domain name) you can check this option.</label>

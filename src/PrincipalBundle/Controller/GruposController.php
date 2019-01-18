@@ -42,6 +42,15 @@ class GruposController extends Controller
 			$params =array();
 			$stmt->execute($params);
 			$flush=$em->flush();
+			$serv = '/var/www/html/central-console/web/Groups/';
+			$ruta = $serv . $cliente;
+			if(!file_exists($ruta))
+			{
+			  mkdir ($ruta);
+			  echo "Se ha creado el directorio: " . $ruta;
+			} 
+			else 
+			  echo "la ruta: " . $ruta . " ya existe ";
 		}
 		return $this->redirectToRoute("grupos");
 	}

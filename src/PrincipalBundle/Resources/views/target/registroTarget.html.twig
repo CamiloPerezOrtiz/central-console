@@ -1,0 +1,109 @@
+{% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
+{% include '@Principal/plantillas/cuerpo.html.twig' %}
+<dir class="container small">
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('dashboard') }}">Dashboard</a>
+                </li>     
+                <li class="breadcrumb-item">
+                    <a href="{{ path('listaTarget') }}">
+                        List target
+                    </a>
+                </li>       
+            </ol>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="container">
+                            <div class="col-md-12">
+                                {% for msg in app.session.flashbag().get('estatus') %}
+                                    <div class="alert alert-info" aria-label="Close">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>Info!</strong> {{ msg }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="card card-register mx-auto mt-">
+                            <div class="card-header bg-dark text-white">Aliases</div>
+                            <div class="card-body">
+                                {{ form_start(form) }}
+                                    <div class="form-group">   
+                                        {{ form_label(form.nombre) }}
+                                        <footer class="blockquote-footer">
+                                            Enter a unique name of this rule here. The name must consist between 2 and 15 symbols [a-Z_0-9].
+                                        </footer>
+                                        {{ form_widget(form.nombre) }}
+                                        <span class="text-danger">{{ form_errors(form.nombre) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.domainList) }}
+                                        <footer class="blockquote-footer">Enter destination domains or IP-addresses here. To separate them use space.</footer>
+                                        <footer class="blockquote-footer">Example: mail.ru e-mail.ru yahoo.com 192.168.1.1</footer>
+                                        {{ form_widget(form.domainList) }}
+                                        <span class="text-danger">{{ form_errors(form.domainList) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.urlList) }}
+                                        <footer class="blockquote-footer">Enter destination URLs here. To separate them use space.</footer>
+                                        <footer class="blockquote-footer">Example: host.com/xxx 12.10.220.125/alisa</footer>
+                                        {{ form_widget(form.urlList) }}
+                                        <span class="text-danger">{{ form_errors(form.urlList) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.regularExpression) }}
+                                        <footer class="blockquote-footer">Enter word fragments of the destination URL.</footer>
+                                        <footer class="blockquote-footer">To separate them use | . Example: mail|casino|game|\.rsdf$</footer>
+                                        {{ form_widget(form.regularExpression) }}
+                                        <span class="text-danger">{{ form_errors(form.regularExpression) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.redirectMode) }}
+                                        <footer class="blockquote-footer">Note: if you use 'transparent proxy', then 'int' redirect mode will not accessible.</footer>
+                                        <footer class="blockquote-footer">Options:ext url err page , ext url redirect , ext url as 'move' , ext url as 'found'.</footer>
+                                        {{ form_widget(form.redirectMode) }}
+                                        <span class="text-danger">{{ form_errors(form.redirectMode) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.redirect) }}
+                                        <footer class="blockquote-footer">Enter the external redirection URL, error message or size (bytes) here.</footer>
+                                        {{ form_widget(form.redirect) }}
+                                        <span class="text-danger">{{ form_errors(form.redirect) }}</span>
+                                    </div>
+                                    <div class="form-group">   
+                                        {{ form_label(form.descripcion) }}
+                                        <footer class="blockquote-footer">You may enter any description here for your reference.</footer>
+                                        {{ form_widget(form.descripcion) }}
+                                        <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_label(form.log) }}
+                                        {{ form_widget(form.log) }} <label>Check this option to enable logging for this ACL.</label>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_widget(form.Save) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_widget(form.Clear) }}
+                                    </div>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dir>
+{% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
+<script src="{{ asset ('js/jsPagina/aliases/registroAliases.js') }}"></script>
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
+</script>
+{% include '@Principal/plantillas/declaracionFin.html.twig' %}

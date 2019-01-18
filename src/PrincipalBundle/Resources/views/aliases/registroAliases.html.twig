@@ -43,12 +43,10 @@
                                         <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
                                     </div>
                                     <div class="form-group">   
-                                        <label>Type</label>
-                                        <select id="id_aliases_tipo" name="id_aliases_tipo" class="form-control form-control-sm" onChange="mostrar(this.value);">
-                                            {% for id_aliases_tipo in tipo %}
-                                                <option value="{{ id_aliases_tipo.id }}" {% if id_aliases_tipo.valor == "host" %}selected{% endif %}>{{ id_aliases_tipo.nombre }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ form_label(form.tipo) }}
+                                        <footer class="blockquote-footer">A description may be entered here for administrative reference.</footer>
+                                        {{ form_widget(form.tipo) }}
+                                        <span class="text-danger">{{ form_errors(form.tipo) }}</span>
                                     </div>
                                     <div class="form-group">
                                         <div id="host" style="display:;">
@@ -87,7 +85,7 @@
                                         <div id="items" class="form-group">
                                             <div class="form-row">
                                                 <div class="col-md-6">  
-                                                    <input type="text" name="ip_port[]" class="form-control form-control-sm" placeholder="Addres">
+                                                    <input type="text" name="ip_port[]" class="form-control form-control-sm" placeholder="Addres" required>
                                                     <br>
                                                 </div>
                                                 <div class="col-md-6">  
