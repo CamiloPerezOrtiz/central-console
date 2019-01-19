@@ -256,6 +256,6 @@ class TargetController extends Controller
 	   	if (!copy($archivoConfig, $destinoConfig)) 
 		   echo "Error al copiar $archivoConfig...\n";
 		unlink("change_to_do.txt");
-    	return $this->redirectToRoute('gruposTarget');
+    	return $this->redirectToRoute('grupos');
 	}
 }

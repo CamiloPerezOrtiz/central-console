@@ -54,6 +54,13 @@ class Acl
     /**
      * @var string
      *
+     * @ORM\Column(name="target_rule", type="text")
+     */
+    private $targetRule;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="target_rules_list", type="text")
      */
     private $targetRulesList;
@@ -205,6 +212,30 @@ class Acl
     public function getTargetRulesList()
     {
         return $this->targetRulesList;
+    }
+
+    /**
+     * Set targetRule
+     *
+     * @param string $targetRule
+     *
+     * @return Acl
+     */
+    public function setTargetRule($targetRule)
+    {
+        $this->targetRule = $targetRule;
+
+        return $this;
+    }
+
+    /**
+     * Get targetRule
+     *
+     * @return string
+     */
+    public function getTargetRule()
+    {
+        return $this->targetRule;
     }
 
     /**

@@ -65,7 +65,9 @@
                                     <div class="form-group">  
                                         <label>Target Rules List</label><br>
                                         <label>ACCESS: 'whitelist' - always pass; 'deny' - block; 'allow' - pass, if not blocked.</label>
-                                        <center><div class="col-md-6">
+                                        <center><div class="col-md-8">
+                                            {{ target_rule[0] }}
+                                            
                                             <table class="table table-sm table-hover table-bordered">
                                                 <thead class="bg-dark text-white">
                                                     <tr>
@@ -79,10 +81,28 @@
                                                                 {{ target_categories.descripcion }} [{{ target_categories.nombre }}] 
                                                                 access 
                                                                 <select name="target_rule[]">
-                                                                    <option value="all">----</option>
-                                                                    <option value="^{{ target_categories.nombre }}">whitelist</option>
-                                                                    <option value="!{{ target_categories.nombre }}">deny</option>
-                                                                    <option value="{{ target_categories.nombre }}">allow</option>
+                                                                    <option value="">----</option>
+                                                                    <option value="^{{ target_categories.nombre }}"
+                                                                    {% for rules in target_rule %}
+                                                                        {% if "^"~target_categories.nombre == rules %}
+                                                                            selected 
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                    >whitelist</option>
+                                                                    <option value="!{{ target_categories.nombre }}"
+                                                                    {% for rules in target_rule %}
+                                                                        {% if "!"~target_categories.nombre == rules %}
+                                                                            selected 
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                    >deny</option>
+                                                                    <option value="{{ target_categories.nombre }}"}
+                                                                    {% for rules in target_rule %}
+                                                                        {% if target_categories.nombre == rules %}
+                                                                            selected 
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                    >allow</option>
                                                                 </select>
                                                             </td>
                                                         </tr>

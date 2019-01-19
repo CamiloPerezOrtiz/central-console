@@ -35,6 +35,7 @@ CREATE TABLE acl(
 	estatus BOOLEAN DEFAULT FALSE,
 	nombre VARCHAR(20) NOT NULL,
 	cliente TEXT NOT NULL,
+	target_rule TEXT NOT NULL,
 	target_rules_list TEXT NOT NULL,
 	not_allow_ip BOOLEAN DEFAULT FALSE,
 	redirectMode VARCHAR(50) NOT NULL,

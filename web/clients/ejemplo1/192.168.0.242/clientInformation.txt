@@ -1,0 +1,1 @@
+pfSense.localdomain|192.168.0.242|ejemplo1|

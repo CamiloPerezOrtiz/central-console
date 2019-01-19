@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use PrincipalBundle\Entity\Acl;
 use PrincipalBundle\Form\AclType;
+use PrincipalBundle\Form\AclEditType;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class AclController extends Controller
@@ -26,7 +27,12 @@ class AclController extends Controller
 		$acl = new Acl();
 		$form = $this ->createForm(AclType::class, $acl);
 		$form->handleRequest($request);
-		$id=$_REQUEST['id'];
+		$u = $this->getUser();
+		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
+			$id=$_REQUEST['id'];
+		else
+			$id=$u->getGrupo();
 		$target = $this->recuperarNombreTarget($id);
 		if($form->isSubmitted() && $form->isValid())
 		{
@@ -34,21 +40,21 @@ class AclController extends Controller
 			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData());
 			if(count($verificarNombre)==0)
 			{
-				$u = $this->getUser();
-				$role=$u->getRole();
 				if($role == 'ROLE_SUPERUSER')
-				{
-					//$id=$_REQUEST['id'];
 					$acl->setGrupo($id);
-				}
 				if($role == 'ROLE_ADMINISTRATOR')
 					$acl->setGrupo($u->getGrupo());
-				if($_POST['target_rule'] == "none")
+				$array_target_rule = $_POST['target_rule'];
+				if(count(array_unique($array_target_rule)) === 1)
+				{
+					$acl->setTargetRule("all [ all]");
 				 	$acl->setTargetRulesList("all [ all]");
+				}
 				else
 				{
 					$target_rule = implode(" ",$_POST['target_rule']);
-					$acl->setTargetRulesList($target_rule." all [ all]");
+					$acl->setTargetRule($target_rule." all [ all]");
+					$acl->setTargetRulesList($target_rule);
 				}
 				$em->persist($acl);
 				$flush=$em->flush();
@@ -187,19 +193,60 @@ class AclController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$acl = $em->getRepository("PrincipalBundle:Acl")->find($id);
-		$form = $this->createForm(AclType::class,$acl);
-		$target = $this->recuperarNombreTarget($id);
+		$form = $this->createForm(AclEditType::class,$acl);
+		$grupo = $this->recuperarGrupoTarget($id);
+		$target = $this->recuperarNombreTarget($grupo);
+		$recuperarDatosId = $this->recuperarDatosId($id);
+		$target_rule= explode(' ',$recuperarDatosId[0]['targetRulesList']);
 		$form->handleRequest($request);
 		if($form->isSubmitted() && $form->isValid())
 		{
+			$array_target_rule = $_POST['target_rule'];
+			if(count(array_unique($array_target_rule)) === 1)
+			{
+				$acl->setTargetRule("all [ all]");
+			 	$acl->setTargetRulesList("all [ all]");
+			}
+			else
+			{
+				$target_rule = implode(" ",$_POST['target_rule']);
+				$acl->setTargetRule($target_rule." all [ all]");
+				$acl->setTargetRulesList($target_rule);
+			}
 			$em->persist($acl);
 			$flush=$em->flush();
 			return $this->redirectToRoute("gruposAcl");
 		}
-		return $this->render('@Principal/acl/registroAcl.html.twig', array(
+		return $this->render('@Principal/acl/editarAcl.html.twig', array(
 			'form'=>$form->createView(),
-			"target"=>$target
+			"target"=>$target,
+			"target_rule"=>$target_rule
 		));
+	}
+
+	# Funcion para recuperar los todos los aliases #
+	private function recuperarGrupoTarget($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.grupo
+				FROM PrincipalBundle:Acl u
+				WHERE  u.id = :id'
+		)->setParameter('id', $id);
+		$target = $query->getResult();
+		return $target;
+	}
+
+	private function recuperarDatosId($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.targetRulesList
+				FROM PrincipalBundle:Acl u
+				WHERE  u.id = :id'
+		)->setParameter('id', $id);
+		$datos = $query->getResult();
+		return $datos;
 	}
 
 	# Funcion para eliminar un target #
@@ -223,20 +270,22 @@ class AclController extends Controller
 		$recuperarTodoDatos = $this->recuperarTodoDatos($id);
 		$contenido = "<?xml version='1.0'?>\n";
 		$contenido .= "\t<squidguardacl>\n";
-		foreach ($recuperarTodoDatos as $target) 
+		foreach ($recuperarTodoDatos as $acl) 
 		{
 		    $contenido .= "\t\t\t<config>\n";
-		    $contenido .= "\t\t\t\t<name>" . $target['nombre'] . "</name>\n";
-		    $contenido .= "\t\t\t\t<domains>" . $target['domainList'] . "</domains>\n";
-		    $contenido .= "\t\t\t\t<urls>" . $target['urlList'] . "</urls>\n";
-		    $contenido .= "\t\t\t\t<expressions>" . $target['regularExpression'] . "</expressions>\n";
-		    $contenido .= "\t\t\t\t<redirect_mode>" . $target['redirectMode'] . "</redirect_mode>\n";
-		    $contenido .= "\t\t\t\t<redirect>" . $target['redirect'] . "</redirect>\n";
-		    $contenido .= "\t\t\t\t<description>" . $target['descripcion'] . "</description>\n";
-		    if($target['log'] == true)
-		    	$contenido .= "\t\t\t\t<enablelog>on</enablelog>\n";
-		    else
-		    	$contenido .= "\t\t\t\t<enablelog>" . $target['log'] . "</enablelog>\n";
+		    $contenido .= "\t\t\t\t<disabled>" . $acl['estatus'] . "</disabled>\n";
+		    $contenido .= "\t\t\t\t<name>" . $acl['nombre'] . "</name>\n";
+		    $contenido .= "\t\t\t\t<source>" . $acl['cliente'] . "</source>\n";
+		    $contenido .= "\t\t\t\t<time></time>\n";
+		    $contenido .= "\t\t\t\t<dest>" . $acl['targetRule'] . "</dest>\n";
+		    $contenido .= "\t\t\t\t<notallowingip>" . $acl['notAllowIp'] . "</notallowingip>\n";
+		    $contenido .= "\t\t\t\t<redirect_mode>" . $acl['redirectMode'] . "</redirect_mode>\n";
+		    $contenido .= "\t\t\t\t<redirect>" . $acl['redirect'] . "</redirect>\n";
+		    $contenido .= "\t\t\t\t<safesearch></safesearch>\n";
+		    $contenido .= "\t\t\t\t<rewrite></rewrite>\n";
+		    $contenido .= "\t\t\t\t<overrewrite></overrewrite>\n";
+		    $contenido .= "\t\t\t\t<description>" . $acl['descripcion'] . "</description>\n";
+		    $contenido .= "\t\t\t\t<enablelog>" . $acl['log'] . "</enablelog>\n";
 		    $contenido .= "\t\t\t</config>\n";
 		}
 		$contenido .= "\t</squidguardacl>";
@@ -251,7 +300,7 @@ class AclController extends Controller
 		unlink("conf.xml");
 		$estatus="The configuration has been saved";
 		$this->session->getFlashBag()->add("estatus",$estatus);
-		return $this->redirectToRoute("gruposTarget");
+		return $this->redirectToRoute("gruposAcl");
 	}
 
 	# Funcion para recuperar toda la informacion de target #
@@ -259,8 +308,8 @@ class AclController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.nombre, u.domainList, u.urlList, u.regularExpression, u.redirectMode, u.redirect, u.descripcion, u.log
-				FROM PrincipalBundle:Target u
+			'SELECT u.estatus, u.nombre, u.cliente, u.targetRule, u.notAllowIp, u.redirectMode, u.redirect, u.descripcion, u.log
+				FROM PrincipalBundle:Acl u
 				WHERE  u.grupo = :grupo'
 		)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
@@ -268,10 +317,10 @@ class AclController extends Controller
 	}
 
 	# funcion para correr el script aplicar cambios en target #
-	public function aplicarXMLTargetAction($id)
+	public function aplicarXMLAclAction($id)
 	{
     	$archivo = fopen("change_to_do.txt", 'w');
-		fwrite($archivo, "targetcategories.py");
+		fwrite($archivo, "aclgroups.py");
 		fwrite ($archivo, "\n");
 		fclose($archivo); 
 		# Mover el archivo a la carpeta #
@@ -280,6 +329,6 @@ class AclController extends Controller
 	   	if (!copy($archivoConfig, $destinoConfig)) 
 		   echo "Error al copiar $archivoConfig...\n";
 		unlink("change_to_do.txt");
-    	return $this->redirectToRoute('gruposTarget');
+    	return $this->redirectToRoute('grupos');
 	}
 }

@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 
-class AclType extends AbstractType
+class AclEditType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -40,7 +40,6 @@ class AclType extends AbstractType
             ->add('targetRule',TextType::class,array(
                 "label"=>"Target Rule ",
                 "required"=>false,
-                "data"=>'all [ all]',
                 "attr"=>array(
                     "class"=>"form-control form-control-sm"
                 )
