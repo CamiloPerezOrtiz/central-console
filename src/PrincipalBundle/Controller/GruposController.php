@@ -52,6 +52,31 @@ class GruposController extends Controller
 			else 
 			  echo "la ruta: " . $ruta . " ya existe ";
 		}
+		# Interfaces #
+		$queryI = "DELETE FROM interfaces";
+		$stmtI = $db->prepare($queryI);
+		$paramsI =array();
+		$stmtI->execute($paramsI);
+		$flushI=$em->flush();
+		# Query para que la secuencia del contador regrese a 1 #
+		$queryIn = "ALTER SEQUENCE interfaces_id_seq RESTART WITH 1";
+		$stmtIn = $db->prepare($queryIn);
+		$paramsIn =array();
+		$stmtIn->execute($paramsIn);
+		$flushIn=$em->flush();
+		# Variable para leer el archivo informacionGrupo.txt #
+		$filasIn=file('interfaces.txt'); 
+		foreach($filasIn as $interfaces)
+		{
+			list($interfas, $grupo) = explode("|", $interfaces);
+			'interfas: '.$interfas.'<br/>'; 
+			'grupo: '.$grupo.'<br/><br/>';
+			$queryInt = "INSERT INTO interfaces VALUES (nextval('interfaces_id_seq'),'$interfas','$grupo')";
+			$stmtInt = $db->prepare($queryInt);
+			$paramsInt =array();
+			$stmtInt->execute($paramsInt);
+			$flushInt=$em->flush();
+		}
 		return $this->redirectToRoute("grupos");
 	}
 

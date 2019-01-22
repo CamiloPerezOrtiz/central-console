@@ -1,0 +1,145 @@
+{% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
+{% include '@Principal/plantillas/cuerpo.html.twig' %}
+<dir class="container small">
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('dashboard') }}">Dashboard</a>
+                </li>     
+                <li class="breadcrumb-item">
+                    <a href="{{ path('listaUsuarios') }}">
+                        List aliases
+                    </a>
+                </li>       
+            </ol>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="container">
+                        <div class="container">
+                            <div class="col-md-12">
+                                {% for msg in app.session.flashbag().get('estatus') %}
+                                    <div class="alert alert-info" aria-label="Close">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>Info!</strong> {{ msg }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="card card-register mx-auto mt-">
+                            <div class="card-header bg-dark text-white">Aliases</div>
+                            <div class="card-body">
+                                {{ form_start(form) }}
+                                    <div class="form-group">   
+                                        {{ form_label(form.estatus) }}
+                                        {{ form_widget(form.estatus) }} <label>Disable this rule.</label>
+                                        <span class="text-danger">{{ form_errors(form.estatus) }}</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Interface</label>
+                                        <select class="form-control form-control-sm" name="id_protocolo">
+                                            {% for interfaz in interfaces %}
+                                                <option values ="{{ interfaz.id }}">{{ interfaz.nombre }}</option>
+                                            {% endfor %}
+                                        </select>  
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Protocol</label>
+                                        <select class="form-control form-control-sm" name="id_interfaces">
+                                            {% for protocol in protocolo %}
+                                                <option values ="{{ protocol.id }}">{{ protocol.nombre }}</option>
+                                            {% endfor %}
+                                        </select>  
+                                    </div>
+                                    <a style='cursor: pointer;' onClick="muestra_oculta('contenido')"class="boton_mostrar btn btn-info btn-sm">
+                                        Hide advanced <i class="fas fa-angle-double-down"></i>
+                                    </a><br><br>
+                                    <div class="form-row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">   
+                                                {{ form_label(form.sourceAdvancedInvertMatch) }}
+                                                {{ form_widget(form.sourceAdvancedInvertMatch) }} <label>Invert match.</label>
+                                                <span class="text-danger">{{ form_errors(form.sourceAdvancedInvertMatch) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">   
+                                                {{ form_label(form.sourceAdvancedType) }}
+                                                {{ form_widget(form.sourceAdvancedType) }} 
+                                                <span class="text-danger">{{ form_errors(form.sourceAdvancedType) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">   
+                                                {{ form_label(form.sourceAdvancedAdressMask) }}
+                                                {{ form_widget(form.sourceAdvancedAdressMask) }} 
+                                                <span class="text-danger">{{ form_errors(form.sourceAdvancedAdressMask) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group"> 
+                                                <label>Mask</label>
+                                                <select class="form-control form-control-sm" name="mask"> 
+                                                    {% for i in 32..1 %}
+                                                        <option value="{{ i }}">{{ i }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <label>Source port range</label>
+                                    <div class="form-row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">   
+                                                {{ form_label(form.sourceAdvancedFromPort) }}
+                                                {{ form_widget(form.sourceAdvancedFromPort) }}
+                                                <span class="text-danger">{{ form_errors(form.sourceAdvancedFromPort) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">   
+                                                {{ form_label(form.sourceAdvancedCustom) }}
+                                                {{ form_widget(form.sourceAdvancedCustom) }} 
+                                                <span class="text-danger">{{ form_errors(form.sourceAdvancedCustom) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">   
+                                                {{ form_label(form.sourceAdvancedToPort) }}
+                                                {{ form_widget(form.sourceAdvancedToPort) }} 
+                                                <span class="text-danger">{{ form_errors(form.sourceAdvancedToPort) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">   
+                                                {{ form_label(form.sourceAdvancedCustomToPort) }}
+                                                {{ form_widget(form.sourceAdvancedCustomToPort) }} 
+                                                <span class="text-danger">{{ form_errors(form.sourceAdvancedCustomToPort) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_widget(form.Save) }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form_widget(form.Reset) }}
+                                    </div>
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</dir>
+{% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
+<script src="{{ asset ('js/jsPagina/aliases/registroAliases.js') }}"></script>
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
+</script>
+{% include '@Principal/plantillas/declaracionFin.html.twig' %}

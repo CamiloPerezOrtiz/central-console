@@ -7,6 +7,10 @@ CREATE SEQUENCE grupos_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 CREATE SEQUENCE acl_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 CREATE SEQUENCE aliases_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 CREATE SEQUENCE target_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
+CREATE SEQUENCE interfaces_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
+CREATE SEQUENCE protocolo_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
+CREATE SEQUENCE nat_one_to_one_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
+CREATE SEQUENCE nat_port_forward_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 
 -- Tabla usuarios 
 CREATE TABLE usuarios(
@@ -68,4 +72,54 @@ CREATE TABLE target(
 	descripcion VARCHAR(50) DEFAULT NULL,
 	log BOOLEAN DEFAULT TRUE,
 	grupo VARCHAR(50) NOT NULL
+);
+
+--interfaces
+CREATE TABLE interfaces(
+	id INT PRIMARY KEY NOT NULL,
+	nombre VARCHAR(20) NOT NULL,
+	grupo VARCHAR(50) NOT NULL
+);
+
+--Protocol
+CREATE TABLE protocolo(
+	id INT PRIMARY KEY NOT NULL,
+	nombre VARCHAR(20) NOT NULL,
+	valor VARCHAR(50) NOT NULL
+);
+
+INSERT INTO protocolo VALUES(NEXTVAL('protocolo_id_seq'),'TCP','tcp');
+INSERT INTO protocolo VALUES(NEXTVAL('protocolo_id_seq'),'UDP','udp');
+INSERT INTO protocolo VALUES(NEXTVAL('protocolo_id_seq'),'TCP/UDP','tcp/udp');
+INSERT INTO protocolo VALUES(NEXTVAL('protocolo_id_seq'),'ICMP','icmp');
+
+--nats
+CREATE TABLE nat_port_forward(
+	id INT PRIMARY KEY NOT NULL,
+	estatus BOOLEAN DEFAULT FALSE,
+	id_interface INT NOT NULL,
+	id_protocolo INT NOT NULL,
+	source_advanced_invert_match BOOLEAN DEFAULT FALSE,
+	source_advanced_type VARCHAR(25) NOT NULL,
+	source_advanced_adress_mask VARCHAR(25) NOT NULL,
+	source_advanced_from_port VARCHAR(20) NOT NULL,
+	source_advanced_custom VARCHAR(25) DEFAULT NULL,
+	source_advanced_to_port VARCHAR(20) NOT NULL,
+	source_advanced_custom_to_port VARCHAR(25) DEFAULT NULL,
+	destination_invert_match BOOLEAN DEFAULT FALSE,
+	destination_type VARCHAR(25) NOT NULL,
+	destination_adress_mask VARCHAR(25) NOT NULL,
+	destination_range_from_port VARCHAR(20) NOT NULL,
+	destination_range_custom VARCHAR(25) DEFAULT NULL,
+	destination_range_to_port VARCHAR(20) NOT NULL,
+	destination_range_custom_to_port VARCHAR(25) DEFAULT NULL,
+	redirect_target_ip VARCHAR(15) NOT NULL,
+	redirect_target_port VARCHAR(25) NOT NULL,
+	redirect_target_port_custom VARCHAR(25) DEFAULT NULL,
+	descripcion VARCHAR(25) NOT NULL,
+	nat_reflection VARCHAR(25) NOT NULL,
+	filter_rule_association VARCHAR(25) NOT NULL,
+	grupo VARCHAR(50) NOT NULL,
+	FOREIGN KEY(id_interface) REFERENCES interfaces(id),
+	FOREIGN KEY(id_protocolo) REFERENCES protocolo(id)
 );

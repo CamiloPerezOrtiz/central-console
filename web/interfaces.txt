@@ -1,0 +1,9 @@
+opt1|Kasa|
+opt1|UI|
+opt2|UI|
+opt1|Crista facil|
+TELMEX|UI|
+AXTEL|UI|
+ALESTRA|UI|
+TELMEX|Kasa|
+TELMEX_2|Hospital Satelite|

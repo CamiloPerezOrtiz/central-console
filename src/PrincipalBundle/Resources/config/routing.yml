@@ -159,3 +159,33 @@ crearXMLTarget:
 aplicarXMLTarget:
     path:     /aplicarXMLTarget/{id}
     defaults: { _controller: PrincipalBundle:Target:aplicarXMLTarget }
+
+# NatPortForward #
+
+gruposNatPortForward:
+    path:     /gruposNatPortForward 
+    defaults: { _controller: PrincipalBundle:NatPortForward:gruposNatPortForward }
+
+registroNatPortForward:
+    path:     /registroNatPortForward 
+    defaults: { _controller: PrincipalBundle:NatPortForward:registroNatPortForward }
+
+editarNatPortForward:
+    path:     /editarNatPortForward/{id} 
+    defaults: { _controller: PrincipalBundle:NatPortForward:editarNatPortForward }
+
+listaNatPortForward:
+    path:     /listaNatPortForward 
+    defaults: { _controller: PrincipalBundle:NatPortForward:listaNatPortForward }
+
+eliminarNatPortForward:
+    path:     /eliminarNatPortForward/{id} 
+    defaults: { _controller: PrincipalBundle:NatPortForward:eliminarNatPortForward }
+
+crearXMLNatPortForward:
+    path:     /crearXMLNatPortForward/{id}
+    defaults: { _controller: PrincipalBundle:NatPortForward:crearXMLNatPortForward }
+
+aplicarXMLNatPortForward:
+    path:     /aplicarXMLNatPortForward/{id}
+    defaults: { _controller: PrincipalBundle:NatPortForward:aplicarXMLNatPortForward }
