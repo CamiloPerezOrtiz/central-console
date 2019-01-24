@@ -97,18 +97,18 @@ INSERT INTO protocolo VALUES(NEXTVAL('protocolo_id_seq'),'ICMP','icmp');
 CREATE TABLE nat_port_forward(
 	id INT PRIMARY KEY NOT NULL,
 	estatus BOOLEAN DEFAULT FALSE,
-	id_interface INT NOT NULL,
-	id_protocolo INT NOT NULL,
+	interface VARCHAR(25) NOT NULL,
+	protocolo VARCHAR(25) NOT NULL,
 	source_advanced_invert_match BOOLEAN DEFAULT FALSE,
 	source_advanced_type VARCHAR(25) NOT NULL,
-	source_advanced_adress_mask VARCHAR(25) NOT NULL,
+	source_advanced_adress_mask VARCHAR(25) DEFAULT NULL,
 	source_advanced_from_port VARCHAR(20) NOT NULL,
 	source_advanced_custom VARCHAR(25) DEFAULT NULL,
 	source_advanced_to_port VARCHAR(20) NOT NULL,
 	source_advanced_custom_to_port VARCHAR(25) DEFAULT NULL,
 	destination_invert_match BOOLEAN DEFAULT FALSE,
 	destination_type VARCHAR(25) NOT NULL,
-	destination_adress_mask VARCHAR(25) NOT NULL,
+	destination_adress_mask VARCHAR(25) DEFAULT NULL,
 	destination_range_from_port VARCHAR(20) NOT NULL,
 	destination_range_custom VARCHAR(25) DEFAULT NULL,
 	destination_range_to_port VARCHAR(20) NOT NULL,
@@ -119,7 +119,5 @@ CREATE TABLE nat_port_forward(
 	descripcion VARCHAR(25) NOT NULL,
 	nat_reflection VARCHAR(25) NOT NULL,
 	filter_rule_association VARCHAR(25) NOT NULL,
-	grupo VARCHAR(50) NOT NULL,
-	FOREIGN KEY(id_interface) REFERENCES interfaces(id),
-	FOREIGN KEY(id_protocolo) REFERENCES protocolo(id)
+	grupo VARCHAR(50) NOT NULL
 );

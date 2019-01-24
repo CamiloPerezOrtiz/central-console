@@ -29,78 +29,90 @@ class NatPortForwardController extends Controller
 		$form->handleRequest($request);
 		$u = $this->getUser();
 		$role=$u->getRole();
-		$interfaces = $this->recuperarInterfaces();
-		$protocolo = $this->recuperarProtocolo();
+		if($role == 'ROLE_SUPERUSER')
+		{
+			$id=$_REQUEST['id'];
+			$interfaces = $this->recuperarInterfaces($id);
+		}
+		if($role == 'ROLE_ADMINISTRATOR')
+			$interfaces = $this->recuperarInterfaces($u->getGrupo());
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
-			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData());
-			if(count($verificarNombre)==0)
+			if($role == 'ROLE_SUPERUSER')
 			{
-				if($role == 'ROLE_SUPERUSER')
-					$acl->setGrupo($id);
-				if($role == 'ROLE_ADMINISTRATOR')
-					$acl->setGrupo($u->getGrupo());
-				$array_target_rule = $_POST['target_rule'];
-				if(count(array_unique($array_target_rule)) === 1)
-				{
-					$acl->setTargetRule("all [ all]");
-				 	$acl->setTargetRulesList("all [ all]");
-				}
-				else
-				{
-					$target_rule = implode(" ",$_POST['target_rule']);
-					$acl->setTargetRule($target_rule." all [ all]");
-					$acl->setTargetRulesList($target_rule);
-				}
-				$em->persist($acl);
-				$flush=$em->flush();
-				if($flush == null)
-				{
-					$estatus="Successfully registration.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
-					return $this->redirectToRoute("gruposAcl");
-				}
-				else
-				{
-					$estatus="Problems with the server try later.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
-				}
+				$id=$_REQUEST['id'];
+				$nat->setGrupo($id);
+			}
+			if($role == 'ROLE_ADMINISTRATOR')
+				$nat->setGrupo($u->getGrupo());
+			$nat->setInterface($_POST['interface']);
+			$em->persist($nat);
+			$flush=$em->flush();
+			if($flush == null)
+			{
+				$estatus="Successfully registration.";
+				$this->session->getFlashBag()->add("estatus",$estatus);
+				return $this->redirectToRoute("gruposAcl");
 			}
 			else
 			{
-				$estatus="The name of alias that you are trying to register already exists try again.";
+				$estatus="Problems with the server try later.";
 				$this->session->getFlashBag()->add("estatus",$estatus);
 			}
 		}
 		return $this->render('@Principal/natPortForward/registroNatPortForward.html.twig', array(
 			'form'=>$form->createView(),
-			'interfaces'=>$interfaces,
-			'protocolo'=>$protocolo
+			'interfaces'=>$interfaces
 		));
 	}
 
 	# Funcion para recuperar nombre por id #
-	private function recuperarInterfaces()
+	private function recuperarInterfaces($grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.id, u.nombre
-				FROM PrincipalBundle:Interfaces u'
-		);
+			'SELECT u.nombre
+				FROM PrincipalBundle:Interfaces u
+				WHERE u.grupo = :grupo'
+		)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;
 	}
 
-	# Funcion para recuperar nombre por id #
-	private function recuperarProtocolo()
+	# Funcion para mostrar los grupos #
+	public function gruposNatAction()
+	{
+		$u = $this->getUser();
+		if($u != null)
+		{
+	        $role=$u->getRole();
+	        $grupo=$u->getGrupo();
+	        if($role == "ROLE_SUPERUSER")
+	        {
+	        	$grupos = $this->recuperarTodosGrupos();
+				return $this->render("@Principal/natPortForward/gruposNat.html.twig", array(
+					"grupo"=>$grupos
+				));
+	        }
+	        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
+	        {
+	        	return $this->redirectToRoute("listaNat");
+	        }
+	    }
+	}
+
+	# Funcion para recuperar el todos los grupos #
+	private function recuperarTodosGrupos()
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.valor
-				FROM PrincipalBundle:Protocolo u'
+			'SELECT DISTINCT g.nombre
+				FROM PrincipalBundle:Grupos g
+				ORDER BY g.nombre ASC'
 		);
-		$datos = $query->getResult();
-		return $datos;
+		$grupos = $query->getResult();
+		return $grupos;
 	}
+
 }

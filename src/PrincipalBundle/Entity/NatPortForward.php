@@ -29,18 +29,18 @@ class NatPortForward
     private $estatus;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="id_interface", type="integer")
+     * @ORM\Column(name="interface", type="string", length=25)
      */
-    private $idInterface;
+    private $interface;
 
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="id_protocolo", type="integer")
+     * @ORM\Column(name="protocolo", type="string", length=25)
      */
-    private $idProtocolo;
+    private $protocolo;
 
     /**
      * @var bool
@@ -59,7 +59,7 @@ class NatPortForward
     /**
      * @var string
      *
-     * @ORM\Column(name="source_advanced_adress_mask", type="string", length=25)
+     * @ORM\Column(name="source_advanced_adress_mask", type="string", length=25, nullable=true)
      */
     private $sourceAdvancedAdressMask;
 
@@ -225,51 +225,51 @@ class NatPortForward
     }
 
     /**
-     * Set idInterface
+     * Set interface
      *
-     * @param int $idInterface
+     * @param int $interface
      *
      * @return NatPortForward
      */
-    public function setIdInterface($idInterface)
+    public function setInterface($interface)
     {
-        $this->idInterface = $idInterface;
+        $this->interface = $interface;
 
         return $this;
     }
 
     /**
-     * Get idInterface
+     * Get interface
      *
      * @return int
      */
-    public function getIdInterface()
+    public function getInterface()
     {
-        return $this->idInterface;
+        return $this->interface;
     }
 
     /**
-     * Set idProtocolo
+     * Set protocolo
      *
-     * @param int $idProtocolo
+     * @param string $protocolo
      *
      * @return NatPortForward
      */
-    public function setIdProtocolo($idProtocolo)
+    public function setProtocolo($protocolo)
     {
-        $this->idProtocolo = $idProtocolo;
+        $this->protocolo = $protocolo;
 
         return $this;
     }
 
     /**
-     * Get idProtocolo
+     * Get protocolo
      *
-     * @return int
+     * @return string
      */
-    public function getIdProtocolo()
+    public function getProtocolo()
     {
-        return $this->idProtocolo;
+        return $this->protocolo;
     }
 
     /**

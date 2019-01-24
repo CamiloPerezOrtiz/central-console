@@ -23,7 +23,7 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Disabled ",
                 "required"=>false
             ))
-            ->add('id_protocolo',ChoiceType::class, array(
+            ->add('protocolo',ChoiceType::class, array(
                 "label"=>"Protocol ",
                 "attr"=>array(
                     "class"=>"form-control form-control-sm",
@@ -68,7 +68,7 @@ class NatPortForwardType extends AbstractType
             ))
             ->add('sourceAdvancedFromPort',ChoiceType::class, array(
                 "label"=>"From port",
-                "required"=>true,
+                "required"=>false,
                 "attr"=>array(
                     "class"=>"form-control form-control-sm"
                 ),
@@ -213,7 +213,8 @@ class NatPortForwardType extends AbstractType
                     'WAN address' => 'wanip',
                     'LAN net' => 'lan',
                     'LAN address' => 'lanip'
-                )
+                ),
+                'data' => 'wanip'
             ))
             ->add('destinationAdressMask',TextType::class,array(
                 "label"=>"Address ",
@@ -406,7 +407,8 @@ class NatPortForwardType extends AbstractType
                     'Telnet' => '23',
                     'TFTP' => '69',
                     'VNC' => '5900'
-                )
+                ),
+                'data' => ''
             ))
             ->add('redirectTargetPortCustom',TextType::class,array(
                 "label"=>"Custom",

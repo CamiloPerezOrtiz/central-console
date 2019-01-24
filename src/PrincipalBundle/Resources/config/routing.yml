@@ -162,9 +162,9 @@ aplicarXMLTarget:
 
 # NatPortForward #
 
-gruposNatPortForward:
-    path:     /gruposNatPortForward 
-    defaults: { _controller: PrincipalBundle:NatPortForward:gruposNatPortForward }
+gruposNat:
+    path:     /gruposNat
+    defaults: { _controller: PrincipalBundle:NatPortForward:gruposNat }
 
 registroNatPortForward:
     path:     /registroNatPortForward 
@@ -174,8 +174,8 @@ editarNatPortForward:
     path:     /editarNatPortForward/{id} 
     defaults: { _controller: PrincipalBundle:NatPortForward:editarNatPortForward }
 
-listaNatPortForward:
-    path:     /listaNatPortForward 
+listaNat:
+    path:     /listaNat 
     defaults: { _controller: PrincipalBundle:NatPortForward:listaNatPortForward }
 
 eliminarNatPortForward:
