@@ -176,7 +176,7 @@ editarNatPortForward:
 
 listaNat:
     path:     /listaNat 
-    defaults: { _controller: PrincipalBundle:NatPortForward:listaNatPortForward }
+    defaults: { _controller: PrincipalBundle:NatPortForward:listaNat }
 
 eliminarNatPortForward:
     path:     /eliminarNatPortForward/{id} 

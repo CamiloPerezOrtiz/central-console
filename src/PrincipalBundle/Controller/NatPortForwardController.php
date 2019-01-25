@@ -115,4 +115,51 @@ class NatPortForwardController extends Controller
 		return $grupos;
 	}
 
+	# Funcion para mostrar los target #
+	public function listaNatAction()
+	{
+		$u = $this->getUser();
+		if($u != null)
+		{
+	        $role=$u->getRole();
+	        $grupo=$u->getGrupo();
+	        if($role == "ROLE_SUPERUSER")
+	        {
+	        	$id=$_REQUEST['id'];
+				$nat = $this->recuperarTodoNatPortGrupo($id);
+				return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
+					"nat"=>$nat
+				));
+	        }
+	        if($role == "ROLE_ADMINISTRATOR")
+	        {
+	        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
+				return $this->render('@Principal/natPortForward/listaTNat.html.twig', array(
+					"nat"=>$nat
+				));
+	        }
+	        if($role == "ROLE_USER")
+	        {
+	        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
+				return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
+					"nat"=>$nat
+				));
+	        }
+	    }
+	}
+
+	# Funcion para recuperar los todos los aliases #
+	private function recuperarTodoNatPortGrupo($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.id, u.estatus, u.interface, u.protocolo, u.sourceAdvancedType, u.sourceAdvancedAdressMask, u.sourceAdvancedFromPort,
+					u.sourceAdvancedCustom, u.sourceAdvancedCustomToPort, u.destinationType, u.destinationRangeFromPort, u.destinationRangeCustom,
+					u.destinationRangeCustomToPort, u.redirectTargetIp, u.redirectTargetPort, u.redirectTargetPortCustom, u.descripcion
+				FROM PrincipalBundle:NatPortForward u
+				WHERE  u.grupo = :grupo'
+		)->setParameter('grupo', $grupo);
+		$target = $query->getResult();
+		return $target;
+	}
 }
