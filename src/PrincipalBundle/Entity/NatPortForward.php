@@ -189,7 +189,6 @@ class NatPortForward
      */
     private $grupo;
 
-
     /**
      * Get id
      *
@@ -227,7 +226,7 @@ class NatPortForward
     /**
      * Set interface
      *
-     * @param int $interface
+     * @param string $interface
      *
      * @return NatPortForward
      */

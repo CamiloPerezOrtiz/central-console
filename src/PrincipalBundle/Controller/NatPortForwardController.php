@@ -6,8 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use PrincipalBundle\Entity\NatPortForward;
+use PrincipalBundle\Entity\NatOneToOne;
 use PrincipalBundle\Entity\Interfaces;
 use PrincipalBundle\Form\NatPortForwardType;
+use PrincipalBundle\Form\NatPortForwardEditType;
+use PrincipalBundle\Form\NatOneToOneType;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class NatPortForwardController extends Controller
@@ -53,7 +56,7 @@ class NatPortForwardController extends Controller
 			{
 				$estatus="Successfully registration.";
 				$this->session->getFlashBag()->add("estatus",$estatus);
-				return $this->redirectToRoute("gruposAcl");
+				return $this->redirectToRoute("gruposNat");
 			}
 			else
 			{
@@ -127,22 +130,28 @@ class NatPortForwardController extends Controller
 	        {
 	        	$id=$_REQUEST['id'];
 				$nat = $this->recuperarTodoNatPortGrupo($id);
+				$natOne = $this->recuperarOneToOneGrupo($id);
 				return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
-					"nat"=>$nat
+					"nat"=>$nat,
+					"natOne"=>$natOne
 				));
 	        }
 	        if($role == "ROLE_ADMINISTRATOR")
 	        {
 	        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
+	        	$natOne = $this->recuperarOneToOneGrupo($id);
 				return $this->render('@Principal/natPortForward/listaTNat.html.twig', array(
-					"nat"=>$nat
+					"nat"=>$nat,
+					"natOne"=>$natOne
 				));
 	        }
 	        if($role == "ROLE_USER")
 	        {
 	        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
+	        	$natOne = $this->recuperarOneToOneGrupo($id);
 				return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
-					"nat"=>$nat
+					"nat"=>$nat,
+					"natOne"=>$natOne
 				));
 	        }
 	    }
@@ -152,14 +161,397 @@ class NatPortForwardController extends Controller
 	private function recuperarTodoNatPortGrupo($grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM nat_port_forward WHERE grupo ='$grupo' ORDER BY posicion";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$nat=$stmt->fetchAll();
+		return $nat;
+	}
+
+	# Funcion para recuperar los todos los aliases #
+	private function recuperarOneToOneGrupo($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM nat_one_to_one WHERE grupo ='$grupo' ORDER BY posicion";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$nat=$stmt->fetchAll();
+		return $nat;
+	}
+
+	public function editarNatPortForwardAction(Request $request, $id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$nat = $em->getRepository("PrincipalBundle:NatPortForward")->find($id);
+		$form = $this->createForm(NatPortForwardEditType::class,$nat);
+		$u = $this->getUser();
+		$role=$u->getRole();
+		$grupo = $this->recuperarGrupoId($id);
+		$interfaces = $this->recuperarInterfaces($grupo);
+		$form->handleRequest($request);
+		$inter = $this->recuperarInterfaceGrupoId($id);
+		if($form->isSubmitted() && $form->isValid())
+		{
+			$nat->setInterface($_POST['interface']);
+			$em->persist($nat);
+			$flush=$em->flush();
+			return $this->redirectToRoute("gruposTarget");
+		}
+		return $this->render('@Principal/natPortForward/editarNatPortForward.html.twig', array(
+			'form'=>$form->createView(),
+			'interfaces'=>$interfaces,
+			'inter'=>$inter
+		));
+	}
+
+	# Funcion para recuperar nombre por id #
+	private function recuperarGrupoId($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.id, u.estatus, u.interface, u.protocolo, u.sourceAdvancedType, u.sourceAdvancedAdressMask, u.sourceAdvancedFromPort,
-					u.sourceAdvancedCustom, u.sourceAdvancedCustomToPort, u.destinationType, u.destinationRangeFromPort, u.destinationRangeCustom,
-					u.destinationRangeCustomToPort, u.redirectTargetIp, u.redirectTargetPort, u.redirectTargetPortCustom, u.descripcion
+			'SELECT u.grupo
 				FROM PrincipalBundle:NatPortForward u
-				WHERE  u.grupo = :grupo'
-		)->setParameter('grupo', $grupo);
-		$target = $query->getResult();
-		return $target;
+				WHERE u.id = :id'
+		)->setParameter('id', $id);
+		$datos = $query->getResult();
+		return $datos;
+	}
+
+	# Funcion para recuperar nombre por id #
+	private function recuperarInterfaceGrupoId($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.interface
+				FROM PrincipalBundle:NatPortForward u
+				WHERE u.id = :id'
+		)->setParameter('id', $id);
+		$datos = $query->getResult();
+		return $datos;
+	}
+
+	# Funcion para eliminar un target #
+	public function eliminarNatPortForwardAction($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$formato = $em->getRepository("PrincipalBundle:NatPortForward")->find($id);
+		$em->remove($formato);
+		$flush=$em->flush();
+		if($flush == null)
+			$estatus="Successfully delete registration";
+		else
+			$estatus="Problems with the server try later.";
+		$this->session->getFlashBag()->add("estatus",$estatus);
+		return $this->redirectToRoute("gruposNat");
+	}
+
+	public function dragAndDropNatPortForwardAction()
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$db = $em->getConnection();
+		$position = $_POST['position'];
+		$i=1;
+		foreach($position as $k=>$v){
+		    $sql = "Update nat_port_forward SET posicion=".$i." WHERE id=".$v;
+		    $stmt = $db->prepare($sql);
+			$stmt->execute(array());
+			$i++;
+		}
+		exit();
+	}
+
+	public function registroNatOneToOneAction(Request $request)
+	{
+		$nat = new NatOneToOne();
+		$form = $this ->createForm(NatOneToOneType::class, $nat);
+		$form->handleRequest($request);
+		$u = $this->getUser();
+		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
+		{
+			$id=$_REQUEST['id'];
+			$interfaces = $this->recuperarInterfaces($id);
+		}
+		if($role == 'ROLE_ADMINISTRATOR')
+			$interfaces = $this->recuperarInterfaces($u->getGrupo());
+		if($form->isSubmitted() && $form->isValid())
+		{
+			$em = $this->getDoctrine()->getEntityManager();
+			if($role == 'ROLE_SUPERUSER')
+			{
+				$id=$_REQUEST['id'];
+				$nat->setGrupo($id);
+			}
+			if($role == 'ROLE_ADMINISTRATOR')
+				$nat->setGrupo($u->getGrupo());
+			$nat->setInterface($_POST['interface']);
+			$em->persist($nat);
+			$flush=$em->flush();
+			if($flush == null)
+			{
+				$estatus="Successfully registration.";
+				$this->session->getFlashBag()->add("estatus",$estatus);
+				return $this->redirectToRoute("gruposNat");
+			}
+			else
+			{
+				$estatus="Problems with the server try later.";
+				$this->session->getFlashBag()->add("estatus",$estatus);
+			}
+		}
+		return $this->render('@Principal/natPortForward/registroNatOneToOne.html.twig', array(
+			'form'=>$form->createView(),
+			'interfaces'=>$interfaces
+		));
+	}
+
+	public function editarNatOneToOneAction(Request $request, $id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$nat = $em->getRepository("PrincipalBundle:NatOneToOne")->find($id);
+		$form = $this->createForm(NatOneToOneType::class,$nat);
+		$u = $this->getUser();
+		$role=$u->getRole();
+		$grupo = $this->recuperarGrupoOneId($id);
+		$interfaces = $this->recuperarInterfaces($grupo);
+		$form->handleRequest($request);
+		$inter = $this->recuperarInterfaceGrupoOneId($id);
+		if($form->isSubmitted() && $form->isValid())
+		{
+			$nat->setInterface($_POST['interface']);
+			$em->persist($nat);
+			$flush=$em->flush();
+			return $this->redirectToRoute("gruposTarget");
+		}
+		return $this->render('@Principal/natPortForward/editarNatOneToOne.html.twig', array(
+			'form'=>$form->createView(),
+			'interfaces'=>$interfaces,
+			'inter'=>$inter
+		));
+	}
+
+	# Funcion para recuperar nombre por id #
+	private function recuperarGrupoOneId($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.grupo
+				FROM PrincipalBundle:NatOneToOne u
+				WHERE u.id = :id'
+		)->setParameter('id', $id);
+		$datos = $query->getResult();
+		return $datos;
+	}
+
+	# Funcion para recuperar nombre por id #
+	private function recuperarInterfaceGrupoOneId($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.interface
+				FROM PrincipalBundle:NatOneToOne u
+				WHERE u.id = :id'
+		)->setParameter('id', $id);
+		$datos = $query->getResult();
+		return $datos;
+	}
+
+	# Funcion para eliminar un target #
+	public function eliminarNatOneToOneAction($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$formato = $em->getRepository("PrincipalBundle:NatOneToOne")->find($id);
+		$em->remove($formato);
+		$flush=$em->flush();
+		if($flush == null)
+			$estatus="Successfully delete registration";
+		else
+			$estatus="Problems with the server try later.";
+		$this->session->getFlashBag()->add("estatus",$estatus);
+		return $this->redirectToRoute("gruposNat");
+	}
+
+	public function dragAndDropNatOneToOneAction()
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$db = $em->getConnection();
+		$position = $_POST['position'];
+		$i=1;
+		foreach($position as $k=>$v){
+		    $sql = "Update nat_one_to_one SET posicion=".$i." WHERE id=".$v;
+		    $stmt = $db->prepare($sql);
+			$stmt->execute(array());
+			$i++;
+		}
+		exit();
+	}
+
+	# Funcion para crear el XML de target #
+	public function crearXMLNatAction($id)
+	{
+		$recuperarTodoDatos = $this->recuperarTodoNatPortGrupo($id);
+		$contenido = "<?xml version='1.0'?>\n";
+		$contenido .= "\t<nat>\n";
+		foreach ($recuperarTodoDatos as $nat) 
+		{
+		    $contenido .= "\t\t<rule>\n";
+		    if($nat['estatus'] === true)
+				$contenido .= "\t\t\t<disabled></disabled>\n";
+			$contenido .= "\t\t\t<source>\n";
+				# Campo Source type #
+				if($nat['source_advanced_type'] === "any")
+					$contenido .= "\t\t\t\t<any></any>\n";
+				if($nat['source_advanced_type'] === "single")
+					$contenido .= "\t\t\t\t<address>" . $nat['source_advanced_adress_mask'] . "</address>\n";
+				if($nat['source_advanced_type'] === "network")
+					$contenido .= "\t\t\t\t<network>" . $nat['source_advanced_adress_mask'] . "</network>\n";
+				if($nat['source_advanced_type'] === "pppoe")
+					$contenido .= "\t\t\t\t<network>pppoe</network>\n";
+				if($nat['source_advanced_type'] === "l2tp")
+					$contenido .= "\t\t\t\t<network>pppoe</network>\n";
+				if($nat['source_advanced_type'] === "wan")
+					$contenido .= "\t\t\t\t<network>wan</network>\n";
+				if($nat['source_advanced_type'] === "wanip")
+					$contenido .= "\t\t\t\t<network>wanip</network>\n";
+				if($nat['source_advanced_type'] === "lan")
+					$contenido .= "\t\t\t\t<network>lan</network>\n";
+				if($nat['source_advanced_type'] === "lanip")
+					$contenido .= "\t\t\t\t<network>lanip</network>\n";
+				# Campo Source Invert match. #
+				if($nat['source_advanced_invert_match'] === true)
+					$contenido .= "\t\t\t\t<not></not>\n";
+				# Campo Source port range cuando los dos campos Custom son iguales. #
+				if($nat['protocolo'] === "tcp" or $nat['protocolo'] === "udp" or $nat['protocolo'] === "tcp/udp" )
+				{
+					if($nat['source_advanced_from_port'] === "")
+					{
+						if($nat['source_advanced_custom'] === $nat['source_advanced_custom_to_port'])
+							$contenido .= "\t\t\t\t<port>" . $nat['source_advanced_custom'] . "</port>\n";
+						else
+							$contenido .= "\t\t\t\t<port>" . $nat['source_advanced_custom'] . "-" . $nat['source_advanced_custom_to_port'] . "</port>\n";
+					}
+					if($nat['source_advanced_from_port'] === "5999")
+						$contenido .= "\t\t\t\t<port>5999</port>\n";
+					if($nat['source_advanced_from_port'] === "53")
+						$contenido .= "\t\t\t\t<port>53</port>\n";
+					if($nat['source_advanced_from_port'] === "21")
+						$contenido .= "\t\t\t\t<port>21</port>\n";
+					if($nat['source_advanced_from_port'] === "3000")
+						$contenido .= "\t\t\t\t<port>3000</port>\n";
+					if($nat['source_advanced_from_port'] === "80")
+						$contenido .= "\t\t\t\t<port>80</port>\n";
+					if($nat['source_advanced_from_port'] === "443")
+						$contenido .= "\t\t\t\t<port>443</port>\n";
+					if($nat['source_advanced_from_port'] === "5190")
+						$contenido .= "\t\t\t\t<port>5190</port>\n";
+					if($nat['source_advanced_from_port'] === "113")
+						$contenido .= "\t\t\t\t<port>113</port>\n";
+					if($nat['source_advanced_from_port'] === "993")
+						$contenido .= "\t\t\t\t<port>993</port>\n";
+					if($nat['source_advanced_from_port'] === "4500")
+						$contenido .= "\t\t\t\t<port>4500</port>\n";
+					if($nat['source_advanced_from_port'] === "500")
+						$contenido .= "\t\t\t\t<port>500</port>\n";
+					if($nat['source_advanced_from_port'] === "1701")
+						$contenido .= "\t\t\t\t<port>1701</port>\n";
+					if($nat['source_advanced_from_port'] === "389")
+						$contenido .= "\t\t\t\t<port>389</port>\n";
+					if($nat['source_advanced_from_port'] === "1755")
+						$contenido .= "\t\t\t\t<port>1755</port>\n";
+					if($nat['source_advanced_from_port'] === "7000")
+						$contenido .= "\t\t\t\t<port>7000</port>\n";
+					if($nat['source_advanced_from_port'] === "445")
+						$contenido .= "\t\t\t\t<port>445</port>\n";
+					if($nat['source_advanced_from_port'] === "3389")
+						$contenido .= "\t\t\t\t<port>3389</port>\n";
+					if($nat['source_advanced_from_port'] === "1512")
+						$contenido .= "\t\t\t\t<port>1512</port>\n";
+					if($nat['source_advanced_from_port'] === "1863")
+						$contenido .= "\t\t\t\t<port>1863</port>\n";
+					if($nat['source_advanced_from_port'] === "119")
+						$contenido .= "\t\t\t\t<port>119</port>\n";
+					if($nat['source_advanced_from_port'] === "123")
+						$contenido .= "\t\t\t\t<port>123</port>\n";
+					if($nat['source_advanced_from_port'] === "138")
+						$contenido .= "\t\t\t\t<port>138</port>\n";
+					if($nat['source_advanced_from_port'] === "137")
+						$contenido .= "\t\t\t\t<port>137</port>\n";
+					if($nat['source_advanced_from_port'] === "139")
+						$contenido .= "\t\t\t\t<port>139</port>\n";
+					if($nat['source_advanced_from_port'] === "1194")
+						$contenido .= "\t\t\t\t<port>1194</port>\n";
+					if($nat['source_advanced_from_port'] === "110")
+						$contenido .= "\t\t\t\t<port>110</port>\n";
+					if($nat['source_advanced_from_port'] === "995")
+						$contenido .= "\t\t\t\t<port>995</port>\n";
+					if($nat['source_advanced_from_port'] === "1723")
+						$contenido .= "\t\t\t\t<port>1723</port>\n";
+					if($nat['source_advanced_from_port'] === "1812")
+						$contenido .= "\t\t\t\t<port>1812</port>\n";
+					if($nat['source_advanced_from_port'] === "1813")
+						$contenido .= "\t\t\t\t<port>1813</port>\n";
+					if($nat['source_advanced_from_port'] === "5004")
+						$contenido .= "\t\t\t\t<port>5004</port>\n";
+					if($nat['source_advanced_from_port'] === "5060")
+						$contenido .= "\t\t\t\t<port>5060</port>\n";
+					if($nat['source_advanced_from_port'] === "25")
+						$contenido .= "\t\t\t\t<port>25</port>\n";
+					if($nat['source_advanced_from_port'] === "465")
+						$contenido .= "\t\t\t\t<port>465</port>\n";
+					if($nat['source_advanced_from_port'] === "161")
+						$contenido .= "\t\t\t\t<port>161</port>\n";
+					if($nat['source_advanced_from_port'] === "162")
+						$contenido .= "\t\t\t\t<port>162</port>\n";
+					if($nat['source_advanced_from_port'] === "22")
+						$contenido .= "\t\t\t\t<port>22</port>\n";
+					if($nat['source_advanced_from_port'] === "3478")
+						$contenido .= "\t\t\t\t<port>3278</port>\n";
+					if($nat['source_advanced_from_port'] === "587")
+						$contenido .= "\t\t\t\t<port>587</port>\n";
+					if($nat['source_advanced_from_port'] === "3544")
+						$contenido .= "\t\t\t\t<port>3544</port>\n";
+					if($nat['source_advanced_from_port'] === "23")
+						$contenido .= "\t\t\t\t<port>23</port>\n";
+					if($nat['source_advanced_from_port'] === "69")
+						$contenido .= "\t\t\t\t<port>69</port>\n";
+					if($nat['source_advanced_from_port'] === "5900")
+						$contenido .= "\t\t\t\t<port>5900</port>\n";				
+				}
+			$contenido .= "\t\t\t</source>\n";
+		    $contenido .= "\t\t</rule>\n";
+		}
+		$contenido .= "\t</nat>";
+		$archivo = fopen("conf.xml", 'w');
+		fwrite($archivo, $contenido);
+		fclose($archivo); 
+		# Mover el archivo a la carpeta #
+		$archivoConfig = 'conf.xml';
+		$destinoConfig = "centralizedConsole/conf.xml";
+	   	if (!copy($archivoConfig, $destinoConfig)) 
+		    echo "Error al copiar $archivoConfig...\n";
+		unlink("conf.xml");
+		$estatus="The configuration has been saved";
+		$this->session->getFlashBag()->add("estatus",$estatus);
+		return $this->redirectToRoute("gruposAcl");
+	}
+
+	# funcion para correr el script aplicar cambios en target #
+	public function aplicarXMLAclAction($id)
+	{
+    	$archivo = fopen("change_to_do.txt", 'w');
+		fwrite($archivo, "aclgroups.py");
+		fwrite ($archivo, "\n");
+		fclose($archivo); 
+		# Mover el archivo a la carpeta #
+		$archivoConfig = 'change_to_do.txt';
+		$destinoConfig = "centralizedConsole/change_to_do.txt";
+	   	if (!copy($archivoConfig, $destinoConfig)) 
+		   echo "Error al copiar $archivoConfig...\n";
+		unlink("change_to_do.txt");
+    	return $this->redirectToRoute('grupos');
 	}
 }

@@ -182,10 +182,30 @@ eliminarNatPortForward:
     path:     /eliminarNatPortForward/{id} 
     defaults: { _controller: PrincipalBundle:NatPortForward:eliminarNatPortForward }
 
-crearXMLNatPortForward:
-    path:     /crearXMLNatPortForward/{id}
-    defaults: { _controller: PrincipalBundle:NatPortForward:crearXMLNatPortForward }
+crearXMLNat:
+    path:     /crearXMLNat/{id}
+    defaults: { _controller: PrincipalBundle:NatPortForward:crearXMLNat }
 
-aplicarXMLNatPortForward:
-    path:     /aplicarXMLNatPortForward/{id}
-    defaults: { _controller: PrincipalBundle:NatPortForward:aplicarXMLNatPortForward }
+aplicarXMLNat:
+    path:     /aplicarXMLNat
+    defaults: { _controller: PrincipalBundle:NatPortForward:aplicarXMLNat }
+
+dragAndDropNatPortForward:
+    path:     /dragAndDropNatPortForward
+    defaults: { _controller: PrincipalBundle:NatPortForward:dragAndDropNatPortForward }
+
+registroNatOneToOne:
+    path:     /registroNatOneToOne 
+    defaults: { _controller: PrincipalBundle:NatPortForward:registroNatOneToOne }
+
+editarNatOneToOne:
+    path:     /editarNatOneToOne/{id} 
+    defaults: { _controller: PrincipalBundle:NatPortForward:editarNatOneToOne }
+
+eliminarNatOneToOne:
+    path:     /eliminarNatOneToOne/{id} 
+    defaults: { _controller: PrincipalBundle:NatPortForward:eliminarNatOneToOne }
+
+dragAndDropNatOneToOne:
+    path:     /dragAndDropNatOneToOne
+    defaults: { _controller: PrincipalBundle:NatPortForward:dragAndDropNatOneToOne }

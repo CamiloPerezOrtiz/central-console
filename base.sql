@@ -119,5 +119,24 @@ CREATE TABLE nat_port_forward(
 	descripcion VARCHAR(25) NOT NULL,
 	nat_reflection VARCHAR(25) NOT NULL,
 	filter_rule_association VARCHAR(25) NOT NULL,
-	grupo VARCHAR(50) NOT NULL
+	grupo VARCHAR(50) NOT NULL,
+	posicion SERIAL 
+);
+
+--nat one to one 
+CREATE TABLE nat_one_to_one(
+	id INT PRIMARY KEY NOT NULL,
+	estatus BOOLEAN DEFAULT FALSE,
+	interface VARCHAR(25) NOT NULL,
+	external_subnet_ip VARCHAR(25) NOT NULL,
+	internal_ip BOOLEAN DEFAULT FALSE,
+	internal_ip_type VARCHAR(25) NOT NULL,
+	internal_adress_mask VARCHAR(25) DEFAULT NULL,
+	destination BOOLEAN DEFAULT FALSE,
+	destination_type VARCHAR(25) NOT NULL,
+	destination_adress_mask VARCHAR(25) DEFAULT NULL,
+	descripcion VARCHAR(25) DEFAULT NULL,
+	nat_reflection VARCHAR(25) NOT NULL,
+	grupo VARCHAR(50) NOT NULL,
+	posicion SERIAL	
 );
