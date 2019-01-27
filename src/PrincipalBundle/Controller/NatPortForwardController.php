@@ -394,6 +394,7 @@ class NatPortForwardController extends Controller
 	public function crearXMLNatAction($id)
 	{
 		$recuperarTodoDatos = $this->recuperarTodoNatPortGrupo($id);
+		$recuperarTodoDatosOneToOne = $this->recuperarOneToOneGrupo($id);
 		$contenido = "<?xml version='1.0'?>\n";
 		$contenido .= "\t<nat>\n";
 		foreach ($recuperarTodoDatos as $nat) 
@@ -522,7 +523,211 @@ class NatPortForwardController extends Controller
 						$contenido .= "\t\t\t\t<port>5900</port>\n";				
 				}
 			$contenido .= "\t\t\t</source>\n";
+			$contenido .= "\t\t\t<destination>\n";
+				# Campo destination type #
+				if($nat['destination_type'] === "any")
+					$contenido .= "\t\t\t\t<any></any>\n";
+				if($nat['destination_type'] === "single")
+					$contenido .= "\t\t\t\t<address>" . $nat['destination_adress_mask'] . "</address>\n";
+				if($nat['destination_type'] === "network")
+					$contenido .= "\t\t\t\t<network>" . $nat['destination_adress_mask'] . "</network>\n";
+				if($nat['destination_type'] === "pppoe")
+					$contenido .= "\t\t\t\t<network>pppoe</network>\n";
+				if($nat['destination_type'] === "l2tp")
+					$contenido .= "\t\t\t\t<network>pppoe</network>\n";
+				if($nat['destination_type'] === "wan")
+					$contenido .= "\t\t\t\t<network>wan</network>\n";
+				if($nat['destination_type'] === "wanip")
+					$contenido .= "\t\t\t\t<network>wanip</network>\n";
+				if($nat['destination_type'] === "lan")
+					$contenido .= "\t\t\t\t<network>lan</network>\n";
+				if($nat['destination_type'] === "lanip")
+					$contenido .= "\t\t\t\t<network>lanip</network>\n";
+				# Campo destination Invert match. #
+				if($nat['destination_invert_match'] === true)
+				{
+					$contenido .= "\t\t\t\t<not></not>\n";
+				}
+				# Campo destination port range cuando los dos campos Custom son iguales. #
+				if($nat['protocolo'] === "tcp" or $nat['protocolo'] === "udp" or $nat['protocolo'] === "tcp/udp" )
+				{
+					if($nat['destination_range_from_port'] === "")
+					{
+						if($nat['destination_range_custom'] === $nat['destination_range_custom_to_port'])
+							$contenido .= "\t\t\t\t<port>" . $nat['destination_range_custom'] . "</port>\n";
+						else
+							$contenido .= "\t\t\t\t<port>" . $nat['destination_range_custom'] . "-" . $nat['destination_range_custom_to_port'] . "</port>\n";
+					}
+
+					if($nat['destination_range_from_port'] === "5999")
+						$contenido .= "\t\t\t\t<port>5999</port>\n";
+					if($nat['destination_range_from_port'] === "53")
+						$contenido .= "\t\t\t\t<port>53</port>\n";
+					if($nat['destination_range_from_port'] === "21")
+						$contenido .= "\t\t\t\t<port>21</port>\n";
+					if($nat['destination_range_from_port'] === "3000")
+						$contenido .= "\t\t\t\t<port>3000</port>\n";
+					if($nat['destination_range_from_port'] === "80")
+						$contenido .= "\t\t\t\t<port>80</port>\n";
+					if($nat['destination_range_from_port'] === "443")
+						$contenido .= "\t\t\t\t<port>443</port>\n";
+					if($nat['destination_range_from_port'] === "5190")
+						$contenido .= "\t\t\t\t<port>5190</port>\n";
+					if($nat['destination_range_from_port'] === "113")
+						$contenido .= "\t\t\t\t<port>113</port>\n";
+					if($nat['destination_range_from_port'] === "993")
+						$contenido .= "\t\t\t\t<port>993</port>\n";
+					if($nat['destination_range_from_port'] === "4500")
+						$contenido .= "\t\t\t\t<port>4500</port>\n";
+					if($nat['destination_range_from_port'] === "500")
+						$contenido .= "\t\t\t\t<port>500</port>\n";
+					if($nat['destination_range_from_port'] === "1701")
+						$contenido .= "\t\t\t\t<port>1701</port>\n";
+					if($nat['destination_range_from_port'] === "389")
+						$contenido .= "\t\t\t\t<port>389</port>\n";
+					if($nat['destination_range_from_port'] === "1755")
+						$contenido .= "\t\t\t\t<port>1755</port>\n";
+					if($nat['destination_range_from_port'] === "7000")
+						$contenido .= "\t\t\t\t<port>7000</port>\n";
+					if($nat['destination_range_from_port'] === "445")
+						$contenido .= "\t\t\t\t<port>445</port>\n";
+					if($nat['destination_range_from_port'] === "3389")
+						$contenido .= "\t\t\t\t<port>3389</port>\n";
+					if($nat['destination_range_from_port'] === "1512")
+						$contenido .= "\t\t\t\t<port>1512</port>\n";
+					if($nat['destination_range_from_port'] === "1863")
+						$contenido .= "\t\t\t\t<port>1863</port>\n";
+					if($nat['destination_range_from_port'] === "119")
+						$contenido .= "\t\t\t\t<port>119</port>\n";
+					if($nat['destination_range_from_port'] === "123")
+						$contenido .= "\t\t\t\t<port>123</port>\n";
+					if($nat['destination_range_from_port'] === "138")
+						$contenido .= "\t\t\t\t<port>138</port>\n";
+					if($nat['destination_range_from_port'] === "137")
+						$contenido .= "\t\t\t\t<port>137</port>\n";
+					if($nat['destination_range_from_port'] === "139")
+						$contenido .= "\t\t\t\t<port>139</port>\n";
+					if($nat['destination_range_from_port'] === "1194")
+						$contenido .= "\t\t\t\t<port>1194</port>\n";
+					if($nat['destination_range_from_port'] === "110")
+						$contenido .= "\t\t\t\t<port>110</port>\n";
+					if($nat['destination_range_from_port'] === "995")
+						$contenido .= "\t\t\t\t<port>995</port>\n";
+					if($nat['destination_range_from_port'] === "1723")
+						$contenido .= "\t\t\t\t<port>1723</port>\n";
+					if($nat['destination_range_from_port'] === "1812")
+						$contenido .= "\t\t\t\t<port>1812</port>\n";
+					if($nat['destination_range_from_port'] === "1813")
+						$contenido .= "\t\t\t\t<port>1813</port>\n";
+					if($nat['destination_range_from_port'] === "5004")
+						$contenido .= "\t\t\t\t<port>5004</port>\n";
+					if($nat['destination_range_from_port'] === "5060")
+						$contenido .= "\t\t\t\t<port>5060</port>\n";
+					if($nat['destination_range_from_port'] === "25")
+						$contenido .= "\t\t\t\t<port>25</port>\n";
+					if($nat['destination_range_from_port'] === "465")
+						$contenido .= "\t\t\t\t<port>465</port>\n";
+					if($nat['destination_range_from_port'] === "161")
+						$contenido .= "\t\t\t\t<port>161</port>\n";
+					if($nat['destination_range_from_port'] === "162")
+						$contenido .= "\t\t\t\t<port>162</port>\n";
+					if($nat['destination_range_from_port'] === "22")
+						$contenido .= "\t\t\t\t<port>22</port>\n";
+					if($nat['destination_range_from_port'] === "3478")
+						$contenido .= "\t\t\t\t<port>3278</port>\n";
+					if($nat['destination_range_from_port'] === "587")
+						$contenido .= "\t\t\t\t<port>587</port>\n";
+					if($nat['destination_range_from_port'] === "3544")
+						$contenido .= "\t\t\t\t<port>3544</port>\n";
+					if($nat['destination_range_from_port'] === "23")
+						$contenido .= "\t\t\t\t<port>23</port>\n";
+					if($nat['destination_range_from_port'] === "69")
+						$contenido .= "\t\t\t\t<port>69</port>\n";
+					if($nat['destination_range_from_port'] === "5900")
+						$contenido .= "\t\t\t\t<port>5900</port>\n";
+				}
+			$contenido .= "\t\t\t</destination>\n";
+			$contenido .= "\t\t\t<protocol>" . $nat['protocolo'] . "</protocol>\n";
+			# Interface #
+		    $contenido .= "\t\t\t<interface>" . $nat['interface'] . "</interface>\n";
+		    # Description #
+		    $contenido .= "\t\t\t<descr>" . $nat['descripcion'] . "</descr>\n";
+		    # Filter rule association #
+		    if($nat['filter_rule_association'] === "")
+		    	$contenido .= "\t\t\t<associated-rule-id></associated-rule-id>\n";
+			# NAT reflection #
+			if($nat['nat_reflection'] === "enable")
+				$contenido .= "\t\t\t<natreflection>enable</natreflection>\n";
+			if($nat['nat_reflection'] === "purenat")
+				$contenido .= "\t\t\t<natreflection>purenat</natreflection>\n";
+			if($nat['nat_reflection'] === "disable")
+				$contenido .= "\t\t\t<natreflection>disable</natreflection>\n";
 		    $contenido .= "\t\t</rule>\n";
+		}
+		# Nat one to one #
+		foreach ($recuperarTodoDatosOneToOne as $natone) 
+		{
+			$contenido .= "\t\t<onetoone>\n";
+			# Disabled #
+			if($natone['estatus'] === true)
+				$contenido .= "\t\t\t<disabled></disabled>\n";
+			# External subnet IP #
+			$contenido .= "\t\t\t<external>" . $natone['external_subnet_ip'] . "</external>\n";
+			# Description #
+			$contenido .= "\t\t\t<descr>" . $natone['descripcion'] . "</descr>\n";
+			# Interface #
+			$contenido .= "\t\t\t<interface>" . $natone['interface'] . "</interface>\n";
+			# Internal IP #
+			$contenido .= "\t\t\t<source>\n";
+				# Type Address/mask #
+				if($natone['internal_ip_type'] === "any")
+					$contenido .= "\t\t\t\t<any></any>\n";
+				if($natone['internal_ip_type'] === "single")
+					$contenido .= "\t\t\t\t<address>" . $natone['internal_adress_mask'] . "</address>\n";
+				if($natone['internal_ip_type'] === "network")
+					$contenido .= "\t\t\t\t<address>" . $natone['internal_adress_mask'] . "</address>\n";
+				if($natone['internal_ip_type'] === "pppoe")
+					$contenido .= "\t\t\t\t<network>pppoe</network>\n";
+				if($natone['internal_ip_type'] === "l2tp")
+					$contenido .= "\t\t\t\t<network>l2tp</network>\n";
+				if($natone['internal_ip_type'] === "wan")
+					$contenido .= "\t\t\t\t<network>wan</network>\n";
+				if($natone['internal_ip_type'] === "wanip")
+					$contenido .= "\t\t\t\t<network>wanip</network>\n";
+				if($natone['internal_ip_type'] === "lan")
+					$contenido .= "\t\t\t\t<network>lan</network>\n";
+				if($natone['internal_ip_type'] === "lanip")
+					$contenido .= "\t\t\t\t<network>lanip</network>\n";
+				# Not Invert the sense of the match #
+				if($natone['internal_ip'] === true)
+					$contenido .= "\t\t\t\t<not></not>\n";
+			$contenido .= "\t\t\t</source>\n";
+			# Destination #
+			$contenido .= "\t\t\t<destination>\n";
+				# Type Address/mask #
+				if($natone['destination_type'] === "any")
+					$contenido .= "\t\t\t\t<any></any>\n";
+				if($natone['destination_type'] === "single")
+					$contenido .= "\t\t\t\t<address>" . $natone['destination_adress_mask'] . "</address>\n";
+				if($natone['destination_type'] === "network")
+					$contenido .= "\t\t\t\t<address>" . $natone['destination_adress_mask'] . "</address>\n";
+				if($natone['destination_type'] === "pppoe")
+					$contenido .= "\t\t\t\t<network>pppoe</network>\n";
+				if($natone['destination_type'] === "l2tp")
+					$contenido .= "\t\t\t\t<network>l2tp</network>\n";
+				if($natone['destination_type'] === "wan")
+					$contenido .= "\t\t\t\t<network>wan</network>\n";
+				if($natone['destination_type'] === "wanip")
+					$contenido .= "\t\t\t\t<network>wanip</network>\n";
+				if($natone['destination_type'] === "lan")
+					$contenido .= "\t\t\t\t<network>lan</network>\n";
+				if($natone['destination_type'] === "lanip")
+					$contenido .= "\t\t\t\t<network>lanip</network>\n";
+				# Not Invert the sense of the match #
+				if($natone['destination'] === true)
+					$contenido .= "\t\t\t\t<not></not>\n";
+			$contenido .= "\t\t\t</destination>\n";
+			$contenido .= "\t\t</onetoone>\n";
 		}
 		$contenido .= "\t</nat>";
 		$archivo = fopen("conf.xml", 'w');

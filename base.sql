@@ -25,6 +25,8 @@ CREATE TABLE usuarios(
 	grupo VARCHAR(50) DEFAULT NULL
 );
 
+INSERT INTO usuarios VALUES(nextval('usuarios_id_seq'), 'admin', '', 'admin@warriorslabs.com', '$2a$04$z3Okjv7YTmOKn.OFky3Z7Ozdj.NtPyB1po9A7GSRHtnXxmpD4wXh2', 'ROLE_SUPERUSER', 't', 0, 'NULL');
+
 -- Tabla de grupos 
 CREATE TABLE grupos(
 	id INT PRIMARY KEY NOT NULL,
