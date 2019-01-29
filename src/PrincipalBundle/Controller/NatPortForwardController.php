@@ -5,6 +5,7 @@ namespace PrincipalBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+
 use PrincipalBundle\Entity\NatPortForward;
 use PrincipalBundle\Entity\NatOneToOne;
 use PrincipalBundle\Entity\Interfaces;
@@ -50,6 +51,24 @@ class NatPortForwardController extends Controller
 			if($role == 'ROLE_ADMINISTRATOR')
 				$nat->setGrupo($u->getGrupo());
 			$nat->setInterface($_POST['interface']);
+			$mask = $_POST['mask'];
+			if($mask == "32")
+				$nat->setSourceAdvancedAdressMask($form->get("sourceAdvancedAdressMask")->getData());
+			elseif($mask <= "31")
+			{
+				$address = $form->get("sourceAdvancedAdressMask")->getData();
+				$adress_mask = $address . "/" . $mask; 
+				$nat->setSourceAdvancedAdressMask($adress_mask);
+			}
+			$maskDestination = $_POST['maskDestination'];
+			if($maskDestination == "32")
+				$nat->setdestinationAdressMask($form->get("destinationAdressMask")->getData());
+			elseif($maskDestination <= "31")
+			{
+				$address = $form->get("destinationAdressMask")->getData();
+				$adress_mask = $address . "/" . $maskDestination; 
+				$nat->setdestinationAdressMask($adress_mask);
+			}
 			$em->persist($nat);
 			$flush=$em->flush();
 			if($flush == null)
@@ -198,8 +217,26 @@ class NatPortForwardController extends Controller
 		{
 			$nat->setInterface($_POST['interface']);
 			$em->persist($nat);
+			$mask = $_POST['mask'];
+			if($mask == "32")
+				$nat->setSourceAdvancedAdressMask($form->get("sourceAdvancedAdressMask")->getData());
+			elseif($mask <= "31")
+			{
+				$address = $form->get("sourceAdvancedAdressMask")->getData();
+				$adress_mask = $address . "/" . $mask; 
+				$nat->setSourceAdvancedAdressMask($adress_mask);
+			}
+			$maskDestination = $_POST['maskDestination'];
+			if($maskDestination == "32")
+				$nat->setdestinationAdressMask($form->get("destinationAdressMask")->getData());
+			elseif($maskDestination <= "31")
+			{
+				$address = $form->get("destinationAdressMask")->getData();
+				$adress_mask = $address . "/" . $maskDestination; 
+				$nat->setdestinationAdressMask($adress_mask);
+			}
 			$flush=$em->flush();
-			return $this->redirectToRoute("gruposTarget");
+			return $this->redirectToRoute("gruposNat");
 		}
 		return $this->render('@Principal/natPortForward/editarNatPortForward.html.twig', array(
 			'form'=>$form->createView(),
@@ -741,14 +778,14 @@ class NatPortForwardController extends Controller
 		unlink("conf.xml");
 		$estatus="The configuration has been saved";
 		$this->session->getFlashBag()->add("estatus",$estatus);
-		return $this->redirectToRoute("gruposAcl");
+		return $this->redirectToRoute("gruposNat");
 	}
 
 	# funcion para correr el script aplicar cambios en target #
-	public function aplicarXMLAclAction($id)
+	public function aplicarXMLNatAction($id)
 	{
     	$archivo = fopen("change_to_do.txt", 'w');
-		fwrite($archivo, "aclgroups.py");
+		fwrite($archivo, "nats.py");
 		fwrite ($archivo, "\n");
 		fclose($archivo); 
 		# Mover el archivo a la carpeta #

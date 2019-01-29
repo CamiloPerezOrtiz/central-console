@@ -104,6 +104,7 @@ CREATE TABLE nat_port_forward(
 	source_advanced_invert_match BOOLEAN DEFAULT FALSE,
 	source_advanced_type VARCHAR(25) NOT NULL,
 	source_advanced_adress_mask VARCHAR(25) DEFAULT NULL,
+	--source_advanced_mask INT DEFAULT NULL,
 	source_advanced_from_port VARCHAR(20) NOT NULL,
 	source_advanced_custom VARCHAR(25) DEFAULT NULL,
 	source_advanced_to_port VARCHAR(20) NOT NULL,
@@ -111,6 +112,7 @@ CREATE TABLE nat_port_forward(
 	destination_invert_match BOOLEAN DEFAULT FALSE,
 	destination_type VARCHAR(25) NOT NULL,
 	destination_adress_mask VARCHAR(25) DEFAULT NULL,
+	--destination_mask INT DEFAULT NULL,
 	destination_range_from_port VARCHAR(20) NOT NULL,
 	destination_range_custom VARCHAR(25) DEFAULT NULL,
 	destination_range_to_port VARCHAR(20) NOT NULL,
@@ -141,4 +143,36 @@ CREATE TABLE nat_one_to_one(
 	nat_reflection VARCHAR(25) NOT NULL,
 	grupo VARCHAR(50) NOT NULL,
 	posicion SERIAL	
+);
+
+--firewall wan
+CREATE TABLE firewall_lan(
+	id INT PRIMARY KEY NOT NULL,
+	action VARCHAR(25) NOT NULL,
+	estatus BOOLEAN DEFAULT FALSE,
+	interface VARCHAR(25) NOT NULL,
+	adress_family VARCHAR(25) NOT NULL,
+	protocolo VARCHAR(25) NOT NULL,
+	icmp_subtypes TEXT DEFAULT NULL,
+	--source
+	source_invert_match BOOLEAN DEFAULT FALSE,
+	source_type VARCHAR(25) DEFAULT NULL,
+	source_addres_mask VARCHAR(20) DEFAULT NULL,
+	--hide advanced
+	source_port_range_from VARCHAR(20) DEFAULT NULL,
+	source_port_range_custom VARCHAR(25) DEFAULT NULL,
+	source_port_range_to VARCHAR(20) DEFAULT NULL,
+	source_port_range_custom_to VARCHAR(20) DEFAULT NULL,
+	--destination
+	destination_invert_match BOOLEAN DEFAULT FALSE,
+	destination_type VARCHAR(25) DEFAULT NULL,
+	destination_addres_mask VARCHAR(20) DEFAULT NULL,
+	destination_port_range_from VARCHAR(20) DEFAULT NULL,
+	destination_port_range_custom VARCHAR(25) DEFAULT NULL,
+	destination_port_range_to VARCHAR(20) DEFAULT NULL,
+	destination_port_range_custom_to VARCHAR(20) DEFAULT NULL,
+	log BOOLEAN DEFAULT TRUE,
+	descripcion VARCHAR(40) NOT NULL,
+	grupo VARCHAR(50) NOT NULL,
+	posicion SERIAL NOT NULL 
 );

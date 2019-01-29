@@ -1,4 +1,4 @@
-192.168.0.1|Kasa|Automotriz toyota Santa Clara|
+192.168.1.160|Kasa|Automotriz toyota Santa Clara|
 192.168.0.2|UI|Ubicacion Ecatepec plantel Via Morelos|
 192.168.0.3|UI|Ubicacion Alcaldia Benito Juarez plantel Viaducto|
 192.168.0.4|Crista facil|Colocacion de vidrios Ubicacion Alcaldia Alavaro Obregon|

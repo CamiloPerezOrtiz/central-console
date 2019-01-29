@@ -184,7 +184,7 @@
                                                         {% if natPort.destination_type == "any" %} 
                                                             *
                                                         {% elseif natPort.destination_type == "network" %}
-                                                            {{ natPort.source_advanced_adress_mask }}
+                                                            {{ natPort.destination_adress_mask }}
                                                         {% elseif natPort.destination_type == "pppoe" %}
                                                             PPPoE
                                                         {% elseif natPort.destination_type == "l2tp" %}

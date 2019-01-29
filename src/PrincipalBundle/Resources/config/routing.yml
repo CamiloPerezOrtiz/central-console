@@ -187,7 +187,7 @@ crearXMLNat:
     defaults: { _controller: PrincipalBundle:NatPortForward:crearXMLNat }
 
 aplicarXMLNat:
-    path:     /aplicarXMLNat
+    path:     /aplicarXMLNat/{id}
     defaults: { _controller: PrincipalBundle:NatPortForward:aplicarXMLNat }
 
 dragAndDropNatPortForward:
