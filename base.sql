@@ -11,6 +11,7 @@ CREATE SEQUENCE interfaces_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 CREATE SEQUENCE protocolo_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 CREATE SEQUENCE nat_one_to_one_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 CREATE SEQUENCE nat_port_forward_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
+CREATE SEQUENCE informacion_ip_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 
 -- Tabla usuarios 
 CREATE TABLE usuarios(
@@ -175,4 +176,13 @@ CREATE TABLE firewall_lan(
 	descripcion VARCHAR(40) NOT NULL,
 	grupo VARCHAR(50) NOT NULL,
 	posicion SERIAL NOT NULL 
+);
+
+CREATE TABLE informacion_ip(
+	id INT PRIMARY KEY NOT NULL,
+	primer_octeto INT NOT NULL,
+	segundo_octeto INT NOT NULL, 
+	tercer_octeto INT NOT NULL,
+	cuarto_octeto INT NOT NULL,
+	mascara INT NOT NULL,
 );

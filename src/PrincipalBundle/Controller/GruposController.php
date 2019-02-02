@@ -77,6 +77,34 @@ class GruposController extends Controller
 			$stmtInt->execute($paramsInt);
 			$flushInt=$em->flush();
 		}
+		# Octetos #
+		$query_delete_informacion_ip = "DELETE FROM informacion_ip";
+		$consulta_delete_informacion_ip = $db->prepare($query_delete_informacion_ip);
+		$ejecutar_delete_informacion_ip =array();
+		$consulta_delete_informacion_ip->execute($ejecutar_delete_informacion_ip);
+		$ejecutar_informacion_ip=$em->flush();
+
+		$sequencia_actulizar_informacion_ip = "ALTER SEQUENCE informacion_ip_id_seq RESTART WITH 1";
+		$consulta_actulizar_informacion_ip = $db->prepare($sequencia_actulizar_informacion_ip);
+		$ejecutar_actulizar_informacion_ip =array();
+		$consulta_actulizar_informacion_ip->execute($paramsIn);
+		$actulizar_informacion_ip=$em->flush();
+
+		$ip_rangos=file('ip_rangos.txt'); 
+		foreach($ip_rangos as $txt_ip_rangos)
+		{
+			list($primer_octeto, $segundo_octeto, $tercer_octeto, $cuarto_octeto, $mascara) = explode("|", $txt_ip_rangos);
+			'primer_octeto: '.$primer_octeto.'<br/>'; 
+			'segundo_octeto: '.$segundo_octeto.'<br/>';
+			'tercer_octeto: '.$tercer_octeto.'<br/>'; 
+			'cuarto_octeto: '.$cuarto_octeto.'<br/>';
+			'mascara: '.$mascara.'<br/><br/>';
+			$query_insertar_ip_rango = "INSERT INTO informacion_ip VALUES (nextval('informacion_ip_id_seq'),'$primer_octeto','$segundo_octeto','$tercer_octeto','$cuarto_octeto','$mascara')";
+			$consulta_insertar_ip_rango = $db->prepare($query_insertar_ip_rango);
+			$ejecutar_insertar_ip_rango =array();
+			$consulta_insertar_ip_rango->execute($ejecutar_insertar_ip_rango);
+			$insertar_ip_rango=$em->flush();
+		}
 		return $this->redirectToRoute("grupos");
 	}
 
