@@ -84,6 +84,19 @@ class AliasesController extends Controller
 		return $datos;
 	}
 
+	# Funcion para recuperar los todos los aliases #
+	private function recuperarIp($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM grupos WHERE nombre = '$grupo' ORDER BY id";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$ip=$stmt->fetchAll();
+		return $ip;
+	}
+
 	# Funcion para mostrar los grupos #
 	public function gruposAliasesAction()
 	{

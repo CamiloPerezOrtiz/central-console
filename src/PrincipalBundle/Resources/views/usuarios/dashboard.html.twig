@@ -1,152 +1,180 @@
 {% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
 {% include '@Principal/plantillas/cuerpo.html.twig' %}
-<div class="container small">
-    <div id="content-wrapper">
-        <div class="container-fluid">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="{{ path('dashboard') }}">Dashboard</a>
-                </li>
-                <li class="breadcrumb-item active">My Dashboard</li>
-            </ol>
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <i class="fas fa-table"></i>
-                        Dashboard
-                    </div>
-                    <div class="card-body">
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Dashboard</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
                         <div class="row">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <div class="box-part text-center">
-                                    <i class="fas fa-users-cog fa-3x"></i>
-                                    <div class="title">
-                                        {% if app.user.role == 'ROLE_SUPERUSER' %}
-                                            <h4>All groups</h4>
-                                        {% endif %}
-                                        {% if app.user.role == 'ROLE_ADMINISTRATOR' or app.user.role == 'ROLE_USER'%}
-                                            <h4>Your group</h4>
-                                        {% endif %}
-                                    </div>
-                                    <div class="text">
-                                        <span>
-                                            Before making any changes, remember to update customer data.
-                                        </span>
-                                    </div>
-                                    <a href="{{ path('leerArchivoTxt') }}">View</a>
-                                </div>
+                            <div class="col-xs-3">
+                                <i class="fas fa-users-cog fa-4x"></i>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                <div class="box-part text-center">
-                                    <i class="fas fa-users fa-3x"></i>
-                                    <div class="title">
-                                        {% if app.user.role == 'ROLE_SUPERUSER' %}
-                                            <h4>All users</h4>
-                                        {% endif %}
-                                        {% if app.user.role == 'ROLE_ADMINISTRATOR' or app.user.role == 'ROLE_USER'%}
-                                            <h4>Your users</h4>
-                                        {% endif %}                                    
-                                    </div>
-                                    <div class="text">
-                                        <span>
-                                            View the users of the system.
-                                        </span>
-                                    </div>
-                                    <a href="{{ path('listaUsuarios') }}">View</a>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">
+                                    {% if app.user.role == 'ROLE_SUPERUSER' %}
+                                        All groups
+                                    {% endif %}
+                                    {% if app.user.role == 'ROLE_ADMINISTRATOR' or app.user.role == 'ROLE_USER'%}
+                                        Your group
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <hr>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-xl-3 col-sm-6 mb-3">
-                                <div class="card text-white bg-primary o-hidden h-100">
-                                    <div class="card-body">
-                                        <div class="card-body-icon">
-                                            <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        </div>
-                                        <div class="mr-5">Aliases</div>
-                                    </div>
-                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="{{ path('gruposAliases') }}">
-                                        <span class="float-left">View Details</span>
-                                        <span class="float-right">
-                                            <i class="fa fa-angle-right"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-sm-6 mb-3">
-                                <div class="card text-white bg-primary o-hidden h-100">
-                                    <div class="card-body">
-                                        <div class="card-body-icon">
-                                            <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        </div>
-                                        <div class="mr-5">Target categories</div>
-                                    </div>
-                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="{{ path('gruposTarget') }}">
-                                        <span class="float-left">View Details</span>
-                                        <span class="float-right">
-                                            <i class="fa fa-angle-right"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-sm-6 mb-3">
-                                <div class="card text-white bg-primary o-hidden h-100">
-                                    <div class="card-body">
-                                        <div class="card-body-icon">
-                                            <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        </div>
-                                        <div class="mr-5">ACL groups</div>
-                                    </div>
-                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="{{ path('gruposAcl') }}">
-                                        <span class="float-left">View Details</span>
-                                        <span class="float-right">
-                                            <i class="fa fa-angle-right"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-sm-6 mb-3">
-                                <div class="card text-white bg-primary o-hidden h-100">
-                                    <div class="card-body">
-                                        <div class="card-body-icon">
-                                            <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        </div>
-                                        <div class="mr-5">NAT</div>
-                                    </div>
-                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="{{ path('gruposNat') }}">
-                                        <span class="float-left">View Details</span>
-                                        <span class="float-right">
-                                            <i class="fa fa-angle-right"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-sm-6 mb-3">
-                                <div class="card text-white bg-primary o-hidden h-100">
-                                    <div class="card-body">
-                                        <div class="card-body-icon">
-                                            <i class="fa fa-bookmark" aria-hidden="true"></i>
-                                        </div>
-                                        <div class="mr-5">Firewall rules</div>
-                                    </div>
-                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="#">
-                                        <span class="float-left">View Details</span>
-                                        <span class="float-right">
-                                            <i class="fa fa-angle-right"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
+                    <a href="{{ path('leerArchivoTxt') }}">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
                         </div>
-                    </div>
+                    </a>
                 </div>
-            <!-- Fin de reglas del firewall -->
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fas fa-users fa-4x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">
+                                    {% if app.user.role == 'ROLE_SUPERUSER' %}
+                                        All users
+                                    {% endif %}
+                                    {% if app.user.role == 'ROLE_ADMINISTRATOR' or app.user.role == 'ROLE_USER'%}
+                                        Your users
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ path('listaUsuarios') }}">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-tasks fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">Aliases</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ path('gruposAliases') }}">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-tasks fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><h3>Target categories</h3></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ path('gruposTarget') }}">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-tasks fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">Acl groups</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ path('gruposAcl') }}">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-red">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-tasks fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">Nats</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ path('gruposNat') }}">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="panel panel-red">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-tasks fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"><h3>Firewall rules</h3></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-</div>
-<div class="overlay"></div>
 {% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
 {% include '@Principal/plantillas/declaracionFin.html.twig' %}

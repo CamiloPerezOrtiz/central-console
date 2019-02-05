@@ -1,56 +1,54 @@
 {% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
 {% include '@Principal/plantillas/cuerpo.html.twig' %}
-<div class="container small">
-    <div id="content-wrapper">
-        <div class="container-fluid">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="{{path('dashboard')}}">Dashboard</a>
-                </li>
-                <li class="breadcrumb-item active">
-                    All nat
-                </li>
-            </ol>
-            <div class="card mb-3">
-                <div class="card-header">
-                    <i class="fas fa-table"></i>
-                    Nat
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% for grupos in grupo %}
-                            <div class="col-xl-3 col-sm-6 mb-3">
-                                <div class="card text-white bg-primary o-hidden h-100">
-                                    <div class="card-body">
-                                        <div class="card-body-icon">
-                                            <i class="fa fa-fw fa-list"></i>
-                                        </div>
-                                        <div class="mr-5">{{ grupos.nombre }}</div>
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    All groups
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            {% for grupos in grupo %}
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-fw fa-list fa-4x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+                                        <h4> {{ grupos.nombre }} </h4>
                                     </div>
-                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="{{ path('registroNatPortForward',{ id:grupos.nombre }) }}">
-                                        <span class="float-left">Register a new nat port forward</span>
-                                        <span class="float-right">
-                                            <i class="fa fa-angle-right"></i>
-                                        </span>
-                                    </a>
-                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="{{ path('registroNatOneToOne',{ id:grupos.nombre }) }}">
-                                        <span class="float-left">Register a new nat 1:1</span>
-                                        <span class="float-right">
-                                            <i class="fa fa-angle-right"></i>
-                                        </span>
-                                    </a>
-                                    <a class="card-footer text-white btn-outline-danger clearfix small z-1" href="{{ path('listaNat',{ id:grupos.nombre }) }}">
-                                        <span class="float-left">List aliases</span>
-                                        <span class="float-right">
-                                            <i class="fa fa-angle-right"></i>
-                                        </span>
-                                    </a>
                                 </div>
                             </div>
-                        {% endfor %}
+                        </div>
+                        <a href="{{ path('registroNatPortForward',{ id:grupos.nombre }) }}">
+                            <div class="panel-footer">
+                                <span class="pull-left">Register a new nat port forward</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                        <a href="{{ path('registroNatOneToOne',{ id:grupos.nombre }) }}">
+                            <div class="panel-footer">
+                                <span class="pull-left">Register a new nat 1:1</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                        <a href="{{ path('listaNat',{ id:grupos.nombre }) }}">
+                            <div class="panel-footer">
+                                <span class="pull-left">List nats</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
                     </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 </div>

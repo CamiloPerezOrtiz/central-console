@@ -83,13 +83,11 @@ class GruposController extends Controller
 		$ejecutar_delete_informacion_ip =array();
 		$consulta_delete_informacion_ip->execute($ejecutar_delete_informacion_ip);
 		$ejecutar_informacion_ip=$em->flush();
-
 		$sequencia_actulizar_informacion_ip = "ALTER SEQUENCE informacion_ip_id_seq RESTART WITH 1";
 		$consulta_actulizar_informacion_ip = $db->prepare($sequencia_actulizar_informacion_ip);
 		$ejecutar_actulizar_informacion_ip =array();
 		$consulta_actulizar_informacion_ip->execute($paramsIn);
 		$actulizar_informacion_ip=$em->flush();
-
 		$ip_rangos=file('ip_rangos.txt'); 
 		foreach($ip_rangos as $txt_ip_rangos)
 		{

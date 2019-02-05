@@ -1,9 +1,9 @@
-192.168.1.160|Kasa|Automotriz toyota Santa Clara|
-192.168.0.2|UI|Ubicacion Ecatepec plantel Via Morelos|
-192.168.0.3|UI|Ubicacion Alcaldia Benito Juarez plantel Viaducto|
-192.168.0.4|Crista facil|Colocacion de vidrios Ubicacion Alcaldia Alavaro Obregon|
-192.168.0.5|UI|Ubicacion Alcaldia Venustiano Carranza  plantel Sur|
-192.168.0.6|UI|Ubicacion Alcaldia Alavaro Obregon plantel Norte|
-192.168.0.7|UI|Ubicacion Alcaldia Miguel Hidalgo  plantel Coacalco|
-192.168.0.8|Kasa|Automotriz Nisan Santa Fe|
-192.168.0.8|Hospital Satelite|Hospital privado Ubicacion satelite|
+192.168.0.0|Kasa|Automotriz toyota Santa Clara|
+192.168.1.0|UI|Ubicacion Ecatepec plantel Via Morelos|
+192.168.2.0|UI|Ubicacion Alcaldia Benito Juarez plantel Viaducto|
+192.168.3.0|Crista facil|Colocacion de vidrios Ubicacion Alcaldia Alavaro Obregon|
+192.168.4.0|UI|Ubicacion Alcaldia Venustiano Carranza  plantel Sur|
+192.168.5.0|UI|Ubicacion Alcaldia Alavaro Obregon plantel Norte|
+192.168.6.0|UI|Ubicacion Alcaldia Miguel Hidalgo  plantel Coacalco|
+192.168.7.0|Kasa|Automotriz Nisan Santa Fe|
+192.168.8.0|Hospital Satelite|Hospital privado Ubicacion satelite|
