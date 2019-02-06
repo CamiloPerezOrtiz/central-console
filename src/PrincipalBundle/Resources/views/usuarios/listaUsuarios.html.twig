@@ -41,16 +41,14 @@
                                 </a>
                                 <br><br>
                             {% endif %}
-                            <table class="table table-sm table-striped table-bordered table-hover text-center" id="dataTables-example">
-                                <div class="container">
-                                    <div class="col-md-12">
-                                        {% for msg in app.session.flashbag().get('estatus') %}
-                                            <div class="alert alert-info" aria-label="Close">
-                                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                <strong>Info!</strong> {{ msg }}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
+                            <table class="table table-sm table-striped table-bordered table-hover text-center table-condensed small" id="dataTables-example">
+                                <div class="col-md-12">
+                                    {% for msg in app.session.flashbag().get('estatus') %}
+                                        <div class="alert alert-info" aria-label="Close">
+                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                            <strong>Info!</strong> {{ msg }}
+                                        </div>
+                                    {% endfor %}
                                 </div>
                                 <thead>
                                     <tr>
@@ -62,8 +60,7 @@
                                             <th>Status</th>
                                         {% endif %}
                                         {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                            <th>Edit</th>
-                                            <th>Delete</th>
+                                            <th>Operations</th>
                                         {% endif %}                                 
                                     </tr>
                                 </thead>
@@ -76,37 +73,29 @@
                                             <td>{{ usuarios.grupo }}</td>
                                             {% if app.user.role == 'ROLE_SUPERUSER' %}
                                                 <td>
-                                                    <a href="{{ path('actualizarEstado',{id:usuarios.id})}}">
-                                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="right" 
-                                                            {% if usuarios.estado == true %}
-                                                                title="Press to disabled "        
-                                                            {% endif %}
-                                                            {% if usuarios.estado == false %}
-                                                                 title="Press to active"
-                                                            {% endif %} name="status">
-                                                            {% if usuarios.estado == true %}
-                                                                Active       
-                                                            {% endif %}
-                                                            {% if usuarios.estado == false %}
-                                                                Disabled 
-                                                            {% endif %}
-                                                        </button>
+                                                    <a href="{{ path('actualizarEstado',{id:usuarios.id})}}"  data-toggle="tooltip" data-placement="right" 
+                                                        {% if usuarios.estado == true %}
+                                                            title="Press to disabled "        
+                                                        {% endif %}
+                                                        {% if usuarios.estado == false %}
+                                                             title="Press to active"
+                                                        {% endif %} name="status">
+                                                        {% if usuarios.estado == true %}
+                                                            Active       
+                                                        {% endif %}
+                                                        {% if usuarios.estado == false %}
+                                                            Disabled 
+                                                        {% endif %}
                                                     </a>
                                                 </td>
                                             {% endif %}
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
                                                     <a href="{{ path('editarUsuario',{id:usuarios.id}) }}">
-                                                        <button class="btn btn-warning btn-sm" type="submit">
-                                                            <small><i class="fas fa-user-edit"></i></small>
-                                                        </button>
+                                                        <i class="fas fa-user-edit"></i>
                                                     </a>
-                                                </td>
-                                                <td>
                                                     <a href="{{ path('eliminarUsuario',{id:usuarios.id}) }}">
-                                                        <button class="btn btn-danger btn-sm" type="submit">
-                                                            <i class="fas fa-user-minus"></i>
-                                                        </button>
+                                                        <i class="fas fa-user-minus"></i>
                                                     </a>
                                                 </td>
                                             {% endif %}

@@ -23,6 +23,8 @@ class AliasesController extends Controller
 	# Funcion para registrar un nuevo aliases #
 	public function registroAliasesAction(Request $request)
 	{
+		$grupo=$_REQUEST['id'];
+		$ipGrupos = $this->ipGrupos($grupo);
 		$alias = new Aliases();
 		$form = $this ->createForm(AliasesType::class, $alias);
 		$form->handleRequest($request);
@@ -67,7 +69,8 @@ class AliasesController extends Controller
 			}
 		}
 		return $this->render('@Principal/aliases/registroAliases.html.twig', array(
-			'form'=>$form->createView()
+			'form'=>$form->createView(),
+			'ipGrupos'=>$ipGrupos
 		));
 	}
 
@@ -82,6 +85,19 @@ class AliasesController extends Controller
 		)->setParameter('nombre', $nombre);
 		$datos = $query->getResult();
 		return $datos;
+	}
+
+	# Funcion para aplicar cambios #
+	private function ipGrupos($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
 	}
 
 	# Funcion para recuperar los todos los aliases #

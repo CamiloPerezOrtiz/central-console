@@ -856,7 +856,7 @@ table.dataTable thead .sorting:after {
 {
     position: fixed;
     bottom: 0;
-     padding-top: 15px;
+    padding-top: 15px;
     width: 100%;
     height: auto;
     background-color: #000;

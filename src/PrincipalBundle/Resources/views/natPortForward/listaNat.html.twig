@@ -1,541 +1,531 @@
 {% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
 {% include '@Principal/plantillas/cuerpo.html.twig' %}
-<div class="container small">
-    <div id="content-wrapper">
-        <div class="container-fluid">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="{{path('dashboard')}}">Dashboard</a>
-                </li>
-                <li class="breadcrumb-item active">
-                    List aliases
-                </li>
-            </ol>
-            <div class="card mb-3">
-                <div class="card-header">
-                    <i class="fas fa-table"></i>
-                    Table aliases
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#home">Port forward</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#menu1">1:1</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div id="home" class="container tab-pane active"><br>
-                                {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                    <a href="{{path ('registerNat') }}">
-                                        <button type="button" class="btn btn-success">
-                                            Add Port forward <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </a>
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">List aliases</h1>
+            </div>
+        </div>
+        <div class="row small">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Table aliases
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
+                                <a href="{{ path('registroAliases') }}">
+                                    <button type="button" class="btn btn-success">
+                                        Add aliases
+                                    </button>
+                                </a>
                                 <br><br>
-                                {% endif %} 
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-bordered table-sm text-center small" width="100%">
-                                        <thead class="bg-dark text-white">
-                                            <tr class="small">
-                                                <th>Disabled</th>                         
-                                                <th>Interface</th>
-                                                <th>Protocol</th>
-                                                <th>Source Address</th>
-                                                <th>Source Ports</th>
-                                                <th>Dest. Address</th>
-                                                <th>Dest. Ports</th>
-                                                <th>NAT IP</th>
-                                                <th>NAT Ports</th>
-                                                <th>Description</th>
-                                                {% if app.user.role == "ROLE_ADMIN" or app.user.role == "ROLE_SUPERUSER" %}
-                                                    <th>Edit</th>
-                                                    <th>Delete</th>
-                                                {% endif %}                 
-                                            </tr>
-                                        </thead>
-                                        <tbody class="row_position">
-                                             {% for natPort in nat %}
-                                                <tr id="{{ natPort.id }}" style="cursor: all-scroll;">
-                                                    <td>{% if natPort.estatus == true %} on {% else %} off {% endif %} </td>
-                                                    <td>{{ natPort.interface|upper }} </td>
-                                                    <td>{{ natPort.protocolo|upper }}</td>
-                                                    <td>
-                                                        {% if natPort.source_advanced_type == "any" %} 
-                                                            *
-                                                        {% elseif natPort.source_advanced_type == "network" %}
-                                                            {{ natPort.source_advanced_adress_mask }}
-                                                        {% elseif natPort.source_advanced_type == "pppoe" %}
-                                                            PPPoE
-                                                        {% elseif natPort.source_advanced_type == "l2tp" %}
-                                                            L2TP clients
-                                                        {% elseif natPort.source_advanced_type == "wan" %}
-                                                            WAN net
-                                                        {% elseif natPort.source_advanced_type == "wanip" %}
-                                                            WAN address
-                                                        {% elseif natPort.source_advanced_type == "lan" %}
-                                                            LAN net
-                                                        {% elseif natPort.source_advanced_type == "lanip" %}
-                                                            LAN address
-                                                        {% else %} 
-                                                            {{ natPort.source_advanced_type }} 
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if natPort.source_advanced_from_port == "any" %} 
-                                                            *
-                                                        {% elseif natPort.source_advanced_from_port == '5999' %}
-                                                            5999 (CVSup)  
-                                                        {% elseif natPort.source_advanced_from_port == '53' %}
-                                                            53 (DNS)  
-                                                        {% elseif natPort.source_advanced_from_port == '21' %}
-                                                            21 (FTP)  
-                                                        {% elseif natPort.source_advanced_from_port == '3000' %}
-                                                            3000 (HBCI)  
-                                                        {% elseif natPort.source_advanced_from_port == '80' %}
-                                                            80 (HTTP) 
-                                                        {% elseif natPort.source_advanced_from_port == '443' %}
-                                                            443 (HTTPS)  
-                                                        {% elseif natPort.source_advanced_from_port == '143' %}
-                                                            143 (ICQ)  
-                                                        {% elseif natPort.source_advanced_from_port == '113' %}
-                                                            113 (IMAP)  
-                                                        {% elseif natPort.source_advanced_from_port == '993' %}
-                                                            993 (IMAP/S)  
-                                                        {% elseif natPort.source_advanced_from_port == '4500' %}
-                                                            4500 (IPsec NAT-T)
-                                                        {% elseif natPort.source_advanced_from_port == '500' %}
-                                                            500 (ISAKMP)  
-                                                        {% elseif natPort.source_advanced_from_port == '1701' %}
-                                                            1701 (L2TP)  
-                                                        {% elseif natPort.source_advanced_from_port == '389' %}
-                                                            389 (LDAP)  
-                                                        {% elseif natPort.source_advanced_from_port == '1755' %}
-                                                            1755 (MMS/TCP)  
-                                                        {% elseif natPort.source_advanced_from_port == '7000' %}
-                                                            7000 (MMS/UDP)  
-                                                        {% elseif natPort.source_advanced_from_port == '445' %}
-                                                            445 (MS DS)  
-                                                        {% elseif natPort.source_advanced_from_port == '3389' %}
-                                                            3389 (MS RDP)  
-                                                        {% elseif natPort.source_advanced_from_port == '1512' %}
-                                                            1512 (MS WINS) 
-                                                        {% elseif natPort.source_advanced_from_port == '1863' %}
-                                                            1863 (MSN)  
-                                                        {% elseif natPort.source_advanced_from_port == '119' %}
-                                                            119 (NNTP)  
-                                                        {% elseif natPort.source_advanced_from_port == '123' %}
-                                                            123 (NTP)  
-                                                        {% elseif natPort.source_advanced_from_port == '138' %}
-                                                            138 (NetBIOS-DGM)  
-                                                        {% elseif natPort.source_advanced_from_port == '137' %}
-                                                            137 (NetBIOS-NS)
-                                                        {% elseif natPort.source_advanced_from_port == '139' %}
-                                                            139 (NetBIOS-SSN)  
-                                                        {% elseif natPort.source_advanced_from_port == '1194' %}
-                                                            1194 (OpenVPN)  
-                                                        {% elseif natPort.source_advanced_from_port == '110' %}
-                                                            110 (POP3)
-                                                        {% elseif natPort.source_advanced_from_port == '995' %}
-                                                            995 (POP3/S)  
-                                                        {% elseif natPort.source_advanced_from_port == '1723' %}
-                                                            1723 (PPTP)  
-                                                        {% elseif natPort.source_advanced_from_port == '1812' %}
-                                                            1812 (RADIUS)  
-                                                        {% elseif natPort.source_advanced_from_port == '1813' %}
-                                                            1813 (RADIUS accounting)  
-                                                        {% elseif natPort.source_advanced_from_port == '5004' %}
-                                                            5004 (RTP) 
-                                                        {% elseif natPort.source_advanced_from_port == '5060' %}
-                                                            5060 (SIP)  
-                                                        {% elseif natPort.source_advanced_from_port == '25' %}
-                                                            25 (SMTP)  
-                                                        {% elseif natPort.source_advanced_from_port == '465' %}
-                                                            465 (SMTP/S)  
-                                                        {% elseif natPort.source_advanced_from_port == '161' %}
-                                                            161 (SNMP)  
-                                                        {% elseif natPort.source_advanced_from_port == '162' %}
-                                                            162 (SNMP-Trap)
-                                                        {% elseif natPort.source_advanced_from_port == '22' %}
-                                                            22 (SSH)  
-                                                        {% elseif natPort.source_advanced_from_port == '3478' %}
-                                                            3478 (STUN)  
-                                                        {% elseif natPort.source_advanced_from_port == '587' %}
-                                                            587 (SUBMISSION)  
-                                                        {% elseif natPort.source_advanced_from_port == '3544' %}
-                                                            3544 (Teredo)
-                                                        {% elseif natPort.source_advanced_from_port == '23' %}
-                                                            23 (Telnet)  
-                                                        {% elseif natPort.source_advanced_from_port == '69' %}
-                                                            69 (TFTP)  
-                                                        {% elseif natPort.source_advanced_from_port == '5900' %}
-                                                            5900 (VNC)  
-                                                        {% else %}
-                                                            {% if natPort.source_advanced_custom == natPort.source_advanced_custom_to_port %}
-                                                                {{ natPort.source_advanced_custom }}
-                                                            {% else %}
-                                                                {{ natPort.source_advanced_custom }} - {{ natPort.source_advanced_custom_to_port }}
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if natPort.destination_type == "any" %} 
-                                                            *
-                                                        {% elseif natPort.destination_type == "network" %}
-                                                            {{ natPort.destination_adress_mask }}
-                                                        {% elseif natPort.destination_type == "pppoe" %}
-                                                            PPPoE
-                                                        {% elseif natPort.destination_type == "l2tp" %}
-                                                            L2TP clients
-                                                        {% elseif natPort.destination_type == "wan" %}
-                                                            WAN net
-                                                        {% elseif natPort.destination_type == "wanip" %}
-                                                            WAN address
-                                                        {% elseif natPort.destination_type == "lan" %}
-                                                            LAN net
-                                                        {% elseif natPort.destination_type == "lanip" %}
-                                                            LAN address
-                                                        {% elseif natPort.destination_type == "(self)" %}
-                                                            This Firewall
-                                                        {% else %} 
-                                                            {{ natPort.destination_type }} 
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if natPort.destination_range_from_port == "any" %} 
-                                                            *
-                                                        {% elseif natPort.destination_range_from_port == '5999' %}
-                                                            5999 (CVSup)  
-                                                        {% elseif natPort.destination_range_from_port == '53' %}
-                                                            53 (DNS)  
-                                                        {% elseif natPort.destination_range_from_port == '21' %}
-                                                            21 (FTP)  
-                                                        {% elseif natPort.destination_range_from_port == '3000' %}
-                                                            3000 (HBCI)  
-                                                        {% elseif natPort.destination_range_from_port == '80' %}
-                                                            80 (HTTP) 
-                                                        {% elseif natPort.destination_range_from_port == '443' %}
-                                                            443 (HTTPS)  
-                                                        {% elseif natPort.destination_range_from_port == '143' %}
-                                                            143 (ICQ)  
-                                                        {% elseif natPort.destination_range_from_port == '113' %}
-                                                            113 (IMAP)  
-                                                        {% elseif natPort.destination_range_from_port == '993' %}
-                                                            993 (IMAP/S)  
-                                                        {% elseif natPort.destination_range_from_port == '4500' %}
-                                                            4500 (IPsec NAT-T)
-                                                        {% elseif natPort.destination_range_from_port == '500' %}
-                                                            500 (ISAKMP)  
-                                                        {% elseif natPort.destination_range_from_port == '1701' %}
-                                                            1701 (L2TP)  
-                                                        {% elseif natPort.destination_range_from_port == '389' %}
-                                                            389 (LDAP)  
-                                                        {% elseif natPort.destination_range_from_port == '1755' %}
-                                                            1755 (MMS/TCP)  
-                                                        {% elseif natPort.destination_range_from_port == '7000' %}
-                                                            7000 (MMS/UDP)  
-                                                        {% elseif natPort.destination_range_from_port == '445' %}
-                                                            445 (MS DS)  
-                                                        {% elseif natPort.destination_range_from_port == '3389' %}
-                                                            3389 (MS RDP)  
-                                                        {% elseif natPort.destination_range_from_port == '1512' %}
-                                                            1512 (MS WINS) 
-                                                        {% elseif natPort.destination_range_from_port == '1863' %}
-                                                            1863 (MSN)  
-                                                        {% elseif natPort.destination_range_from_port == '119' %}
-                                                            119 (NNTP)  
-                                                        {% elseif natPort.destination_range_from_port == '123' %}
-                                                            123 (NTP)  
-                                                        {% elseif natPort.destination_range_from_port == '138' %}
-                                                            138 (NetBIOS-DGM)  
-                                                        {% elseif natPort.destination_range_from_port == '137' %}
-                                                            137 (NetBIOS-NS)
-                                                        {% elseif natPort.destination_range_from_port == '139' %}
-                                                            139 (NetBIOS-SSN)  
-                                                        {% elseif natPort.destination_range_from_port == '1194' %}
-                                                            1194 (OpenVPN)  
-                                                        {% elseif natPort.destination_range_from_port == '110' %}
-                                                            110 (POP3)
-                                                        {% elseif natPort.destination_range_from_port == '995' %}
-                                                            995 (POP3/S)  
-                                                        {% elseif natPort.destination_range_from_port == '1723' %}
-                                                            1723 (PPTP)  
-                                                        {% elseif natPort.destination_range_from_port == '1812' %}
-                                                            1812 (RADIUS)  
-                                                        {% elseif natPort.destination_range_from_port == '1813' %}
-                                                            1813 (RADIUS accounting)  
-                                                        {% elseif natPort.destination_range_from_port == '5004' %}
-                                                            5004 (RTP) 
-                                                        {% elseif natPort.destination_range_from_port == '5060' %}
-                                                            5060 (SIP)  
-                                                        {% elseif natPort.destination_range_from_port == '25' %}
-                                                            25 (SMTP)  
-                                                        {% elseif natPort.destination_range_from_port == '465' %}
-                                                            465 (SMTP/S)  
-                                                        {% elseif natPort.destination_range_from_port == '161' %}
-                                                            161 (SNMP)  
-                                                        {% elseif natPort.destination_range_from_port == '162' %}
-                                                            162 (SNMP-Trap)
-                                                        {% elseif natPort.destination_range_from_port == '22' %}
-                                                            22 (SSH)  
-                                                        {% elseif natPort.destination_range_from_port == '3478' %}
-                                                            3478 (STUN)  
-                                                        {% elseif natPort.destination_range_from_port == '587' %}
-                                                            587 (SUBMISSION)  
-                                                        {% elseif natPort.destination_range_from_port == '3544' %}
-                                                            3544 (Teredo)
-                                                        {% elseif natPort.destination_range_from_port == '23' %}
-                                                            23 (Telnet)  
-                                                        {% elseif natPort.destination_range_from_port == '69' %}
-                                                            69 (TFTP)  
-                                                        {% elseif natPort.destination_range_from_port == '5900' %}
-                                                            5900 (VNC)  
-                                                        {% else %}
-                                                            {% if natPort.destination_range_custom == natPort.destination_range_custom_to_port %}
-                                                                {{ natPort.destination_range_custom }}
-                                                            {% else %}
-                                                                {{ natPort.destination_range_custom }} - {{ natPort.destination_range_custom_to_port }}
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>{{ natPort.redirect_target_ip  }}</td>
-                                                    <td>
-                                                        {% if natPort.redirect_target_port == 'any' %}
-                                                            *
-                                                        {% elseif natPort.redirect_target_port == '5999' %}
-                                                            5999 (CVSup)  
-                                                        {% elseif natPort.redirect_target_port == '53' %}
-                                                            53 (DNS)  
-                                                        {% elseif natPort.redirect_target_port == '21' %}
-                                                            21 (FTP)  
-                                                        {% elseif natPort.redirect_target_port == '3000' %}
-                                                            3000 (HBCI)  
-                                                        {% elseif natPort.redirect_target_port == '80' %}
-                                                            80 (HTTP) 
-                                                        {% elseif natPort.redirect_target_port == '443' %}
-                                                            443 (HTTPS)  
-                                                        {% elseif natPort.redirect_target_port == '143' %}
-                                                            143 (ICQ)  
-                                                        {% elseif natPort.redirect_target_port == '113' %}
-                                                            113 (IMAP)  
-                                                        {% elseif natPort.redirect_target_port == '993' %}
-                                                            993 (IMAP/S)  
-                                                        {% elseif natPort.redirect_target_port == '4500' %}
-                                                            4500 (IPsec NAT-T)
-                                                        {% elseif natPort.redirect_target_port == '500' %}
-                                                            500 (ISAKMP)  
-                                                        {% elseif natPort.redirect_target_port == '1701' %}
-                                                            1701 (L2TP)  
-                                                        {% elseif natPort.redirect_target_port == '389' %}
-                                                            389 (LDAP)  
-                                                        {% elseif natPort.redirect_target_port == '1755' %}
-                                                            1755 (MMS/TCP)  
-                                                        {% elseif natPort.redirect_target_port == '7000' %}
-                                                            7000 (MMS/UDP)  
-                                                        {% elseif natPort.redirect_target_port == '445' %}
-                                                            445 (MS DS)  
-                                                        {% elseif natPort.redirect_target_port == '3389' %}
-                                                            3389 (MS RDP)  
-                                                        {% elseif natPort.redirect_target_port == '1512' %}
-                                                            1512 (MS WINS) 
-                                                        {% elseif natPort.redirect_target_port == '1863' %}
-                                                            1863 (MSN)  
-                                                        {% elseif natPort.redirect_target_port == '119' %}
-                                                            119 (NNTP)  
-                                                        {% elseif natPort.redirect_target_port == '123' %}
-                                                            123 (NTP)  
-                                                        {% elseif natPort.redirect_target_port == '138' %}
-                                                            138 (NetBIOS-DGM)  
-                                                        {% elseif natPort.redirect_target_port == '137' %}
-                                                            137 (NetBIOS-NS)
-                                                        {% elseif natPort.redirect_target_port == '139' %}
-                                                            139 (NetBIOS-SSN)  
-                                                        {% elseif natPort.redirect_target_port == '1194' %}
-                                                            1194 (OpenVPN)  
-                                                        {% elseif natPort.redirect_target_port == '110' %}
-                                                            110 (POP3)
-                                                        {% elseif natPort.redirect_target_port == '995' %}
-                                                            995 (POP3/S)  
-                                                        {% elseif natPort.redirect_target_port == '1723' %}
-                                                            1723 (PPTP)  
-                                                        {% elseif natPort.redirect_target_port == '1812' %}
-                                                            1812 (RADIUS)  
-                                                        {% elseif natPort.redirect_target_port == '1813' %}
-                                                            1813 (RADIUS accounting)  
-                                                        {% elseif natPort.redirect_target_port == '5004' %}
-                                                            5004 (RTP) 
-                                                        {% elseif natPort.redirect_target_port == '5060' %}
-                                                            5060 (SIP)  
-                                                        {% elseif natPort.redirect_target_port == '25' %}
-                                                            25 (SMTP)  
-                                                        {% elseif natPort.redirect_target_port == '465' %}
-                                                            465 (SMTP/S)  
-                                                        {% elseif natPort.redirect_target_port == '161' %}
-                                                            161 (SNMP)  
-                                                        {% elseif natPort.redirect_target_port == '162' %}
-                                                            162 (SNMP-Trap)
-                                                        {% elseif natPort.redirect_target_port == '22' %}
-                                                            22 (SSH)  
-                                                        {% elseif natPort.redirect_target_port == '3478' %}
-                                                            3478 (STUN)  
-                                                        {% elseif natPort.redirect_target_port == '587' %}
-                                                            587 (SUBMISSION)  
-                                                        {% elseif natPort.redirect_target_port == '3544' %}
-                                                            3544 (Teredo)
-                                                        {% elseif natPort.redirect_target_port == '23' %}
-                                                            23 (Telnet)  
-                                                        {% elseif natPort.redirect_target_port == '69' %}
-                                                            69 (TFTP)  
-                                                        {% elseif natPort.redirect_target_port == '5900' %}
-                                                            5900 (VNC)  
-                                                        {% else %}
-                                                            {{ natPort.redirect_target_port_custom }}
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>{{ natPort.descripcion }}</td>
+                            {% endif %}
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a class="nav-link active" data-toggle="tab" href="#home">Port forward</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#menu1">1:1</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="home" class="container tab-pane active"><br>
+                                    {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
+                                        <a href="{{path ('registerNat') }}">
+                                            <button type="button" class="btn btn-success">
+                                                Add Port forward <i class="fas fa-search-plus"></i>
+                                            </button>
+                                        </a>
+                                    <br><br>
+                                    {% endif %} 
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-striped table-bordered table-hover text-center small">
+                                            <thead class="small">
+                                                <tr>
+                                                    <th>Disabled</th>                         
+                                                    <th>Interface</th>
+                                                    <th>Protocol</th>
+                                                    <th>Source Address</th>
+                                                    <th>Source Ports</th>
+                                                    <th>Dest. Address</th>
+                                                    <th>Dest. Ports</th>
+                                                    <th>NAT IP</th>
+                                                    <th>NAT Ports</th>
+                                                    <th>Description</th>
                                                     {% if app.user.role == "ROLE_ADMIN" or app.user.role == "ROLE_SUPERUSER" %}
-                                                        <td>
-                                                            <a href="{{path('editarNatPortForward',{id:natPort.id})}}">
-                                                                <button class="btn btn-warning btn-sm" type="submit">
-                                                                    Edit <i class="far fa-edit"></i>
-                                                                </button>
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="{{path('eliminarNatPortForward',{id:natPort.id})}}">
-                                                                <button class="btn btn-danger btn-sm" type="submit">
-                                                                    Delete <i class="fas fa-times-circle"></i>
-                                                                </button>
-                                                            </a>
-                                                        </td>
-                                                    {% endif %}
+                                                        <th>Operations</th>
+                                                    {% endif %}                 
                                                 </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody class="row_position">
+                                                 {% for natPort in nat %}
+                                                    <tr id="{{ natPort.id }}" style="cursor: all-scroll;">
+                                                        <td>{% if natPort.estatus == true %} on {% else %} off {% endif %} </td>
+                                                        <td>{{ natPort.interface|upper }} </td>
+                                                        <td>{{ natPort.protocolo|upper }}</td>
+                                                        <td>
+                                                            {% if natPort.source_advanced_type == "any" %} 
+                                                                *
+                                                            {% elseif natPort.source_advanced_type == "network" %}
+                                                                {{ natPort.source_advanced_adress_mask }}
+                                                            {% elseif natPort.source_advanced_type == "pppoe" %}
+                                                                PPPoE
+                                                            {% elseif natPort.source_advanced_type == "l2tp" %}
+                                                                L2TP clients
+                                                            {% elseif natPort.source_advanced_type == "wan" %}
+                                                                WAN net
+                                                            {% elseif natPort.source_advanced_type == "wanip" %}
+                                                                WAN address
+                                                            {% elseif natPort.source_advanced_type == "lan" %}
+                                                                LAN net
+                                                            {% elseif natPort.source_advanced_type == "lanip" %}
+                                                                LAN address
+                                                            {% else %} 
+                                                                {{ natPort.source_advanced_type }} 
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if natPort.source_advanced_from_port == "any" %} 
+                                                                *
+                                                            {% elseif natPort.source_advanced_from_port == '5999' %}
+                                                                5999 (CVSup)  
+                                                            {% elseif natPort.source_advanced_from_port == '53' %}
+                                                                53 (DNS)  
+                                                            {% elseif natPort.source_advanced_from_port == '21' %}
+                                                                21 (FTP)  
+                                                            {% elseif natPort.source_advanced_from_port == '3000' %}
+                                                                3000 (HBCI)  
+                                                            {% elseif natPort.source_advanced_from_port == '80' %}
+                                                                80 (HTTP) 
+                                                            {% elseif natPort.source_advanced_from_port == '443' %}
+                                                                443 (HTTPS)  
+                                                            {% elseif natPort.source_advanced_from_port == '143' %}
+                                                                143 (ICQ)  
+                                                            {% elseif natPort.source_advanced_from_port == '113' %}
+                                                                113 (IMAP)  
+                                                            {% elseif natPort.source_advanced_from_port == '993' %}
+                                                                993 (IMAP/S)  
+                                                            {% elseif natPort.source_advanced_from_port == '4500' %}
+                                                                4500 (IPsec NAT-T)
+                                                            {% elseif natPort.source_advanced_from_port == '500' %}
+                                                                500 (ISAKMP)  
+                                                            {% elseif natPort.source_advanced_from_port == '1701' %}
+                                                                1701 (L2TP)  
+                                                            {% elseif natPort.source_advanced_from_port == '389' %}
+                                                                389 (LDAP)  
+                                                            {% elseif natPort.source_advanced_from_port == '1755' %}
+                                                                1755 (MMS/TCP)  
+                                                            {% elseif natPort.source_advanced_from_port == '7000' %}
+                                                                7000 (MMS/UDP)  
+                                                            {% elseif natPort.source_advanced_from_port == '445' %}
+                                                                445 (MS DS)  
+                                                            {% elseif natPort.source_advanced_from_port == '3389' %}
+                                                                3389 (MS RDP)  
+                                                            {% elseif natPort.source_advanced_from_port == '1512' %}
+                                                                1512 (MS WINS) 
+                                                            {% elseif natPort.source_advanced_from_port == '1863' %}
+                                                                1863 (MSN)  
+                                                            {% elseif natPort.source_advanced_from_port == '119' %}
+                                                                119 (NNTP)  
+                                                            {% elseif natPort.source_advanced_from_port == '123' %}
+                                                                123 (NTP)  
+                                                            {% elseif natPort.source_advanced_from_port == '138' %}
+                                                                138 (NetBIOS-DGM)  
+                                                            {% elseif natPort.source_advanced_from_port == '137' %}
+                                                                137 (NetBIOS-NS)
+                                                            {% elseif natPort.source_advanced_from_port == '139' %}
+                                                                139 (NetBIOS-SSN)  
+                                                            {% elseif natPort.source_advanced_from_port == '1194' %}
+                                                                1194 (OpenVPN)  
+                                                            {% elseif natPort.source_advanced_from_port == '110' %}
+                                                                110 (POP3)
+                                                            {% elseif natPort.source_advanced_from_port == '995' %}
+                                                                995 (POP3/S)  
+                                                            {% elseif natPort.source_advanced_from_port == '1723' %}
+                                                                1723 (PPTP)  
+                                                            {% elseif natPort.source_advanced_from_port == '1812' %}
+                                                                1812 (RADIUS)  
+                                                            {% elseif natPort.source_advanced_from_port == '1813' %}
+                                                                1813 (RADIUS accounting)  
+                                                            {% elseif natPort.source_advanced_from_port == '5004' %}
+                                                                5004 (RTP) 
+                                                            {% elseif natPort.source_advanced_from_port == '5060' %}
+                                                                5060 (SIP)  
+                                                            {% elseif natPort.source_advanced_from_port == '25' %}
+                                                                25 (SMTP)  
+                                                            {% elseif natPort.source_advanced_from_port == '465' %}
+                                                                465 (SMTP/S)  
+                                                            {% elseif natPort.source_advanced_from_port == '161' %}
+                                                                161 (SNMP)  
+                                                            {% elseif natPort.source_advanced_from_port == '162' %}
+                                                                162 (SNMP-Trap)
+                                                            {% elseif natPort.source_advanced_from_port == '22' %}
+                                                                22 (SSH)  
+                                                            {% elseif natPort.source_advanced_from_port == '3478' %}
+                                                                3478 (STUN)  
+                                                            {% elseif natPort.source_advanced_from_port == '587' %}
+                                                                587 (SUBMISSION)  
+                                                            {% elseif natPort.source_advanced_from_port == '3544' %}
+                                                                3544 (Teredo)
+                                                            {% elseif natPort.source_advanced_from_port == '23' %}
+                                                                23 (Telnet)  
+                                                            {% elseif natPort.source_advanced_from_port == '69' %}
+                                                                69 (TFTP)  
+                                                            {% elseif natPort.source_advanced_from_port == '5900' %}
+                                                                5900 (VNC)  
+                                                            {% else %}
+                                                                {% if natPort.source_advanced_custom == natPort.source_advanced_custom_to_port %}
+                                                                    {{ natPort.source_advanced_custom }}
+                                                                {% else %}
+                                                                    {{ natPort.source_advanced_custom }} - {{ natPort.source_advanced_custom_to_port }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if natPort.destination_type == "any" %} 
+                                                                *
+                                                            {% elseif natPort.destination_type == "network" %}
+                                                                {{ natPort.destination_adress_mask }}
+                                                            {% elseif natPort.destination_type == "pppoe" %}
+                                                                PPPoE
+                                                            {% elseif natPort.destination_type == "l2tp" %}
+                                                                L2TP clients
+                                                            {% elseif natPort.destination_type == "wan" %}
+                                                                WAN net
+                                                            {% elseif natPort.destination_type == "wanip" %}
+                                                                WAN address
+                                                            {% elseif natPort.destination_type == "lan" %}
+                                                                LAN net
+                                                            {% elseif natPort.destination_type == "lanip" %}
+                                                                LAN address
+                                                            {% elseif natPort.destination_type == "(self)" %}
+                                                                This Firewall
+                                                            {% else %} 
+                                                                {{ natPort.destination_type }} 
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if natPort.destination_range_from_port == "any" %} 
+                                                                *
+                                                            {% elseif natPort.destination_range_from_port == '5999' %}
+                                                                5999 (CVSup)  
+                                                            {% elseif natPort.destination_range_from_port == '53' %}
+                                                                53 (DNS)  
+                                                            {% elseif natPort.destination_range_from_port == '21' %}
+                                                                21 (FTP)  
+                                                            {% elseif natPort.destination_range_from_port == '3000' %}
+                                                                3000 (HBCI)  
+                                                            {% elseif natPort.destination_range_from_port == '80' %}
+                                                                80 (HTTP) 
+                                                            {% elseif natPort.destination_range_from_port == '443' %}
+                                                                443 (HTTPS)  
+                                                            {% elseif natPort.destination_range_from_port == '143' %}
+                                                                143 (ICQ)  
+                                                            {% elseif natPort.destination_range_from_port == '113' %}
+                                                                113 (IMAP)  
+                                                            {% elseif natPort.destination_range_from_port == '993' %}
+                                                                993 (IMAP/S)  
+                                                            {% elseif natPort.destination_range_from_port == '4500' %}
+                                                                4500 (IPsec NAT-T)
+                                                            {% elseif natPort.destination_range_from_port == '500' %}
+                                                                500 (ISAKMP)  
+                                                            {% elseif natPort.destination_range_from_port == '1701' %}
+                                                                1701 (L2TP)  
+                                                            {% elseif natPort.destination_range_from_port == '389' %}
+                                                                389 (LDAP)  
+                                                            {% elseif natPort.destination_range_from_port == '1755' %}
+                                                                1755 (MMS/TCP)  
+                                                            {% elseif natPort.destination_range_from_port == '7000' %}
+                                                                7000 (MMS/UDP)  
+                                                            {% elseif natPort.destination_range_from_port == '445' %}
+                                                                445 (MS DS)  
+                                                            {% elseif natPort.destination_range_from_port == '3389' %}
+                                                                3389 (MS RDP)  
+                                                            {% elseif natPort.destination_range_from_port == '1512' %}
+                                                                1512 (MS WINS) 
+                                                            {% elseif natPort.destination_range_from_port == '1863' %}
+                                                                1863 (MSN)  
+                                                            {% elseif natPort.destination_range_from_port == '119' %}
+                                                                119 (NNTP)  
+                                                            {% elseif natPort.destination_range_from_port == '123' %}
+                                                                123 (NTP)  
+                                                            {% elseif natPort.destination_range_from_port == '138' %}
+                                                                138 (NetBIOS-DGM)  
+                                                            {% elseif natPort.destination_range_from_port == '137' %}
+                                                                137 (NetBIOS-NS)
+                                                            {% elseif natPort.destination_range_from_port == '139' %}
+                                                                139 (NetBIOS-SSN)  
+                                                            {% elseif natPort.destination_range_from_port == '1194' %}
+                                                                1194 (OpenVPN)  
+                                                            {% elseif natPort.destination_range_from_port == '110' %}
+                                                                110 (POP3)
+                                                            {% elseif natPort.destination_range_from_port == '995' %}
+                                                                995 (POP3/S)  
+                                                            {% elseif natPort.destination_range_from_port == '1723' %}
+                                                                1723 (PPTP)  
+                                                            {% elseif natPort.destination_range_from_port == '1812' %}
+                                                                1812 (RADIUS)  
+                                                            {% elseif natPort.destination_range_from_port == '1813' %}
+                                                                1813 (RADIUS accounting)  
+                                                            {% elseif natPort.destination_range_from_port == '5004' %}
+                                                                5004 (RTP) 
+                                                            {% elseif natPort.destination_range_from_port == '5060' %}
+                                                                5060 (SIP)  
+                                                            {% elseif natPort.destination_range_from_port == '25' %}
+                                                                25 (SMTP)  
+                                                            {% elseif natPort.destination_range_from_port == '465' %}
+                                                                465 (SMTP/S)  
+                                                            {% elseif natPort.destination_range_from_port == '161' %}
+                                                                161 (SNMP)  
+                                                            {% elseif natPort.destination_range_from_port == '162' %}
+                                                                162 (SNMP-Trap)
+                                                            {% elseif natPort.destination_range_from_port == '22' %}
+                                                                22 (SSH)  
+                                                            {% elseif natPort.destination_range_from_port == '3478' %}
+                                                                3478 (STUN)  
+                                                            {% elseif natPort.destination_range_from_port == '587' %}
+                                                                587 (SUBMISSION)  
+                                                            {% elseif natPort.destination_range_from_port == '3544' %}
+                                                                3544 (Teredo)
+                                                            {% elseif natPort.destination_range_from_port == '23' %}
+                                                                23 (Telnet)  
+                                                            {% elseif natPort.destination_range_from_port == '69' %}
+                                                                69 (TFTP)  
+                                                            {% elseif natPort.destination_range_from_port == '5900' %}
+                                                                5900 (VNC)  
+                                                            {% else %}
+                                                                {% if natPort.destination_range_custom == natPort.destination_range_custom_to_port %}
+                                                                    {{ natPort.destination_range_custom }}
+                                                                {% else %}
+                                                                    {{ natPort.destination_range_custom }} - {{ natPort.destination_range_custom_to_port }}
+                                                                {% endif %}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ natPort.redirect_target_ip  }}</td>
+                                                        <td>
+                                                            {% if natPort.redirect_target_port == 'any' %}
+                                                                *
+                                                            {% elseif natPort.redirect_target_port == '5999' %}
+                                                                5999 (CVSup)  
+                                                            {% elseif natPort.redirect_target_port == '53' %}
+                                                                53 (DNS)  
+                                                            {% elseif natPort.redirect_target_port == '21' %}
+                                                                21 (FTP)  
+                                                            {% elseif natPort.redirect_target_port == '3000' %}
+                                                                3000 (HBCI)  
+                                                            {% elseif natPort.redirect_target_port == '80' %}
+                                                                80 (HTTP) 
+                                                            {% elseif natPort.redirect_target_port == '443' %}
+                                                                443 (HTTPS)  
+                                                            {% elseif natPort.redirect_target_port == '143' %}
+                                                                143 (ICQ)  
+                                                            {% elseif natPort.redirect_target_port == '113' %}
+                                                                113 (IMAP)  
+                                                            {% elseif natPort.redirect_target_port == '993' %}
+                                                                993 (IMAP/S)  
+                                                            {% elseif natPort.redirect_target_port == '4500' %}
+                                                                4500 (IPsec NAT-T)
+                                                            {% elseif natPort.redirect_target_port == '500' %}
+                                                                500 (ISAKMP)  
+                                                            {% elseif natPort.redirect_target_port == '1701' %}
+                                                                1701 (L2TP)  
+                                                            {% elseif natPort.redirect_target_port == '389' %}
+                                                                389 (LDAP)  
+                                                            {% elseif natPort.redirect_target_port == '1755' %}
+                                                                1755 (MMS/TCP)  
+                                                            {% elseif natPort.redirect_target_port == '7000' %}
+                                                                7000 (MMS/UDP)  
+                                                            {% elseif natPort.redirect_target_port == '445' %}
+                                                                445 (MS DS)  
+                                                            {% elseif natPort.redirect_target_port == '3389' %}
+                                                                3389 (MS RDP)  
+                                                            {% elseif natPort.redirect_target_port == '1512' %}
+                                                                1512 (MS WINS) 
+                                                            {% elseif natPort.redirect_target_port == '1863' %}
+                                                                1863 (MSN)  
+                                                            {% elseif natPort.redirect_target_port == '119' %}
+                                                                119 (NNTP)  
+                                                            {% elseif natPort.redirect_target_port == '123' %}
+                                                                123 (NTP)  
+                                                            {% elseif natPort.redirect_target_port == '138' %}
+                                                                138 (NetBIOS-DGM)  
+                                                            {% elseif natPort.redirect_target_port == '137' %}
+                                                                137 (NetBIOS-NS)
+                                                            {% elseif natPort.redirect_target_port == '139' %}
+                                                                139 (NetBIOS-SSN)  
+                                                            {% elseif natPort.redirect_target_port == '1194' %}
+                                                                1194 (OpenVPN)  
+                                                            {% elseif natPort.redirect_target_port == '110' %}
+                                                                110 (POP3)
+                                                            {% elseif natPort.redirect_target_port == '995' %}
+                                                                995 (POP3/S)  
+                                                            {% elseif natPort.redirect_target_port == '1723' %}
+                                                                1723 (PPTP)  
+                                                            {% elseif natPort.redirect_target_port == '1812' %}
+                                                                1812 (RADIUS)  
+                                                            {% elseif natPort.redirect_target_port == '1813' %}
+                                                                1813 (RADIUS accounting)  
+                                                            {% elseif natPort.redirect_target_port == '5004' %}
+                                                                5004 (RTP) 
+                                                            {% elseif natPort.redirect_target_port == '5060' %}
+                                                                5060 (SIP)  
+                                                            {% elseif natPort.redirect_target_port == '25' %}
+                                                                25 (SMTP)  
+                                                            {% elseif natPort.redirect_target_port == '465' %}
+                                                                465 (SMTP/S)  
+                                                            {% elseif natPort.redirect_target_port == '161' %}
+                                                                161 (SNMP)  
+                                                            {% elseif natPort.redirect_target_port == '162' %}
+                                                                162 (SNMP-Trap)
+                                                            {% elseif natPort.redirect_target_port == '22' %}
+                                                                22 (SSH)  
+                                                            {% elseif natPort.redirect_target_port == '3478' %}
+                                                                3478 (STUN)  
+                                                            {% elseif natPort.redirect_target_port == '587' %}
+                                                                587 (SUBMISSION)  
+                                                            {% elseif natPort.redirect_target_port == '3544' %}
+                                                                3544 (Teredo)
+                                                            {% elseif natPort.redirect_target_port == '23' %}
+                                                                23 (Telnet)  
+                                                            {% elseif natPort.redirect_target_port == '69' %}
+                                                                69 (TFTP)  
+                                                            {% elseif natPort.redirect_target_port == '5900' %}
+                                                                5900 (VNC)  
+                                                            {% else %}
+                                                                {{ natPort.redirect_target_port_custom }}
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ natPort.descripcion }}</td>
+                                                        {% if app.user.role == "ROLE_ADMIN" or app.user.role == "ROLE_SUPERUSER" %}
+                                                            <td>
+                                                                <a href="{{path('editarNatPortForward',{id:natPort.id})}}">
+                                                                    <i class="far fa-edit"></i>
+                                                                </a>
+                                                                <a href="{{path('eliminarNatPortForward',{id:natPort.id})}}">
+                                                                    <i class="fas fa-times-circle"></i>
+                                                                </a>
+                                                            </td>
+                                                        {% endif %}
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                            <div id="menu1" class="container tab-pane fade"><br>
-                                {% if app.user.role == 'ROLE_ADMIN' %}
-                                    <a href="{{path ('registerNatOne') }}">
-                                        <button type="button" class="btn btn-success">
-                                            Add 1:1 <i class="fas fa-search-plus"></i>
-                                        </button>
-                                    </a>
-                                <br><br>
-                                {% endif %}
-                                <div class="table-responsive">
-                                    <table class="table table-hover table-bordered table-sm text-center small" width="100%">
-                                        <thead class="bg-dark text-white">
-                                            <tr class="small">
-                                                <th>Disabled</th>                         
-                                                <th>Interface</th>
-                                                <th>External IP</th>
-                                                <th>Internal IP</th>
-                                                <th>Destination IP</th>
-                                                <th>Description</th>
-                                                {% if app.user.role == "ROLE_ADMIN" or app.user.role == "ROLE_SUPERUSER" %}
-                                                    <th>Edit</th>
-                                                    <th>Delete</th>
-                                                {% endif %}                 
-                                            </tr>
-                                        </thead>
-                                        <tbody class="row_position_one">
-                                            {% for natOTO in natOne %}
-                                                <tr id="{{ natOTO.id }}" style="cursor: all-scroll;">
-                                                    <td>{{ natOTO.estatus }}</td>
-                                                    <td>{{ natOTO.interface|upper }} </td>
-                                                    <td>
-                                                        {{ natOTO.external_subnet_ip }}
-                                                    </td>
-                                                    <td>
-                                                        {% if natOTO.internal_ip_type == 'any' %}
-                                                            *
-                                                        {% endif %}
-                                                        {% if natOTO.internal_ip_type == 'single' %}
-                                                            {{ natOTO.dst }}
-                                                        {% endif %}
-                                                        {% if natOTO.internal_ip_type == 'network' %}
-                                                            {{ natOTO.internal_adress_mask }}
-                                                        {% endif %}
-                                                        {% if natOTO.internal_ip_type == 'pppoe' %}
-                                                            PPPoE clients
-                                                        {% endif %}
-                                                        {% if natOTO.internal_ip_type == 'l2tp' %}
-                                                            L2TP clients
-                                                        {% endif %}
-                                                        {% if natOTO.internal_ip_type == 'wan' %}
-                                                            WAN net
-                                                        {% endif %}
-                                                        {% if natOTO.internal_ip_type == 'wanip' %}
-                                                            WAN address
-                                                        {% endif %}
-                                                        {% if natOTO.internal_ip_type == 'lan' %}
-                                                            LAN net
-                                                        {% endif %}
-                                                        {% if natOTO.internal_ip_type == 'lanip' %}
-                                                            LAN address
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {% if natOTO.destination_type == 'any' %}
-                                                            *
-                                                        {% endif %}
-                                                        {% if natOTO.destination_type == 'single' %}
-                                                            {{ natOTO.dst }}
-                                                        {% endif %}
-                                                        {% if natOTO.destination_type == 'network' %}
-                                                            {{ natOTO.destination_adress_mask }}
-                                                        {% endif %}
-                                                        {% if natOTO.destination_type == 'pppoe' %}
-                                                            PPPoE clients
-                                                        {% endif %}
-                                                        {% if natOTO.destination_type == 'l2tp' %}
-                                                            L2TP clients
-                                                        {% endif %}
-                                                        {% if natOTO.destination_type == 'wan' %}
-                                                            WAN net
-                                                        {% endif %}
-                                                        {% if natOTO.destination_type == 'wanip' %}
-                                                            WAN address
-                                                        {% endif %}
-                                                        {% if natOTO.destination_type == 'lan' %}
-                                                            LAN net
-                                                        {% endif %}
-                                                        {% if natOTO.destination_type == 'lanip' %}
-                                                            LAN address
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>
-                                                        {{ natOTO.descripcion }}
-                                                    </td>
-                                                    {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
-                                                        <td>
-                                                            <a href="{{path('editarNatOneToOne',{id:natOTO.id})}}">
-                                                                <button class="btn btn-warning btn-sm" type="submit">
-                                                                    Edit <i class="far fa-edit"></i>
-                                                                </button>
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="{{path('eliminarNatOneToOne',{id:natOTO.id})}}">
-                                                                <button class="btn btn-danger btn-sm" type="submit">
-                                                                    Delete <i class="fas fa-times-circle"></i>
-                                                                </button>
-                                                            </a>
-                                                        </td>
-                                                    {% endif %}
+                                <div id="menu1" class="container tab-pane fade"><br>
+                                    {% if app.user.role == 'ROLE_ADMIN' %}
+                                        <a href="{{path ('registerNatOne') }}">
+                                            <button type="button" class="btn btn-success">
+                                                Add 1:1 <i class="fas fa-search-plus"></i>
+                                            </button>
+                                        </a>
+                                    <br><br>
+                                    {% endif %}
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-striped table-bordered table-hover text-center small">
+                                            <thead>
+                                                <tr class="small">
+                                                    <th>Disabled</th>                         
+                                                    <th>Interface</th>
+                                                    <th>External IP</th>
+                                                    <th>Internal IP</th>
+                                                    <th>Destination IP</th>
+                                                    <th>Description</th>
+                                                    {% if app.user.role == "ROLE_ADMIN" or app.user.role == "ROLE_SUPERUSER" %}
+                                                        <th>Operations</th>
+                                                    {% endif %}                 
                                                 </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody class="row_position_one">
+                                                {% for natOTO in natOne %}
+                                                    <tr id="{{ natOTO.id }}" style="cursor: all-scroll;">
+                                                        <td>{{ natOTO.estatus }}</td>
+                                                        <td>{{ natOTO.interface|upper }} </td>
+                                                        <td>
+                                                            {{ natOTO.external_subnet_ip }}
+                                                        </td>
+                                                        <td>
+                                                            {% if natOTO.internal_ip_type == 'any' %}
+                                                                *
+                                                            {% endif %}
+                                                            {% if natOTO.internal_ip_type == 'single' %}
+                                                                {{ natOTO.dst }}
+                                                            {% endif %}
+                                                            {% if natOTO.internal_ip_type == 'network' %}
+                                                                {{ natOTO.internal_adress_mask }}
+                                                            {% endif %}
+                                                            {% if natOTO.internal_ip_type == 'pppoe' %}
+                                                                PPPoE clients
+                                                            {% endif %}
+                                                            {% if natOTO.internal_ip_type == 'l2tp' %}
+                                                                L2TP clients
+                                                            {% endif %}
+                                                            {% if natOTO.internal_ip_type == 'wan' %}
+                                                                WAN net
+                                                            {% endif %}
+                                                            {% if natOTO.internal_ip_type == 'wanip' %}
+                                                                WAN address
+                                                            {% endif %}
+                                                            {% if natOTO.internal_ip_type == 'lan' %}
+                                                                LAN net
+                                                            {% endif %}
+                                                            {% if natOTO.internal_ip_type == 'lanip' %}
+                                                                LAN address
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if natOTO.destination_type == 'any' %}
+                                                                *
+                                                            {% endif %}
+                                                            {% if natOTO.destination_type == 'single' %}
+                                                                {{ natOTO.dst }}
+                                                            {% endif %}
+                                                            {% if natOTO.destination_type == 'network' %}
+                                                                {{ natOTO.destination_adress_mask }}
+                                                            {% endif %}
+                                                            {% if natOTO.destination_type == 'pppoe' %}
+                                                                PPPoE clients
+                                                            {% endif %}
+                                                            {% if natOTO.destination_type == 'l2tp' %}
+                                                                L2TP clients
+                                                            {% endif %}
+                                                            {% if natOTO.destination_type == 'wan' %}
+                                                                WAN net
+                                                            {% endif %}
+                                                            {% if natOTO.destination_type == 'wanip' %}
+                                                                WAN address
+                                                            {% endif %}
+                                                            {% if natOTO.destination_type == 'lan' %}
+                                                                LAN net
+                                                            {% endif %}
+                                                            {% if natOTO.destination_type == 'lanip' %}
+                                                                LAN address
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {{ natOTO.descripcion }}
+                                                        </td>
+                                                        {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
+                                                            <td>
+                                                                <a href="{{path('editarNatOneToOne',{id:natOTO.id})}}">
+                                                                    <i class="far fa-edit"></i>
+                                                                </a>
+                                                                <a href="{{path('eliminarNatOneToOne',{id:natOTO.id})}}">
+                                                                    <i class="fas fa-times-circle"></i>
+                                                                </a>
+                                                            </td>
+                                                        {% endif %}
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                             {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
-                                <br>
-                                <div class="card-header bg-dark text-white">Save the configuration</div>
                                 <br>
                                 <div class="panel-body text-center">
                                     When you do click on save button you are saving the acl list and if you do click on apply button, the process about new configuration changes will be starting. <br>

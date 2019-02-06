@@ -23,16 +23,14 @@
                                 </a>
                                 <br><br>
                             {% endif %}
-                            <table class="table table-sm table-striped table-bordered table-hover text-center" id="dataTables-example">
-                                <div class="container">
-                                    <div class="col-md-12">
-                                        {% for msg in app.session.flashbag().get('estatus') %}
-                                            <div class="alert alert-info" aria-label="Close">
-                                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                <strong>Info!</strong> {{ msg }}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
+                            <table class="table table-sm table-striped table-bordered table-hover text-center small" id="dataTables-example">
+                                <div class="col-md-12">
+                                    {% for msg in app.session.flashbag().get('estatus') %}
+                                        <div class="alert alert-info" aria-label="Close">
+                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                            <strong>Info!</strong> {{ msg }}
+                                        </div>
+                                    {% endfor %}
                                 </div>
                                 <thead>
                                     <tr>
@@ -41,8 +39,7 @@
                                         <th>Description</th>
                                         <th>Group</th>
                                         {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                            <th>Edit</th>
-                                            <th>Delete</th>
+                                            <th>Operations</th>
                                         {% endif %}                                 
                                     </tr>
                                 </thead>
@@ -58,16 +55,10 @@
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
                                                     <a href="{{ path('editarAcl',{id:acl_groups.id}) }}">
-                                                        <button class="btn btn-warning btn-sm" type="submit">
-                                                            <small><i class="fas fa-user-edit"></i></small>
-                                                        </button>
+                                                            <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                </td>
-                                                <td>
                                                     <a href="{{ path('eliminarAcl',{id:acl_groups.id}) }}">
-                                                        <button class="btn btn-danger btn-sm" type="submit">
-                                                            <i class="fas fa-user-minus"></i>
-                                                        </button>
+                                                            <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </td>
                                             {% endif %}

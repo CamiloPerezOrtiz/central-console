@@ -16,15 +16,13 @@
                     <div class="panel-body">
                         <div class="row">
                             {# Mensaje a pantalla de notificacion de algun error #}
-                                <div class="container">
-                                    <div class="col-md-12">
-                                        {% for msg in app.session.flashbag().get('estatus') %}
-                                            <div class="alert alert-info" aria-label="Close">
-                                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                <strong>Info!</strong> {{ msg }}
-                                            </div>
-                                        {% endfor %}
-                                    </div>
+                                <div class="col-md-12">
+                                    {% for msg in app.session.flashbag().get('estatus') %}
+                                        <div class="alert alert-info" aria-label="Close">
+                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                            <strong>Info!</strong> {{ msg }}
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             {# Fin de Mensaje #}
                             <div class="col-lg-1">

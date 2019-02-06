@@ -1,7 +1,7 @@
 //when the Add Field button is clicked
 $("#add").click(function (e) {
 //Append a new row of code to the "#items" div
-$("#items").append('<div><br><div id="items" class="form-group"><div class="form-row"><div class="col-md-6"><input type="text" name="input[]" class="form-control form-control-sm" placeholder="Addres"></div><div class="col-md-6"><input type="text" name="input2[]" class="form-control form-control-sm" placeholder="Description"></div></div></div><button class="delete btn btn-danger btn-sm">Delete</button></div>'); });
+$("#items").append('<div><br><div id="items" class="form-group"><div class="form-row"><div class="col-md-6"><input type="text" name="input[]" class="form-control form-control-sm" placeholder="Host"></div><div class="col-md-6"><input type="text" name="input2[]" class="form-control form-control-sm" placeholder="Description"></div></div></div><button class="delete btn btn-danger btn-sm">Delete</button></div>'); });
 $("body").on("click", ".delete", function (e) {
     $(this).parent("div").remove();
 });

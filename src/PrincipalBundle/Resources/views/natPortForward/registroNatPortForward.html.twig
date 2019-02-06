@@ -4,29 +4,25 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Target categories</h1>
+                <h1 class="page-header">Nat port forward</h1>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Register target categories
+                        Nat port forward
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body small">
                         <div class="row">
-                            {# Mensaje a pantalla de notificacion de algun error #}
-                                <div class="container">
-                                    <div class="col-md-12">
-                                        {% for msg in app.session.flashbag().get('estatus') %}
-                                            <div class="alert alert-info" aria-label="Close">
-                                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                <strong>Info!</strong> {{ msg }}
-                                            </div>
-                                        {% endfor %}
+                            <div class="col-md-12">
+                                {% for msg in app.session.flashbag().get('estatus') %}
+                                    <div class="alert alert-info" aria-label="Close">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        <strong>Info!</strong> {{ msg }}
                                     </div>
-                                </div>
-                            {# Fin de Mensaje #}
+                                {% endfor %}
+                            </div>
                             <div class="col-lg-1">
                             </div>
                             <div class="col-lg-9">
@@ -38,7 +34,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Interface</label>
-                                        <footer class="blockquote-footer">
+                                        <footer>
                                             Choose which interface this rule applies to. In most cases "WAN" is specified.
                                         </footer>
                                         <select class="form-control form-control-sm" name="interface">
@@ -51,7 +47,7 @@
                                     </div>
                                     <div class="form-group">   
                                         {{ form_label(form.protocolo) }}
-                                        <footer class="blockquote-footer">
+                                        <footer>
                                             Choose which protocol this rule should match. In most cases "TCP" is specified.
                                         </footer>
                                         {{ form_widget(form.protocolo) }}
@@ -96,9 +92,10 @@
                                         </div>
                                         <div id="advancedSourcePortRange">
                                             <label>Source port range</label>
-                                            <footer class="blockquote-footer">
+                                            <footer>
                                                 Specify the source port or port range for this rule. This is usually random and almost never equal to the destination port range (and should usually be 'any'). The 'to' field may be left empty if only filtering a single port.
                                             </footer>
+                                            <br>
                                             <div class="form-row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">   
@@ -166,7 +163,7 @@
                                     </div>
                                     <div id="destinationTargetPort">
                                         <label>Destination port range</label>
-                                        <footer class="blockquote-footer">
+                                        <footer>
                                             Specify the port or port range for the destination of the packet for this mapping. The 'to' field may be left empty if only mapping a single port.
                                         </footer>
                                         <div class="form-row">
@@ -202,10 +199,10 @@
                                     </div>
                                     <div class="form-group">   
                                         {{ form_label(form.redirectTargetIp) }}
-                                        <footer class="blockquote-footer">
+                                        <footer>
                                             Enter the internal IP address of the server on which to map the ports.
                                         </footer>
-                                        <footer class="blockquote-footer">
+                                        <footer>
                                             e.g.: 192.168.1.12
                                         </footer>
                                         {{ form_widget(form.redirectTargetIp) }} 
@@ -213,10 +210,10 @@
                                     </div>
                                     <div id="redirectTargetPort">
                                         <label>Redirect target port</label>
-                                        <footer class="blockquote-footer">
+                                        <footer>
                                             Specify the port on the machine with the IP address entered above. In case of a port range, specify the beginning port of the range (the end port will be calculated automatically).
                                         </footer>
-                                        <footer class="blockquote-footer">
+                                        <footer>
                                             This is usually identical to the "From port" above.
                                         </footer>
                                         <div class="form-row">
@@ -238,7 +235,7 @@
                                     </div>
                                     <div class="form-group">   
                                         {{ form_label(form.descripcion) }}
-                                        <footer class="blockquote-footer">
+                                        <footer>
                                             A description may be entered here for administrative reference (not parsed).
                                         </footer>
                                         {{ form_widget(form.descripcion) }}
@@ -251,7 +248,7 @@
                                     </div>
                                     <div class="form-group">   
                                         {{ form_label(form.filterRuleAssociation) }}
-                                        <footer class="blockquote-footer">
+                                        <footer>
                                              The "pass" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.
                                         </footer>
                                         {{ form_widget(form.filterRuleAssociation) }}
@@ -354,7 +351,7 @@
         if($("#sourceAdvancedType option:selected").val() !== "") 
         {
            $("#sourceAdvancedAdressMask").prop("readonly", true);
-           $("#mask").prop("hidden", true);
+           $("#mask").prop("hidden", false);
         }
     // Fin //
     

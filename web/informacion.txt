@@ -1,0 +1,3 @@
+187.89.69.45|192|168|1|0|24|opt1|Kasa|Automotriz Toyota Santa Clara|
+187.189.69.45|192|168|2|0|23|opt1|Kasa|Automotriz Nisan Santa Fe|
+187.89.169.45|192|168|3|0|22|opt1|Kasa|Automotriz Hyndai Mundo E|
