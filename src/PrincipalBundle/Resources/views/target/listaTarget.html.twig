@@ -34,9 +34,12 @@
                                 </div>
                                 <thead>
                                     <tr>
+                                        <th>Save</th>
                                         <th>Name</th>                         
-                                        <th>Values</th>
+                                        <th>Redirect</th>
+                                        <th>Description</th>
                                         <th>Group</th>
+                                        <th>Location</th>
                                         {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                             <th>Operations</th>
                                         {% endif %}                                 
@@ -45,9 +48,14 @@
                                 <tbody>
                                     {% for targets in target %}
                                         <tr>
+                                            <td>
+                                                <input type="checkbox" class="form-check-input" name="ip[]" value="{{ targets.ubicacion }}" checked>
+                                            </td>
                                             <td>{{ targets.nombre }}</td>
                                             <td>{{ targets.redirect }}</td>
                                             <td>{{ targets.descripcion }}</td>
+                                            <td>{{ targets.grupo  }}</td>
+                                            <td>{{ targets.ubicacion }}</td>
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
                                                     <a href="{{ path('editarTarget',{id:targets.id}) }}">
@@ -64,26 +72,14 @@
                             </table>
                             {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
                                 <br>
-                                <div class="card-header bg-dark text-white">Save the configuration</div>
-                                <br>
                                 <div class="panel-body text-center">
                                     When you do click on save button you are saving the target categories list and if you do click on apply button, the process about new configuration changes will be starting. <br>
                                     <b><span style="color: #800000;">Both the save and apply button must be clicked</span></b>. <br><br>
                                     <div class="form-group">
                                     {% if target == true %} 
                                         <a href="{{path('crearXMLTarget',{id:target[0]['grupo']})}}">
-                                            <button type="button" class="btn btn-primary">
-                                                <b>  
-                                                    Save target list <i class="fas fa-save"></i>
-                                                </b>
-                                            </button>
-                                        </a>
-                                        <br><br>
-                                         <a href="{{path('aplicarXMLTarget',{id:target[0]['grupo']})}}">
-                                            <button type="" class="btn btn-success">
-                                                <b>  
-                                                    Apply to aliases list <i class="fas fa-caret-square-down"></i>
-                                                </b>
+                                            <button type="button" class="btn btn-success">
+                                                <b>  Save target list <i class="fas fa-save"></i></b>
                                             </button>
                                         </a>
                                     {% endif %} 

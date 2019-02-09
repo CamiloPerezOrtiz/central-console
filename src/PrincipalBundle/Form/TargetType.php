@@ -84,7 +84,6 @@ class TargetType extends AbstractType
                     'placeholder' => 'Write the description'
                 )
             ))
-            ->add('log')
             ->add('Save', SubmitType::class,array(
                 "attr"=>array(
                     "class"=>"btn btn-primary btn-block btn-sm"

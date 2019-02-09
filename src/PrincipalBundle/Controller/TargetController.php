@@ -26,24 +26,43 @@ class TargetController extends Controller
 		$target = new Target();
 		$form = $this ->createForm(TargetType::class, $target);
 		$form->handleRequest($request);
+		$grupo=$_REQUEST['id'];
+		$ipGrupos = $this->ipGrupos($grupo);
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
+			$db = $em->getConnection();
 			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData());
 			if(count($verificarNombre)==0)
 			{
-				$u = $this->getUser();
-				//$grupo=$u->getGrupo();
-				$role=$u->getRole();
-				if($role == 'ROLE_SUPERUSER')
+				$nombre = $form->get("nombre")->getData();
+				$domainList = $form->get("domainList")->getData();
+				$urlList = $form->get("urlList")->getData();
+				$regularExpression = $form->get("regularExpression")->getData();
+				$redirectMode = $form->get("redirectMode")->getData();
+				$redirect = $form->get("redirect")->getData();
+				$descripcion = $form->get("descripcion")->getData();
+				foreach ($_POST['ip'] as $ips)
 				{
-					$id=$_REQUEST['id'];
-					$target->setGrupo($id);
+					$query = "INSERT INTO target 
+						VALUES (nextval('target_id_seq'),'$nombre','$domainList','$urlList',
+						'$regularExpression','$redirectMode','$redirect','$descripcion','t','$grupo','$ips')"
+					;
+					$stmt = $db->prepare($query);
+					$params =array();
+					$stmt->execute($params);
+					$flush=$em->flush();
+					$serv = '/var/www/html/central-console/web/Groups/';
+					$ruta = $serv . $grupo . "/" . $ips;
+					if(!file_exists($ruta))
+					{
+					  mkdir ($ruta);
+					  echo "Se ha creado el directorio: " . $ruta . "<br>";
+					} 
+					else 
+					  echo "la ruta: " . $ruta . " ya existe ". "<br>";
+					$flush=$em->flush();	
 				}
-				if($role == 'ROLE_ADMINISTRATOR')
-					$target->setGrupo($u->getGrupo());
-				$em->persist($target);
-				$flush=$em->flush();
 				if($flush == null)
 				{
 					$estatus="Successfully registration.";
@@ -63,7 +82,8 @@ class TargetController extends Controller
 			}
 		}
 		return $this->render('@Principal/target/registroTarget.html.twig', array(
-			'form'=>$form->createView()
+			'form'=>$form->createView(),
+			'ipGrupos'=>$ipGrupos
 		));
 	}
 
@@ -153,12 +173,25 @@ class TargetController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.redirect, u.descripcion, u.grupo
+			'SELECT u.id, u.nombre, u.redirect, u.descripcion, u.grupo, u.ubicacion
 				FROM PrincipalBundle:Target u
-				WHERE  u.grupo = :grupo'
+				WHERE  u.grupo = :grupo
+				ORDER BY u.id'
 		)->setParameter('grupo', $grupo);
 		$target = $query->getResult();
 		return $target;
+	}
+
+	private function ipGrupos($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
 	}
 
 	public function editarTargetAction(Request $request, $id)
@@ -173,7 +206,7 @@ class TargetController extends Controller
 			$flush=$em->flush();
 			return $this->redirectToRoute("gruposTarget");
 		}
-		return $this->render('@Principal/target/registroTarget.html.twig', array(
+		return $this->render('@Principal/target/editarTarget.html.twig', array(
 			'form'=>$form->createView()
 		));
 	}
@@ -194,40 +227,47 @@ class TargetController extends Controller
 	}
 
 	# Funcion para crear el XML de target #
-	public function crearXMLTargetAction($id)
+	public function crearXMLTargetAction()
 	{
-		$recuperarTodoDatos = $this->recuperarTodoDatos($id);
-		$contenido = "<?xml version='1.0'?>\n";
-		$contenido .= "\t<squidguarddest>\n";
-		foreach ($recuperarTodoDatos as $target) 
+		$id=$_REQUEST['id'];
+		$grupos = $this->ipGrupos($id);
+		if(isset($_POST['enviar']))
 		{
-		    $contenido .= "\t\t\t<config>\n";
-		    $contenido .= "\t\t\t\t<name>" . $target['nombre'] . "</name>\n";
-		    $contenido .= "\t\t\t\t<domains>" . $target['domainList'] . "</domains>\n";
-		    $contenido .= "\t\t\t\t<urls>" . $target['urlList'] . "</urls>\n";
-		    $contenido .= "\t\t\t\t<expressions>" . $target['regularExpression'] . "</expressions>\n";
-		    $contenido .= "\t\t\t\t<redirect_mode>" . $target['redirectMode'] . "</redirect_mode>\n";
-		    $contenido .= "\t\t\t\t<redirect>" . $target['redirect'] . "</redirect>\n";
-		    $contenido .= "\t\t\t\t<description>" . $target['descripcion'] . "</description>\n";
-		    if($target['log'] == true)
-		    	$contenido .= "\t\t\t\t<enablelog>on</enablelog>\n";
-		    else
-		    	$contenido .= "\t\t\t\t<enablelog>" . $target['log'] . "</enablelog>\n";
-		    $contenido .= "\t\t\t</config>\n";
+			foreach ($_POST['ip'] as $ips) 
+			{
+				$recuperarTodoDatos = $this->recuperarTodoDatos($ips);
+				$contenido = "<?xml version='1.0'?>\n";
+				$contenido .= "\t<squidguarddest>\n";
+				foreach ($recuperarTodoDatos as $target) 
+				{
+				    $contenido .= "\t\t\t<config>\n";
+				    $contenido .= "\t\t\t\t<name>" . $target['nombre'] . "</name>\n";
+				    $contenido .= "\t\t\t\t<domains>" . $target['domainList'] . "</domains>\n";
+				    $contenido .= "\t\t\t\t<urls>" . $target['urlList'] . "</urls>\n";
+				    $contenido .= "\t\t\t\t<expressions>" . $target['regularExpression'] . "</expressions>\n";
+				    $contenido .= "\t\t\t\t<redirect_mode>" . $target['redirectMode'] . "</redirect_mode>\n";
+				    $contenido .= "\t\t\t\t<redirect>" . $target['redirect'] . "</redirect>\n";
+				    $contenido .= "\t\t\t\t<description>" . $target['descripcion'] . "</description>\n";
+				    $contenido .= "\t\t\t\t<enablelog>on</enablelog>\n";
+				    $contenido .= "\t\t\t</config>\n";
+				}
+			    $contenido .= "\t</squidguarddest>";
+				$archivo = fopen("$ips.xml", 'w');
+				fwrite($archivo, $contenido);
+				fclose($archivo);
+				# Mover el archivo a la carpeta #
+				$archivoConfig = "$ips.xml";
+				$serv = '/var/www/html/central-console/web/Groups/';
+				$destinoConfig = $serv . "/" . $id . "/" . $ips . "/conf.xml";
+			   	if (!copy($archivoConfig, $destinoConfig)) 
+				    echo "Error al copiar $archivoConfig...\n";
+				unlink("$ips.xml");
+			}
+			echo '<script> alert("The configuration has been saved.");</script>';
 		}
-		$contenido .= "\t</squidguarddest>";
-		$archivo = fopen("conf.xml", 'w');
-		fwrite($archivo, $contenido);
-		fclose($archivo); 
-		# Mover el archivo a la carpeta #
-		$archivoConfig = 'conf.xml';
-		$destinoConfig = "centralizedConsole/conf.xml";
-	   	if (!copy($archivoConfig, $destinoConfig)) 
-		    echo "Error al copiar $archivoConfig...\n";
-		unlink("conf.xml");
-		$estatus="The configuration has been saved";
-		$this->session->getFlashBag()->add("estatus",$estatus);
-		return $this->redirectToRoute("gruposTarget");
+		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
+			"grupos"=>$grupos
+		));
 	}
 
 	# Funcion para recuperar toda la informacion de target #
@@ -237,8 +277,8 @@ class TargetController extends Controller
 		$query = $em->createQuery(
 			'SELECT u.nombre, u.domainList, u.urlList, u.regularExpression, u.redirectMode, u.redirect, u.descripcion, u.log
 				FROM PrincipalBundle:Target u
-				WHERE  u.grupo = :grupo'
-		)->setParameter('grupo', $grupo);
+				WHERE  u.ubicacion = :ubicacion'
+		)->setParameter('ubicacion', $grupo);
 		$datos = $query->getResult();
 		return $datos;
 	}

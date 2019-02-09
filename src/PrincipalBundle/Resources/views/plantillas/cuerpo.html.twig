@@ -2,8 +2,11 @@
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="navbar-header">
             <a class="navbar-brand" href="{{ path('dashboard') }}">
-                <img src="{{ asset('img/logoWarriors.png')}}" style="width:85px;" alt="logo">
+                WARRIORS CONSOLE
             </a>
+            <!--<a class="navbar-brand" href="{{ path('dashboard') }}">
+                <img src="{{ asset('img/logoWarriors.png')}}" style="width:100px;">
+            </a>-->
         </div>
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -13,14 +16,19 @@
         </button>
         <ul class="nav navbar-right navbar-top-links">
             <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <a href="#">
                     <i class="fa fa-user fa-fw"></i> {{ app.user.nombre }} {{ app.user.apellidos }} 
                 </a>
             </li>
         </ul>
-        <div class="navbar-default sidebar" role="navigation">
+        <div class="navbar-default sidebar" role="navigation" id="izquierdo">
             <div class="sidebar-nav navbar-collapse">
                 <ul class="nav" id="side-menu">
+                    <li class="sidebar-search" id="sidebar-search">
+                        <div class="input-group custom-search-form">
+                            <img src="{{ asset('img/logotipo.png')}}" style="width:200px;">
+                        </div>
+                    </li>
                     <li class="sidebar-search">
                         <div class="input-group custom-search-form">
                             <i class="fa fa-user-circle" aria-hidden="true"></i>
@@ -38,15 +46,15 @@
                         </div>
                     </li>
                     <li>
-                        <a class="text-white active" href="{{ path('dashboard') }}">
+                        <a class="text-white" href="{{ path('dashboard') }}">
                             <i class="fas fa-fw fa-tachometer-alt"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li>
                         <a class="text-white" href="{{ path('leerArchivoTxt') }}">
-                            <i class="fa fa-users" aria-hidden="true"></i>
-                            <span class="nav-link-text">
+                            <i class="fa fa-users"></i>
+                            <span>
                                 Groups{% if app.user.role == 'ROLE_SUPERUSER' %}/ Add an user {% endif %} 
                             </span>
                         </a>
@@ -74,6 +82,7 @@
                             <i class="fas fa-th-large"></i>
                             <span class="nav-link-text">
                                 Aliases
+                            </span>
                         </a>
                     </li>
                     <li>

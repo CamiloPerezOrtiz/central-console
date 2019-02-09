@@ -52,6 +52,10 @@ registroUsuarioGrupo:
     path:     /registroUsuarioGrupo/{id}
     defaults: { _controller: PrincipalBundle:Usuarios:registroUsuarioGrupo }
 
+llenar:
+    path:     /llenar
+    defaults: { _controller: PrincipalBundle:Usuarios:llenar }
+
 # Grupos #
 
 leerArchivoTxt:
@@ -153,7 +157,7 @@ eliminarTarget:
     defaults: { _controller: PrincipalBundle:Target:eliminarTarget }
 
 crearXMLTarget:
-    path:     /crearXMLTarget/{id}
+    path:     /crearXMLTarget
     defaults: { _controller: PrincipalBundle:Target:crearXMLTarget }
 
 aplicarXMLTarget:

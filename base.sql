@@ -106,7 +106,8 @@ CREATE TABLE target(
 	redirect VARCHAR(50) NOT NULL,
 	descripcion VARCHAR(50) DEFAULT NULL,
 	log BOOLEAN DEFAULT TRUE,
-	grupo VARCHAR(50) NOT NULL
+	grupo VARCHAR(50) NOT NULL,
+	ubicacion VARCHAR(50) NOT NULL
 );
 
 --interfaces

@@ -27,6 +27,14 @@ body {
     }
 }
 
+.navbar-brand{
+    color: white !important;
+}
+
+.navbar-brand:hover{
+    color: red !important;
+}
+
 .navbar-header {
     float: left;
 }
@@ -57,11 +65,11 @@ body {
 }
 
 .navbar-top-links>li>a {
-    color: #999;
+    color: white;
 }
 
 .navbar-top-links>li>a:hover, .navbar-top-links>li>a:focus, .navbar-top-links>.open>a, .navbar-top-links>.open>a:hover, .navbar-top-links>.open>a:focus {
-    color: #fff;
+    color: red;
     background-color: #000;
 }
 
@@ -115,12 +123,17 @@ body {
     padding: 15px;
 }
 
+#sidebar-search{
+    background-color: #000;
+}
+/* Super user */
 .sidebar ul li {
     border-bottom: 1px solid #e7e7e7;
+    color: #000;
 }
 
 .sidebar ul li a.active {
-    background-color: #eee;
+    color: red;
 }
 
 .sidebar .arrow {
@@ -154,6 +167,7 @@ body {
         position: absolute;
         width: 250px;
         margin-top: 51px;
+        
     }
 
     .navbar-top-links .dropdown-messages,
@@ -861,13 +875,4 @@ table.dataTable thead .sorting:after {
     height: auto;
     background-color: #000;
     color: white;
-
-      /*position: fixed;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      background-color: #000;
-      color: white;
-      text-align: center;*/
-
 }

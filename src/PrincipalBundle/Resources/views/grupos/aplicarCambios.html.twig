@@ -15,46 +15,31 @@
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
-                            {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMINISTRATOR" %}
-                                <h1>Instructions</h1>      
-                                <p>Select the Ip to which you want to apply the change.</p>
-                                <form method="post">
-                                    <button class="btn btn-success" name="reset" type="submit" data-toggle="tooltip" data-placement="right" title="Press this button after having made some change.">Reset configuration</button>
-                                </form>
-                                <hr>
-                            {% endif %}
-                            <table class="table table-striped table-bordered table-hover small" id="dataTables-example">
-                                <thead class="bg-dark text-white">
-                                    <tr>
-                                        <th>Ip</th>   
-                                        <th>Description</th>       
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {{ form_start(apply) }}
+                            <h1>Instructions</h1>      
+                            <p>Select the Ip to which you want to apply the change.</p>
+                            <form method="post" class="role">
+                                <button class="btn btn-success" name="enviar" type="submit">Save</button>
+                                <br><br>
+                                <table class="table table-striped table-bordered table-hover small" id="dataTables-example">
+                                    <thead class="bg-dark text-white">
+                                        <tr>
+                                            <th>Ip</th>   
+                                            <th>Description</th>       
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                         {% for grupo in grupos %}
                                             <tr>
                                                 <td>
-                                                    {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMINISTRATOR" %}
-                                                        <input type="checkbox" class="form-check-input" name="ip[]" value="{{ grupo.ip }}" checked> 
-                                                    {% endif %}
-                                                    {{ grupo.ip }}
+                                                    <input type="checkbox" class="form-check-input" name="ip[]" value="{{ grupo.descripcion }}" checked> 
+                                                    {{ grupo.primer_octeto }}.{{ grupo.segundo_octeto }}.{{ grupo.tercer_octeto }}.{{ grupo.cuarto_octeto }}
                                                 </td>
                                                 <td>{{ grupo.descripcion }}</td>
                                             </tr>
                                         {% endfor %}
-                                </tbody>
-                            </table>
-                            {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMINISTRATOR" %}
-                                <br>
-                                <div class="panel-body text-center">
-                                    When you do click on save button you are saving the IP List and if you do click on apply button, the process about new configuration changes will be starting. <br>
-                                    <b><span style="color: #800000;">Both the save and apply button must be clicked</span></b>.<br><br>
-                                    <div class="responsive" align="center">
-                                        {{ form_end(apply) }}
-                                    </div>
-                                </div>
-                            {% endif %}
+                                    </tbody>
+                                </table>
+                            </form>
                         </div>
                     </div>
                 </div>

@@ -446,4 +446,35 @@ class UsuariosController extends Controller
 				"form"=>$form->createView()
 		));
 	}
+
+	public function llenarAction()
+	{
+		for ($i=0; $i < 100; $i++) 
+		{ 
+			$nombre = $this->sa(10);
+			$apellidos = $this->sa(10);
+			$email = $this->sa(15).'@'.'warriorslabs.com';
+			$password = '$2a$04$EI1wf24P.G4Nd5K3An34puMsRZhOpSXbbBcqyAgyPy5UUjcuXGMDW';
+			$em = $this->getDoctrine()->getEntityManager();
+			$db = $em->getConnection();
+			$query = "INSERT INTO Usuarios VALUES (nextval('usuarios_id_seq'),'$nombre','$apellidos','$email','$password','ROLE_ADMINISTRATOR','t',0,'Kasa')";
+			$stmt = $db->prepare($query);
+			$params =array();
+			$stmt->execute($params);
+			$flush=$em->flush();
+		}
+		return $this->redirectToRoute("listaUsuarios");
+	}
+
+	private function sa($long)
+	{
+		$caracteres = 'asdfghjklqwertyuiopzxcvbnm1234567890ASDFGHJKLQWERTYUIOPZXCVBNM';
+		$num_caracteres = strlen($caracteres);
+		$string_aletorio = '';
+		for ($i=0; $i < $long; $i++) 
+		{ 
+			$string_aletorio .=$caracteres[rand(0, $num_caracteres - 1)];
+		}
+		return $string_aletorio;
+	}
 }
