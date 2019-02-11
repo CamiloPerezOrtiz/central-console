@@ -23,64 +23,51 @@ class AliasesController extends Controller
 	# Funcion para registrar un nuevo aliases #
 	public function registroAliasesAction(Request $request)
 	{
-		$grupo=$_REQUEST['id'];
-		$ipGrupos = $this->ipGrupos($grupo);
 		$alias = new Aliases();
 		$form = $this ->createForm(AliasesType::class, $alias);
 		$form->handleRequest($request);
 		if($form->isSubmitted() && $form->isValid())
-		{ 
+		{
 			$em = $this->getDoctrine()->getEntityManager();
-			$db = $em->getConnection();
-			$filas=file('changes.txt');
-			foreach($filas as $value)
+			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData());
+			if(count($verificarNombre)==0)
 			{
-				list($ip) = explode("|", $value);
-				$ip;
-				$contador;
-				foreach ($_POST['ip_port'] as $ips)
+				$u = $this->getUser();
+				$grupo=$u->getGrupo();
+				$role=$u->getRole();
+				$ip_port = implode(" ",$_POST['ip_port']);
+				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
+				$alias->setIp_port($ip_port);
+				$alias->setDescripcion_ip_port($descripcion_ip_port);
+				if($role == 'ROLE_SUPERUSER')
 				{
-     				//echo "El valor de la posición [".$contador."] es [".$aDias[$contador]."]<br/>";
-     				$r=$ip.".".$ips;
-     				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-					$ip_port= explode(' ',$r);
-					$ip_port2=implode(" ",$ip_port);
-					$query = "INSERT INTO aliases VALUES (nextval('aliases_id_seq'),'Ejemplo1','Ejemplo1','Ejemplo1','$ip_port2','$descripcion_ip_port','Kasa')";
-					$stmt = $db->prepare($query);
-					$params =array();
-					$stmt->execute($params);
-					$flush=$em->flush();
-					/*$r=$ip.".".$ips;
-					//echo $ips;
-					//echo $r . "<br>";
-					//die();
-					$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-					$ip_port= explode(' ',$r);
-					$ip_port2=implode(" ",$ip_port);
-					$query = "INSERT INTO aliases VALUES (nextval('aliases_id_seq'),'Ejemplo1','Ejemplo1','Ejemplo1','$ip_port2','$descripcion_ip_port','Kasa')";
-					$stmt = $db->prepare($query);
-					$params =array();
-					$stmt->execute($params);
-					$flush=$em->flush();*/
+					$id=$_REQUEST['id'];
+					$alias->setGrupo($id);
 				}
-				
-				/*$query = "INSERT INTO aliases VALUES (nextval('aliases_id_seq'),'Ejemplo1','Ejemplo1','Ejemplo1','$ip_port2','$descripcion_ip_port','Kasa')";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$flush=$em->flush();*/
+				if($role == 'ROLE_ADMINISTRATOR')
+					$alias->setGrupo($grupo);
+				$em->persist($alias);
+				$flush=$em->flush();
+				if($flush == null)
+				{
+					$estatus="Successfully registration.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+					return $this->redirectToRoute("gruposAliases");
+				}
+				else
+				{
+					$estatus="Problems with the server try later.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+				}
 			}
-			//die();
-			/*$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-			$query = "INSERT INTO aliases VALUES (nextval('aliases_id_seq'),'Ejemplo1','Ejemplo1','Ejemplo1','$ip_port2','$descripcion_ip_port','Kasa')";
-			$stmt = $db->prepare($query);
-			$params =array();
-			$stmt->execute($params);
-			$flush=$em->flush();*/
+			else
+			{
+				$estatus="The name of alias that you are trying to register already exists try again.";
+				$this->session->getFlashBag()->add("estatus",$estatus);
+			}
 		}
 		return $this->render('@Principal/aliases/registroAliases.html.twig', array(
-			'form'=>$form->createView(),
-			'ipGrupos'=>$ipGrupos
+			'form'=>$form->createView()
 		));
 	}
 
