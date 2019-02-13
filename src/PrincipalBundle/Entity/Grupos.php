@@ -42,6 +42,13 @@ class Grupos
      */
     private $descripcion;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="interfaz", type="string", length=50)
+     */
+    private $interfaz;
+
 
     /**
      * Get id
@@ -123,6 +130,30 @@ class Grupos
     public function getDescripcion()
     {
         return $this->descripcion;
+    }
+
+    /**
+     * Set interfaz
+     *
+     * @param string $interfaz
+     *
+     * @return Grupos
+     */
+    public function setInterfaz($interfaz)
+    {
+        $this->interfaz = $interfaz;
+
+        return $this;
+    }
+
+    /**
+     * Get interfaz
+     *
+     * @return string
+     */
+    public function getInterfaz()
+    {
+        return $this->interfaz;
     }
 }
 

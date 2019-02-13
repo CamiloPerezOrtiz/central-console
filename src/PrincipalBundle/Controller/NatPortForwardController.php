@@ -33,13 +33,6 @@ class NatPortForwardController extends Controller
 		$form->handleRequest($request);
 		$u = $this->getUser();
 		$role=$u->getRole();
-		if($role == 'ROLE_SUPERUSER')
-		{
-			$id=$_REQUEST['id'];
-			$interfaces = $this->recuperarInterfaces($id);
-		}
-		if($role == 'ROLE_ADMINISTRATOR')
-			$interfaces = $this->recuperarInterfaces($u->getGrupo());
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
@@ -50,7 +43,6 @@ class NatPortForwardController extends Controller
 			}
 			if($role == 'ROLE_ADMINISTRATOR')
 				$nat->setGrupo($u->getGrupo());
-			$nat->setInterface($_POST['interface']);
 			$mask = $_POST['mask'];
 			if($mask == "32")
 				$nat->setSourceAdvancedAdressMask($form->get("sourceAdvancedAdressMask")->getData());
@@ -84,22 +76,8 @@ class NatPortForwardController extends Controller
 			}
 		}
 		return $this->render('@Principal/natPortForward/registroNatPortForward.html.twig', array(
-			'form'=>$form->createView(),
-			'interfaces'=>$interfaces
+			'form'=>$form->createView()
 		));
-	}
-
-	# Funcion para recuperar nombre por id #
-	private function recuperarInterfaces($grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.nombre
-				FROM PrincipalBundle:Interfaces u
-				WHERE u.grupo = :grupo'
-		)->setParameter('grupo', $grupo);
-		$datos = $query->getResult();
-		return $datos;
 	}
 
 	# Funcion para mostrar los grupos #

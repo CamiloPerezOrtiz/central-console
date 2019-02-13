@@ -408,7 +408,7 @@ class NatPortForwardType extends AbstractType
                     'TFTP' => '69',
                     'VNC' => '5900'
                 ),
-                'data' => ''
+                'data' => 'any'
             ))
             ->add('redirectTargetPortCustom',TextType::class,array(
                 "label"=>"Custom",

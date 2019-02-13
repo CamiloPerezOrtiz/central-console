@@ -1,0 +1,64 @@
+{% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
+{% include '@Principal/plantillas/cuerpo.html.twig' %}
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    All groups
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            {% for grupos in grupo %}
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-fw fa-list fa-4x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">
+                                        <h4> {{ grupos.nombre }} </h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{ path('registerFirewallSuperUser',{ id:grupos.nombre }) }}">
+                            <div class="panel-footer">
+                                <span class="pull-left">Register a new rule WAN</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                        <a href="{{ path('registerFirewallLanSuperUser',{id:grupos.nombre }) }}">
+                            <div class="panel-footer">
+                                <span class="pull-left">Register a new rule LAN</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                        <a href="{{ path('listFirewallSuperUser',{id:grupos.nombre }) }}">
+                            <div class="panel-footer">
+                                <span class="pull-left">View list</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
+<script src="{{ asset ('js/jsPagina/aliases/registroAliases.js') }}"></script>
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
+</script>
+{% include '@Principal/plantillas/declaracionFin.html.twig' %}

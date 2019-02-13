@@ -26,13 +26,23 @@ class TargetController extends Controller
 		$target = new Target();
 		$form = $this ->createForm(TargetType::class, $target);
 		$form->handleRequest($request);
-		$grupo=$_REQUEST['id'];
-		$ipGrupos = $this->ipGrupos($grupo);
+		$u = $this->getUser();
+		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
+		{
+			$grupo=$_REQUEST['id'];
+			$ipGrupos = $this->ipGrupos($grupo);
+		}
+		else
+		{
+			$grupo=$u->getGrupo();
+			$ipGrupos = $this->ipGrupos($grupo);
+		}
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
 			$db = $em->getConnection();
-			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData());
+			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo);
 			if(count($verificarNombre)==0)
 			{
 				$nombre = $form->get("nombre")->getData();
@@ -51,7 +61,7 @@ class TargetController extends Controller
 					$stmt = $db->prepare($query);
 					$params =array();
 					$stmt->execute($params);
-					$flush=$em->flush();
+					//$flush=$em->flush();
 					$serv = '/var/www/html/central-console/web/Groups/';
 					$ruta = $serv . $grupo . "/" . $ips;
 					if(!file_exists($ruta))
@@ -88,14 +98,15 @@ class TargetController extends Controller
 	}
 
 	# Funcion para recuperar nombre por id #
-	private function recuperarNombreId($nombre)
+	private function recuperarNombreId($nombre, $grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
 			'SELECT u.nombre
 				FROM PrincipalBundle:Target u
-				WHERE  u.nombre = :nombre'
-		)->setParameter('nombre', $nombre);
+				WHERE  u.nombre = :nombre
+				AND u.grupo = :grupo'
+		)->setParameter('nombre', $nombre)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;
 	}

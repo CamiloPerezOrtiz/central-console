@@ -1,0 +1,733 @@
+{# Se evalua si existe un usuario que alla iniciado session, de lo contrario se redirecciona al login  #}
+{% if app.user != null %}
+    {# Se evalua que tipo de ussuario inicio sesion para cargar la plantilla correspondiente #}
+    {% if app.user.role == "ROLE_ADMIN" or app.user.role == "ROLE_SUPERUSER" %}
+        {% include '@Principal/templates/declaracionCabezera.html.twig' %}
+        {% include '@Principal/templates/base.html.twig' %}
+        <div class="container small">
+            <div id="content-wrapper">
+                <div class="container-fluid">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{path('dashboard')}}">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{{path('listGroupFirewall')}}">List firewall rules</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Firewall rules
+                        </li>
+                    </ol>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="fas fa-table"></i>
+                            Register a new rule
+                        </div>
+                        <div class="card-body">
+                            <div class="container">
+                                {# Mensaje a pantalla de notificacion de algun error #}
+                                    <div class="container">
+                                        <div class="col-md-11">
+                                            {% for msg in app.session.flashbag().get('estatus') %}
+                                                <div class="alert alert-info" aria-label="Close">
+                                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                    <strong>Info!</strong> {{ msg }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {# Fin de Mensaje #}
+                                <div class="card mx-auto card-register">
+                                    <div class="card-header bg-dark text-white">Properties</div>
+                                    <form method="post">
+                                        {% for listaGrupo in value %}
+                                            <div class="form-group">   
+                                                <div  class="card-body">
+                                                    <label>Action</label>
+                                                    <footer class="blockquote-footer">
+                                                        Choose what to do with packets that match the criteria specified below.
+                                                    </footer>
+                                                    <footer class="blockquote-footer">
+                                                        Hint: the difference between block and reject is that with reject, a packet (TCP RST or ICMP port unreachable for UDP) is returned to the sender, whereas with block the packet is dropped silently. In either case, the original packet is discarded.
+                                                    </footer>
+                                                    <select class="form-control" name="type" id="type">
+                                                        <option value="pass" {% if listaGrupo.type == "pass" %}selected{% endif %}>Pass</option>
+                                                        <option value="block" {% if listaGrupo.type == "block" %}selected{% endif %}>Block</option>
+                                                        <option value="reject" {% if listaGrupo.type == "reject" %}selected{% endif %}>Reject</option>
+                                                    </select>    
+                                                    <hr>
+                                                    <label>Disabled</label>
+                                                    <input type="hidden" name="disabled" id="disabled" value="no">
+                                                    <input type="checkbox" name="disabled" id="disabled" value="yes" {% if listaGrupo.disabled == "yes" %}checked{% endif %}>
+                                                    <label>Disable this rule.</label>
+                                                    <hr>
+                                                    <label>Interface</label>
+                                                    <footer class="blockquote-footer">
+                                                        Choose the interface from which packets must come to match this rule.
+                                                    </footer>
+                                                    <select class="form-control" name="interface" id="interface">
+                                                        <option value="wan" {% if listaGrupo.interface == "wan" %}selected{% endif %}>WAN</option>
+                                                        <option value="lan" {% if listaGrupo.interface == "lan" %}selected{% endif %}>LAN</option>
+                                                    </select>    
+                                                    <hr>
+                                                    <label>Address Family</label>
+                                                    <footer class="blockquote-footer">
+                                                        Select the Internet Protocol version this rule applies to.
+                                                    </footer>
+                                                    <select class="form-control" name="ipprotocol" id="ipprotocol">
+                                                        <option value="inet" {% if listaGrupo.ipprotocol == "inet" %}selected{% endif %}>IPv4</option>
+                                                        <option value="inet6" {% if listaGrupo.ipprotocol == "inet6" %}selected{% endif %}>IPv6</option>
+                                                        <option value="inet46" {% if listaGrupo.ipprotocol == "inet46" %}selected{% endif %}>IPv4+IPv6</option>
+                                                    </select>    
+                                                    <hr>
+                                                    <label>Address Family</label>
+                                                    <footer class="blockquote-footer">
+                                                        Select the Internet Protocol version this rule applies to.
+                                                    </footer>
+                                                    <select class="form-control" name="proto" id="proto" onChange="addressFamilyOnChange(this)">
+                                                        <option value="any" {% if listaGrupo.proto == "any" %}selected{% endif %}>Any</option>
+                                                        <option value="tcp" {% if listaGrupo.proto == "tcp" %}selected{% endif %}>TCP</option>
+                                                        <option value="udp" {% if listaGrupo.proto == "udp" %}selected{% endif %}>UDP</option>
+                                                        <option value="tcp/udp" {% if listaGrupo.proto == "tcp/udp" %}selected{% endif %}>TCP/UDP</option>
+                                                        <option value="icmp" {% if listaGrupo.proto == "icmp" %}selected{% endif %}>ICMP</option>
+                                                    </select>     
+                                                </div>
+                                            </div>
+                                            <div id="icmpSubtypes" style="block">
+                                                <div class="card-header bg-dark text-white">ICMP Subtypes</div>
+                                                <div class="form-group">   
+                                                    <div  class="card-body">
+                                                        <label>ICMP Subtypes</label>
+                                                        <footer class="blockquote-footer">
+                                                            For ICMP rules on IPv4, one or more of these ICMP subtypes may be specified.
+                                                        </footer>
+                                                        <br>
+                                                        <select class="form-control" name="icmptype[]" id="icmptype[]" multiple="multiple">
+                                                            <option value="any" selected>any</option>
+                                                            <option value="althost">Alternate Host</option>
+                                                            <option value="dataconv">Datagram conversion error</option>
+                                                            <option value="echorep">Echo reply</option>
+                                                            <option value="echoreq">Echo request</option>
+                                                            <option value="inforep">Information reply</option>
+                                                            <option value="inforeq">Information request</option>
+                                                            <option value="ipv6-here" >>IPv6 I-am-here</option>
+                                                            <option value="ipv6-where">IPv6 where-are-you</option>
+                                                            <option value="maskrep">Address mask reply</option>
+                                                            <option value="maskreq">Address mask request</option>
+                                                            <option value="mobredir">Mobile host redirect</option>
+                                                            <option value="mobregrep">Mobile registration reply</option>
+                                                            <option value="mobregreq">Mobile registration request</option>
+                                                            <option value="paramprob">Parameter problem (invalid IP header)</option>
+                                                            <option value="photuris">Photuris</option>
+                                                            <option value="redir">Redirect</option>
+                                                            <option value="routeradv">Router advertisement</option>
+                                                            <option value="routersol">Router solicitation</option>
+                                                            <option value="skip">SKIP</option>
+                                                            <option value="squench">Source quench</option>
+                                                            <option value="timerep">Timestamp reply</option>
+                                                            <option value="timereq">Timestamp</option>
+                                                            <option value="timex">Time exceeded</option>
+                                                            <option value="trace">Traceroute</option>
+                                                            <option value="unreach">Destination unreachable</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-header bg-dark text-white">Source</div>
+                                            <div class="form-group">   
+                                                <div  class="card-body">
+                                                    <div class="form-group">
+                                                        <div class="form-row">
+                                                            <div class="col-md-2">
+                                                                <label>Source</label>
+                                                                <input type="hidden" name="srcnot" id="srcnot" value="no">
+                                                                <input type="checkbox" name="srcnot" id="srcnot" value="yes" {% if listaGrupo.srcnot == "yes" %}checked{% endif %}>
+                                                                <label>Invert match.</label>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Type</label>
+                                                                <select class="form-control" name="srctype" id="srctype">
+                                                                    <option value="any" {% if listaGrupo.srctype == "any" %}selected{% endif %}>any</option>
+                                                                    <option value="single" {% if listaGrupo.srctype == "single" %}selected{% endif %}>Single host or alias</option>
+                                                                    <option value="network" {% if listaGrupo.srctype == "network" %}selected{% endif %}>Network</option>
+                                                                    <option value="pppoe" {% if listaGrupo.srctype == "pppoe" %}selected{% endif %}>PPPoE clients</option>
+                                                                    <option value="l2tp" {% if listaGrupo.srctype == "l2tp" %}selected{% endif %}>L2TP clients</option>
+                                                                    <option value="wan" {% if listaGrupo.srctype == "wan" %}selected{% endif %}>WAN net</option>
+                                                                    <option value="wanip" {% if listaGrupo.srctype == "wanip" %}selected{% endif %}>WAN address</option>
+                                                                    <option value="lan" {% if listaGrupo.srctype == "lan" %}selected{% endif %}>LAN net</option>
+                                                                    <option value="lanip" {% if listaGrupo.srctype == "lanip" %}selected{% endif %}>LAN address</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label>Address/mask</label>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="text" class="form-control col-sm-8" name="src" id="src" title="An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1 or an alias">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text" id="mask1">/</span>
+                                                                    </div>
+                                                                    <select class="form-control col-sm-3 pfIpMask" name="srcmask" id="srcmask"> 
+                                                                        {% for i in 32..1 %}
+                                                                            <option value="{{ i }}" {% if listaGrupo.srcmask == "{{ i }}" %}selected{% endif %}>{{ i }}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <div id="sourcePortRange" style="block">
+                                                            <div class="form-row">
+                                                                <div class="col-md-2">
+                                                                    <label>From port:</label>
+                                                                    <select class="form-control" name="srcbeginport" id="srcbeginport">
+                                                                        <option value="" {% if listaGrupo.srcbeginport == "" %}selected{% endif %}>(other)</option>
+                                                                        <option value="any" {% if listaGrupo.srcbeginport == "any" %}selected{% endif %}>any</option>
+                                                                        <option value="5999" {% if listaGrupo.srcbeginport == "5999" %}selected{% endif %}>CVSup (5999)</option>
+                                                                        <option value="53" {% if listaGrupo.srcbeginport == "53" %}selected{% endif %}>DNS (53)</option>
+                                                                        <option value="21" {% if listaGrupo.srcbeginport == "21" %}selected{% endif %}>FTP (21)</option>
+                                                                        <option value="3000" {% if listaGrupo.srcbeginport == "3000" %}selected{% endif %}>HBCI (3000)</option>
+                                                                        <option value="80" {% if listaGrupo.srcbeginport == "80" %}selected{% endif %}>HTTP (80)</option>
+                                                                        <option value="443" {% if listaGrupo.srcbeginport == "443" %}selected{% endif %}>HTTPS (443)</option>
+                                                                        <option value="5190" {% if listaGrupo.srcbeginport == "5190" %}selected{% endif %}>ICQ (5190)</option>
+                                                                        <option value="113" {% if listaGrupo.srcbeginport == "113" %}selected{% endif %}>IDENT/AUTH (113)</option>
+                                                                        <option value="143" {% if listaGrupo.srcbeginport == "143" %}selected{% endif %}>IMAP (143)</option>
+                                                                        <option value="993" {% if listaGrupo.srcbeginport == "993" %}selected{% endif %}>IMAP/S (993)</option>
+                                                                        <option value="4500" {% if listaGrupo.srcbeginport == "4500" %}selected{% endif %}>IPsec NAT-T (4500)</option>
+                                                                        <option value="500" {% if listaGrupo.srcbeginport == "500" %}selected{% endif %}>ISAKMP (500)</option>
+                                                                        <option value="1701" {% if listaGrupo.srcbeginport == "1701" %}selected{% endif %}>L2TP (1701)</option>
+                                                                        <option value="389" {% if listaGrupo.srcbeginport == "3890" %}selected{% endif %}>LDAP (389)</option>
+                                                                        <option value="1755" {% if listaGrupo.srcbeginport == "1755" %}selected{% endif %}>MMS/TCP (1755)</option>
+                                                                        <option value="7000" {% if listaGrupo.srcbeginport == "7000" %}selected{% endif %}>MMS/UDP (7000)</option>
+                                                                        <option value="445" {% if listaGrupo.srcbeginport == "445" %}selected{% endif %}>MS DS (445)</option>
+                                                                        <option value="3389" {% if listaGrupo.srcbeginport == "3389" %}selected{% endif %}>MS RDP (3389)</option>
+                                                                        <option value="1512" {% if listaGrupo.srcbeginport == "1512" %}selected{% endif %}>MS WINS (1512)</option>
+                                                                        <option value="1863" {% if listaGrupo.srcbeginport == "1863" %}selected{% endif %}>MSN (1863)</option>
+                                                                        <option value="119" {% if listaGrupo.srcbeginport == "119" %}selected{% endif %}>NNTP (119)</option>
+                                                                        <option value="123" {% if listaGrupo.srcbeginport == "123" %}selected{% endif %}>NTP (123)</option>
+                                                                        <option value="138" {% if listaGrupo.srcbeginport == "138" %}selected{% endif %}>NetBIOS-DGM (138)</option>
+                                                                        <option value="137" {% if listaGrupo.srcbeginport == "137" %}selected{% endif %}>NetBIOS-NS (137)</option>
+                                                                        <option value="139" {% if listaGrupo.srcbeginport == "139" %}selected{% endif %}>NetBIOS-SSN (139)</option>
+                                                                        <option value="1194" {% if listaGrupo.srcbeginport == "1194" %}selected{% endif %}>OpenVPN (1194)</option>
+                                                                        <option value="110" {% if listaGrupo.srcbeginport == "110" %}selected{% endif %}>POP3 (110)</option>
+                                                                        <option value="995" {% if listaGrupo.srcbeginport == "995" %}selected{% endif %}>POP3/S (995)</option>
+                                                                        <option value="1723" {% if listaGrupo.srcbeginport == "1723" %}selected{% endif %}>PPTP (1723)</option>
+                                                                        <option value="1812" {% if listaGrupo.srcbeginport == "1812" %}selected{% endif %}>RADIUS (1812)</option>
+                                                                        <option value="1813" {% if listaGrupo.srcbeginport == "1813" %}selected{% endif %}>RADIUS accounting (1813)</option>
+                                                                        <option value="5004" {% if listaGrupo.srcbeginport == "5004" %}selected{% endif %}>RTP (5004)</option>
+                                                                        <option value="5060" {% if listaGrupo.srcbeginport == "5060" %}selected{% endif %}>SIP (5060)</option>
+                                                                        <option value="25" {% if listaGrupo.srcbeginport == "25" %}selected{% endif %}>SMTP (25)</option>
+                                                                        <option value="465" {% if listaGrupo.srcbeginport == "465" %}selected{% endif %}>SMTP/S (465)</option>
+                                                                        <option value="161" {% if listaGrupo.srcbeginport == "161" %}selected{% endif %}>SNMP (161)</option>
+                                                                        <option value="162" {% if listaGrupo.srcbeginport == "162" %}selected{% endif %}>SNMP-Trap (162)</option>
+                                                                        <option value="22" {% if listaGrupo.srcbeginport == "22" %}selected{% endif %}>SSH (22)</option>
+                                                                        <option value="3478" {% if listaGrupo.srcbeginport == "3478" %}selected{% endif %}>STUN (3478)</option>
+                                                                        <option value="587" {% if listaGrupo.srcbeginport == "587" %}selected{% endif %}>SUBMISSION (587)</option>
+                                                                        <option value="3544" {% if listaGrupo.srcbeginport == "3544" %}selected{% endif %}>Teredo (3544)</option>
+                                                                        <option value="23" {% if listaGrupo.srcbeginport == "23" %}selected{% endif %}>Telnet (23)</option>
+                                                                        <option value="69" {% if listaGrupo.srcbeginport == "69" %}selected{% endif %}>TFTP (69)</option>
+                                                                        <option value="5900" {% if listaGrupo.srcbeginport == "5900" %}selected{% endif %}>VNC (5900)</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label>Custom</label>
+                                                                    <input type="text" class="form-control" name="srcbeginport_cust" id="srcbeginport_cust" value="{{ listaGrupo.srcbeginport_cust }}">
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <label>To port</label>
+                                                                    <select class="form-control" name="srcendport" id="srcendport">
+                                                                        <option value="" {% if listaGrupo.srcendport == "" %}selected{% endif %}>(other)</option>
+                                                                        <option value="any" {% if listaGrupo.srcendport == "any" %}selected{% endif %}>any</option>
+                                                                        <option value="5999" {% if listaGrupo.srcendport == "5999" %}selected{% endif %}>CVSup (5999)</option>
+                                                                        <option value="53" {% if listaGrupo.srcendport == "53" %}selected{% endif %}>DNS (53)</option>
+                                                                        <option value="21" {% if listaGrupo.srcendport == "21" %}selected{% endif %}>FTP (21)</option>
+                                                                        <option value="3000" {% if listaGrupo.srcendport == "3000" %}selected{% endif %}>HBCI (3000)</option>
+                                                                        <option value="80" {% if listaGrupo.srcendport == "80" %}selected{% endif %}>HTTP (80)</option>
+                                                                        <option value="443" {% if listaGrupo.srcendport == "443" %}selected{% endif %}>HTTPS (443)</option>
+                                                                        <option value="5190" {% if listaGrupo.srcendport == "5190" %}selected{% endif %}>ICQ (5190)</option>
+                                                                        <option value="113" {% if listaGrupo.srcendport == "113" %}selected{% endif %}>IDENT/AUTH (113)</option>
+                                                                        <option value="143" {% if listaGrupo.srcendport == "143" %}selected{% endif %}>IMAP (143)</option>
+                                                                        <option value="993" {% if listaGrupo.srcendport == "993" %}selected{% endif %}>IMAP/S (993)</option>
+                                                                        <option value="4500" {% if listaGrupo.srcendport == "4500" %}selected{% endif %}>IPsec NAT-T (4500)</option>
+                                                                        <option value="500" {% if listaGrupo.srcendport == "500" %}selected{% endif %}>ISAKMP (500)</option>
+                                                                        <option value="1701" {% if listaGrupo.srcendport == "1701" %}selected{% endif %}>L2TP (1701)</option>
+                                                                        <option value="389" {% if listaGrupo.srcendport == "3890" %}selected{% endif %}>LDAP (389)</option>
+                                                                        <option value="1755" {% if listaGrupo.srcendport == "1755" %}selected{% endif %}>MMS/TCP (1755)</option>
+                                                                        <option value="7000" {% if listaGrupo.srcendport == "7000" %}selected{% endif %}>MMS/UDP (7000)</option>
+                                                                        <option value="445" {% if listaGrupo.srcendport == "445" %}selected{% endif %}>MS DS (445)</option>
+                                                                        <option value="3389" {% if listaGrupo.srcendport == "3389" %}selected{% endif %}>MS RDP (3389)</option>
+                                                                        <option value="1512" {% if listaGrupo.srcendport == "1512" %}selected{% endif %}>MS WINS (1512)</option>
+                                                                        <option value="1863" {% if listaGrupo.srcendport == "1863" %}selected{% endif %}>MSN (1863)</option>
+                                                                        <option value="119" {% if listaGrupo.srcendport == "119" %}selected{% endif %}>NNTP (119)</option>
+                                                                        <option value="123" {% if listaGrupo.srcendport == "123" %}selected{% endif %}>NTP (123)</option>
+                                                                        <option value="138" {% if listaGrupo.srcendport == "138" %}selected{% endif %}>NetBIOS-DGM (138)</option>
+                                                                        <option value="137" {% if listaGrupo.srcendport == "137" %}selected{% endif %}>NetBIOS-NS (137)</option>
+                                                                        <option value="139" {% if listaGrupo.srcendport == "139" %}selected{% endif %}>NetBIOS-SSN (139)</option>
+                                                                        <option value="1194" {% if listaGrupo.srcendport == "1194" %}selected{% endif %}>OpenVPN (1194)</option>
+                                                                        <option value="110" {% if listaGrupo.srcendport == "110" %}selected{% endif %}>POP3 (110)</option>
+                                                                        <option value="995" {% if listaGrupo.srcendport == "995" %}selected{% endif %}>POP3/S (995)</option>
+                                                                        <option value="1723" {% if listaGrupo.srcendport == "1723" %}selected{% endif %}>PPTP (1723)</option>
+                                                                        <option value="1812" {% if listaGrupo.srcendport == "1812" %}selected{% endif %}>RADIUS (1812)</option>
+                                                                        <option value="1813" {% if listaGrupo.srcendport == "1813" %}selected{% endif %}>RADIUS accounting (1813)</option>
+                                                                        <option value="5004" {% if listaGrupo.srcendport == "5004" %}selected{% endif %}>RTP (5004)</option>
+                                                                        <option value="5060" {% if listaGrupo.srcendport == "5060" %}selected{% endif %}>SIP (5060)</option>
+                                                                        <option value="25" {% if listaGrupo.srcendport == "25" %}selected{% endif %}>SMTP (25)</option>
+                                                                        <option value="465" {% if listaGrupo.srcendport == "465" %}selected{% endif %}>SMTP/S (465)</option>
+                                                                        <option value="161" {% if listaGrupo.srcendport == "161" %}selected{% endif %}>SNMP (161)</option>
+                                                                        <option value="162" {% if listaGrupo.srcendport == "162" %}selected{% endif %}>SNMP-Trap (162)</option>
+                                                                        <option value="22" {% if listaGrupo.srcendport == "22" %}selected{% endif %}>SSH (22)</option>
+                                                                        <option value="3478" {% if listaGrupo.srcendport == "3478" %}selected{% endif %}>STUN (3478)</option>
+                                                                        <option value="587" {% if listaGrupo.srcendport == "587" %}selected{% endif %}>SUBMISSION (587)</option>
+                                                                        <option value="3544" {% if listaGrupo.srcendport == "3544" %}selected{% endif %}>Teredo (3544)</option>
+                                                                        <option value="23" {% if listaGrupo.srcendport == "23" %}selected{% endif %}>Telnet (23)</option>
+                                                                        <option value="69" {% if listaGrupo.srcendport == "69" %}selected{% endif %}>TFTP (69)</option>
+                                                                        <option value="5900" {% if listaGrupo.srcendport == "5900" %}selected{% endif %}>VNC (5900)</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label>Custom</label>
+                                                                    <input type="text" class="form-control" name="srcendport_cust" id="srcendport_cust" value="{{ listaGrupo.srcendport_cust }}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-header bg-dark text-white">Destination</div>
+                                            <div class="form-group">   
+                                                <div  class="card-body">
+                                                    <div class="form-group">
+                                                        <div class="form-row">
+                                                            <div class="col-md-2">
+                                                                <label>Source</label>
+                                                                <input type="hidden" name="dstnot" id="dstnot" value="no">
+                                                                <input type="checkbox" name="dstnot" id="dstnot" value="yes" {% if listaGrupo.dstnot == "yes" %}checked{% endif %}>
+                                                                <label>Invert match.</label>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label>Type</label>
+                                                                <select class="form-control" name="dsttype" id="dsttype">
+                                                                    <option value="any" {% if listaGrupo.dsttype == "any" %}selected{% endif %}>any</option>
+                                                                    <option value="single" {% if listaGrupo.dsttype == "single" %}selected{% endif %}>Single host or alias</option>
+                                                                    <option value="network" {% if listaGrupo.dsttype == "network" %}selected{% endif %}>Network</option>
+                                                                    <option value="(self)" {% if listaGrupo.dsttype == "(self)" %}selected{% endif %}>This firewall (self)</option>
+                                                                    <option value="pppoe" {% if listaGrupo.dsttype == "pppoe" %}selected{% endif %}>PPPoE clients</option>
+                                                                    <option value="l2tp" {% if listaGrupo.dsttype == "l2tp" %}selected{% endif %}>L2TP clients</option>
+                                                                    <option value="wan" {% if listaGrupo.dsttype == "wan" %}selected{% endif %}>WAN net</option>
+                                                                    <option value="wanip" {% if listaGrupo.dsttype == "wanip" %}selected{% endif %}>AN address</option>
+                                                                    <option value="lan" {% if listaGrupo.dsttype == "lan" %}selected{% endif %}>LAN net</option>
+                                                                    <option value="lanip" {% if listaGrupo.dsttype == "lanip" %}selected{% endif %}>LAN address</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label>Address/mask</label>
+                                                                <div class="input-group mb-3">
+                                                                    <input type="text" class="form-control col-sm-8" name="dst" id="dst" title="An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1 or an alias" value="{{ listaGrupo.dst }}">
+                                                                    <div class="input-group-prepend">
+                                                                        <span class="input-group-text" id="mask2">/</span>
+                                                                    </div>
+                                                                    <select class="form-control col-sm-3" name="dstmask" id="dstmask"> 
+                                                                        {% for i in 32..1 %}
+                                                                            <option value="{{ i }}" {% if listaGrupo.dstmask == "i" %}selected{% endif %}>{{ i }}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>  
+                                                            </div>
+                                                        </div>
+                                                        <div id="destinationPortRange" style="block">
+                                                            <div class="form-row">
+                                                                <div class="col-md-2">
+                                                                    <label>From port:</label>
+                                                                    <select class="form-control" name="dstbeginport" id="dstbeginport">
+                                                                        <option value="" {% if listaGrupo.dstbeginport == "" %}selected{% endif %}>(other)</option>
+                                                                        <option value="any" {% if listaGrupo.dstbeginport == "any" %}selected{% endif %}>any</option>
+                                                                        <option value="5999" {% if listaGrupo.dstbeginport == "5999" %}selected{% endif %}>CVSup (5999)</option>
+                                                                        <option value="53" {% if listaGrupo.dstbeginport == "53" %}selected{% endif %}>DNS (53)</option>
+                                                                        <option value="21" {% if listaGrupo.dstbeginport == "21" %}selected{% endif %}>FTP (21)</option>
+                                                                        <option value="3000" {% if listaGrupo.dstbeginport == "3000" %}selected{% endif %}>HBCI (3000)</option>
+                                                                        <option value="80" {% if listaGrupo.dstbeginport == "80" %}selected{% endif %}>HTTP (80)</option>
+                                                                        <option value="443" {% if listaGrupo.dstbeginport == "443" %}selected{% endif %}>HTTPS (443)</option>
+                                                                        <option value="5190" {% if listaGrupo.dstbeginport == "5190" %}selected{% endif %}>ICQ (5190)</option>
+                                                                        <option value="113" {% if listaGrupo.dstbeginport == "113" %}selected{% endif %}>IDENT/AUTH (113)</option>
+                                                                        <option value="143" {% if listaGrupo.dstbeginport == "143" %}selected{% endif %}>IMAP (143)</option>
+                                                                        <option value="993" {% if listaGrupo.dstbeginport == "993" %}selected{% endif %}>IMAP/S (993)</option>
+                                                                        <option value="4500" {% if listaGrupo.dstbeginport == "4500" %}selected{% endif %}>IPsec NAT-T (4500)</option>
+                                                                        <option value="500" {% if listaGrupo.dstbeginport == "500" %}selected{% endif %}>ISAKMP (500)</option>
+                                                                        <option value="1701" {% if listaGrupo.dstbeginport == "1701" %}selected{% endif %}>L2TP (1701)</option>
+                                                                        <option value="389" {% if listaGrupo.dstbeginport == "389" %}selected{% endif %}>LDAP (389)</option>
+                                                                        <option value="1755" {% if listaGrupo.dstbeginport == "1755" %}selected{% endif %}>MMS/TCP (1755)</option>
+                                                                        <option value="7000" {% if listaGrupo.dstbeginport == "7000" %}selected{% endif %}>MMS/UDP (7000)</option>
+                                                                        <option value="445" {% if listaGrupo.dstbeginport == "445" %}selected{% endif %}>MS DS (445)</option>
+                                                                        <option value="3389" {% if listaGrupo.dstbeginport == "3389" %}selected{% endif %}>MS RDP (3389)</option>
+                                                                        <option value="1512" {% if listaGrupo.dstbeginport == "1512" %}selected{% endif %}>MS WINS (1512)</option>
+                                                                        <option value="1863" {% if listaGrupo.dstbeginport == "1863" %}selected{% endif %}>MSN (1863)</option>
+                                                                        <option value="119" {% if listaGrupo.dstbeginport == "119" %}selected{% endif %}>NNTP (119)</option>
+                                                                        <option value="123" {% if listaGrupo.dstbeginport == "123" %}selected{% endif %}>NTP (123)</option>
+                                                                        <option value="138" {% if listaGrupo.dstbeginport == "138" %}selected{% endif %}>NetBIOS-DGM (138)</option>
+                                                                        <option value="137" {% if listaGrupo.dstbeginport == "137" %}selected{% endif %}>NetBIOS-NS (137)</option>
+                                                                        <option value="139" {% if listaGrupo.dstbeginport == "139" %}selected{% endif %}>NetBIOS-SSN (139)</option>
+                                                                        <option value="1194" {% if listaGrupo.dstbeginport == "1194" %}selected{% endif %}>OpenVPN (1194)</option>
+                                                                        <option value="110" {% if listaGrupo.dstbeginport == "110" %}selected{% endif %}>POP3 (110)</option>
+                                                                        <option value="995" {% if listaGrupo.dstbeginport == "995" %}selected{% endif %}>POP3/S (995)</option>
+                                                                        <option value="1723" {% if listaGrupo.dstbeginport == "1723" %}selected{% endif %}>PPTP (1723)</option>
+                                                                        <option value="1812" {% if listaGrupo.dstbeginport == "1812" %}selected{% endif %}>RADIUS (1812)</option>
+                                                                        <option value="1813" {% if listaGrupo.dstbeginport == "1813" %}selected{% endif %}>RADIUS accounting (1813)</option>
+                                                                        <option value="5004" {% if listaGrupo.dstbeginport == "5004" %}selected{% endif %}>RTP (5004)</option>
+                                                                        <option value="5060" {% if listaGrupo.dstbeginport == "5060" %}selected{% endif %}>SIP (5060)</option>
+                                                                        <option value="25" {% if listaGrupo.dstbeginport == "25" %}selected{% endif %}>SMTP (25)</option>
+                                                                        <option value="465" {% if listaGrupo.dstbeginport == "465" %}selected{% endif %}>SMTP/S (465)</option>
+                                                                        <option value="161" {% if listaGrupo.dstbeginport == "161" %}selected{% endif %}>SNMP (161)</option>
+                                                                        <option value="162" {% if listaGrupo.dstbeginport == "162" %}selected{% endif %}>SNMP-Trap (162)</option>
+                                                                        <option value="22" {% if listaGrupo.dstbeginport == "22" %}selected{% endif %}>SSH (22)</option>
+                                                                        <option value="3478" {% if listaGrupo.dstbeginport == "3478" %}selected{% endif %}>STUN (3478)</option>
+                                                                        <option value="587" {% if listaGrupo.dstbeginport == "587" %}selected{% endif %}>SUBMISSION (587)</option>
+                                                                        <option value="3544" {% if listaGrupo.dstbeginport == "3544" %}selected{% endif %}>Teredo (3544)</option>
+                                                                        <option value="23" {% if listaGrupo.dstbeginport == "23" %}selected{% endif %}>Telnet (23)</option>
+                                                                        <option value="69" {% if listaGrupo.dstbeginport == "69" %}selected{% endif %}>TFTP (69)</option>
+                                                                        <option value="5900" {% if listaGrupo.dstbeginport == "5900" %}selected{% endif %}>VNC (5900)</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label>Custom</label>
+                                                                    <input type="text" class="form-control" name="dstbeginport_cust" id="dstbeginport_cust" value="{{ listaGrupo.dstbeginport_cust }}">
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                    <label>To port</label>
+                                                                    <select class="form-control" name="dstendport" id="dstendport">
+                                                                        <option value="" {% if listaGrupo.dstendport == "" %}selected{% endif %}>(other)</option>
+                                                                        <option value="any" {% if listaGrupo.dstendport == "any" %}selected{% endif %}>any</option>
+                                                                        <option value="5999" {% if listaGrupo.dstendport == "5999" %}selected{% endif %}>CVSup (5999)</option>
+                                                                        <option value="53" {% if listaGrupo.dstendport == "53" %}selected{% endif %}>DNS (53)</option>
+                                                                        <option value="21" {% if listaGrupo.dstendport == "21" %}selected{% endif %}>FTP (21)</option>
+                                                                        <option value="3000" {% if listaGrupo.dstendport == "3000" %}selected{% endif %}>HBCI (3000)</option>
+                                                                        <option value="80" {% if listaGrupo.dstendport == "80" %}selected{% endif %}>HTTP (80)</option>
+                                                                        <option value="443" {% if listaGrupo.dstendport == "443" %}selected{% endif %}>HTTPS (443)</option>
+                                                                        <option value="5190" {% if listaGrupo.dstendport == "5190" %}selected{% endif %}>ICQ (5190)</option>
+                                                                        <option value="113" {% if listaGrupo.dstendport == "113" %}selected{% endif %}>IDENT/AUTH (113)</option>
+                                                                        <option value="143" {% if listaGrupo.dstendport == "143" %}selected{% endif %}>IMAP (143)</option>
+                                                                        <option value="993" {% if listaGrupo.dstendport == "993" %}selected{% endif %}>IMAP/S (993)</option>
+                                                                        <option value="4500" {% if listaGrupo.dstendport == "4500" %}selected{% endif %}>IPsec NAT-T (4500)</option>
+                                                                        <option value="500" {% if listaGrupo.dstendport == "500" %}selected{% endif %}>ISAKMP (500)</option>
+                                                                        <option value="1701" {% if listaGrupo.dstendport == "1701" %}selected{% endif %}>L2TP (1701)</option>
+                                                                        <option value="389" {% if listaGrupo.dstendport == "389" %}selected{% endif %}>LDAP (389)</option>
+                                                                        <option value="1755" {% if listaGrupo.dstendport == "1755" %}selected{% endif %}>MMS/TCP (1755)</option>
+                                                                        <option value="7000" {% if listaGrupo.dstendport == "7000" %}selected{% endif %}>MMS/UDP (7000)</option>
+                                                                        <option value="445" {% if listaGrupo.dstendport == "445" %}selected{% endif %}>MS DS (445)</option>
+                                                                        <option value="3389" {% if listaGrupo.dstendport == "3389" %}selected{% endif %}>MS RDP (3389)</option>
+                                                                        <option value="1512" {% if listaGrupo.dstendport == "1512" %}selected{% endif %}>MS WINS (1512)</option>
+                                                                        <option value="1863" {% if listaGrupo.dstendport == "1863" %}selected{% endif %}>MSN (1863)</option>
+                                                                        <option value="119" {% if listaGrupo.dstendport == "119" %}selected{% endif %}>NNTP (119)</option>
+                                                                        <option value="123" {% if listaGrupo.dstendport == "123" %}selected{% endif %}>NTP (123)</option>
+                                                                        <option value="138" {% if listaGrupo.dstendport == "138" %}selected{% endif %}>NetBIOS-DGM (138)</option>
+                                                                        <option value="137" {% if listaGrupo.dstendport == "137" %}selected{% endif %}>NetBIOS-NS (137)</option>
+                                                                        <option value="139" {% if listaGrupo.dstendport == "139" %}selected{% endif %}>NetBIOS-SSN (139)</option>
+                                                                        <option value="1194" {% if listaGrupo.dstendport == "1194" %}selected{% endif %}>OpenVPN (1194)</option>
+                                                                        <option value="110" {% if listaGrupo.dstendport == "110" %}selected{% endif %}>POP3 (110)</option>
+                                                                        <option value="995" {% if listaGrupo.dstendport == "995" %}selected{% endif %}>POP3/S (995)</option>
+                                                                        <option value="1723" {% if listaGrupo.dstendport == "1723" %}selected{% endif %}>PPTP (1723)</option>
+                                                                        <option value="1812" {% if listaGrupo.dstendport == "1812" %}selected{% endif %}>RADIUS (1812)</option>
+                                                                        <option value="1813" {% if listaGrupo.dstendport == "1813" %}selected{% endif %}>RADIUS accounting (1813)</option>
+                                                                        <option value="5004" {% if listaGrupo.dstendport == "5004" %}selected{% endif %}>RTP (5004)</option>
+                                                                        <option value="5060" {% if listaGrupo.dstendport == "5060" %}selected{% endif %}>SIP (5060)</option>
+                                                                        <option value="25" {% if listaGrupo.dstendport == "25" %}selected{% endif %}>SMTP (25)</option>
+                                                                        <option value="465" {% if listaGrupo.dstendport == "465" %}selected{% endif %}>SMTP/S (465)</option>
+                                                                        <option value="161" {% if listaGrupo.dstendport == "161" %}selected{% endif %}>SNMP (161)</option>
+                                                                        <option value="162" {% if listaGrupo.dstendport == "162" %}selected{% endif %}>SNMP-Trap (162)</option>
+                                                                        <option value="22" {% if listaGrupo.dstendport == "22" %}selected{% endif %}>SSH (22)</option>
+                                                                        <option value="3478" {% if listaGrupo.dstendport == "3478" %}selected{% endif %}>STUN (3478)</option>
+                                                                        <option value="587" {% if listaGrupo.dstendport == "587" %}selected{% endif %}>SUBMISSION (587)</option>
+                                                                        <option value="3544" {% if listaGrupo.dstendport == "3544" %}selected{% endif %}>Teredo (3544)</option>
+                                                                        <option value="23" {% if listaGrupo.dstendport == "23" %}selected{% endif %}>Telnet (23)</option>
+                                                                        <option value="69" {% if listaGrupo.dstendport == "69" %}selected{% endif %}>TFTP (69)</option>
+                                                                        <option value="5900" {% if listaGrupo.dstendport == "5900" %}selected{% endif %}>VNC (5900)</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <label>Custom</label>
+                                                                    <input type="text" class="form-control" name="dstendport_cust" id="dstendport_cust" value="{{ listaGrupo.dstendport_cust }}">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-header bg-dark text-white">Extra Options</div>
+                                            <div class="form-group">   
+                                                <div  class="card-body">
+                                                    <label>Log</label>
+                                                    <input type="hidden" name="log" id="log" value="no">
+                                                    <input type="checkbox" name="log" id="log" value="yes" {% if listaGrupo.log == "yes" %}checked{% endif %}>
+                                                    <footer class="blockquote-footer">
+                                                        Hint: the firewall has limited local log space. Don't turn on logging for everything. If doing a lot of logging, consider using a remote syslog server (see the Status: System Logs: Settings page).
+                                                    </footer>
+                                                    <hr>
+                                                    <label>Description</label>
+                                                    <footer class="blockquote-footer">
+                                                        A description may be entered here for administrative reference. A maximum of 52 characters will be used in the ruleset and displayed in the firewall log.
+                                                    </footer>
+                                                    <input class="form-control" name="descr" id="descr" type="text" value="{{ listaGrupo.descr }}"> 
+                                                    <hr> 
+                                                    <label>Gateway</label>
+                                                    <footer class="blockquote-footer">
+                                                        Leave as 'default' to use the system routing table. Or choose a gateway to utilize policy based routing.
+                                                    </footer>
+                                                    <select class="form-control" name="gateway" id="gateway">
+                                                        <option value="" selected>default</option>
+                                                    </select>
+                                                    <hr>
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary btn-block" name="enviar">Save</button>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <button type="reset" class="btn btn-danger btn-block">Clean Form</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}  
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include '@Principal/templates/declaracionPiePagina.html.twig' %}
+        <script>
+            // Address Family, Destination y ICMP Subtypes
+            function addressFamilyOnChange(sel) 
+            {
+                if (sel.value=="tcp" || sel.value=="udp" || sel.value=="tcp/udp")
+                {
+                    // Address Family
+                    divC = document.getElementById("sourcePortRange");
+                    divC.style.display="block";
+                    // Destination
+                    divD = document.getElementById("destinationPortRange");
+                    divD.style.display="block";
+                    // ICMP Subtypes
+                    divE = document.getElementById("icmpSubtypes");
+                    divE.style.display="none";
+                }
+                else if(sel.value=="icmp")
+                {
+                    // ICMP Subtypes
+                    divC = document.getElementById("icmpSubtypes");
+                    divC.style.display="block";
+                    // Address Family
+                    divC = document.getElementById("sourcePortRange");
+                    divC.style.display="none";
+                    // Destination
+                    divD = document.getElementById("destinationPortRange");
+                    divD.style.display="none";
+                }
+                else
+                {
+                    // Address Family
+                    divC = document.getElementById("sourcePortRange");
+                    divC.style.display="none";
+                    // Destination
+                    divD = document.getElementById("destinationPortRange");
+                    divD.style.display="none";
+                    // ICMP Subtypes
+                    divE = document.getElementById("icmpSubtypes");
+                    divE.style.display="none";
+                }
+            }
+            if($("#proto option:selected").val() == "any") 
+            {
+                // Address Family
+                divC = document.getElementById("sourcePortRange");
+                divC.style.display="none";
+                // Destination
+                divD = document.getElementById("destinationPortRange");
+                divD.style.display="none";
+                // ICMP Subtypes
+                divD = document.getElementById("icmpSubtypes");
+                divD.style.display="none";
+            }
+            if($("#proto option:selected").val() == "tcp") 
+            {
+                // ICMP Subtypes
+                divD = document.getElementById("icmpSubtypes");
+                divD.style.display="none";
+            }
+            if($("#proto option:selected").val() == "udp") 
+            {
+                // ICMP Subtypes
+                divD = document.getElementById("icmpSubtypes");
+                divD.style.display="none";
+            }
+            if($("#proto option:selected").val() == "tcp/udp") 
+            {
+                // ICMP Subtypes
+                divD = document.getElementById("icmpSubtypes");
+                divD.style.display="none";
+            }
+            // Source Address/mask
+            $( function() 
+            {
+                $("#srctype").change( function() 
+                {
+                    if ($(this).val() === "single" || $(this).val() === "network") 
+                    {
+                        $("#src").prop("readonly", false);
+                        $('#src[type="text"]').val('');
+                        $("#srcmask").prop("hidden", true);
+                    } 
+                    else 
+                    {
+                        $("#src").prop("readonly", true);
+                        $('#src[type="text"]').val('');
+                        $("#srcmask").prop("hidden", false);
+                    }
+                    if ($(this).val() === "network") 
+                    {
+                        $("#srcmask").prop("hidden", false);
+                        $("#mask1").prop("hidden", false); 
+                    } 
+                    else 
+                    {
+                        $("#srcmask").prop("hidden", true);
+                        $("#mask1").prop("hidden", true);         
+                    }
+                });
+            });
+            if($("#srctype option:selected").val() !== "") 
+            {
+               $("#src").prop("readonly", true);
+               $("#srcmask").prop("hidden", true);
+               $("#mask1").prop("hidden", true);
+            }
+            // Source From port: Custom To port Custom
+            // From port:
+            $( function() 
+            {
+                $("#srcbeginport").on('change',function() 
+                {
+                    $('#srcendport').val(this.value).prop('selected', true);
+                    $("#srcendport_cust").prop("readonly", true);
+                    if ($(this).val() === "") 
+                    {
+                        $("#srcbeginport_cust").prop("readonly", false);
+                        $("#srcendport_cust").prop("readonly", false);
+                    } 
+                    else 
+                    {
+                        $("#srcbeginport_cust").prop("readonly", true);
+                        $('#srcbeginport_cust[type="text"]').val('');
+                    }
+                });
+            });
+            // Custom
+            if($("#srcbeginport option:selected").val() !== "") 
+            {
+               $("#srcbeginport_cust").prop("readonly", true);
+            }
+            // To port
+            $( function() 
+            {
+                $("#srcendport").on('change', function() 
+                {
+                    if ($(this).val() === "") 
+                    {
+                        $("#srcendport_cust").prop("readonly", false);
+                    } 
+                    else 
+                    {
+                        $("#srcendport_cust").prop("readonly", true);
+                        $('#srcendport_cust[type="text"]').val('');
+                    }
+                });
+            });
+            // Custom
+            if($("#srcendport option:selected").val() !== "") 
+            {
+               $("#srcendport_cust").prop("readonly", true);
+            }
+            // Destination Address/mask
+            $( function() 
+            {
+                $("#dsttype").change( function() 
+                {
+                    if ($(this).val() === "single" || $(this).val() === "network") 
+                    {
+                        $("#dst").prop("readonly", false);
+                        $('#dst[type="text"]').val('');
+                        $("#dstmask").prop("hidden", true);
+                    } 
+                    else 
+                    {
+                        $("#dst").prop("readonly", true);
+                        $('#dst[type="text"]').val('');
+                        $("#dstmask").prop("hidden", false);
+                    }
+                    if ($(this).val() === "network") 
+                    {
+                        $("#dstmask").prop("hidden", false);
+                        $("#mask2").prop("hidden", false); 
+                    } 
+                    else 
+                    {
+                        $("#dstmask").prop("hidden", true);
+                        $("#mask2").prop("hidden", true);         
+                    }
+                });
+            });
+            if($("#dsttype option:selected").val() !== "") 
+            {
+               $("#dst").prop("readonly", true);
+               $("#dstmask").prop("hidden", true);
+               $("#mask2").prop("hidden", true);
+            }
+            // Destination From port: Custom To port Custom
+            // From port:
+            $( function() 
+            {
+                $("#dstbeginport").on('change',function() 
+                {
+                    $('#dstendport').val(this.value).prop('selected', true);
+                    $("#dstendport_cust").prop("readonly", true);
+                    if ($(this).val() === "") 
+                    {
+                        $("#dstbeginport_cust").prop("readonly", false);
+                        $("#dstendport_cust").prop("readonly", false);
+                    } 
+                    else 
+                    {
+                        $("#dstbeginport_cust").prop("readonly", true);
+                        $('#dstbeginport_cust[type="text"]').val('');
+                    }
+                });
+            });
+            // Custom
+            if($("#dstbeginport option:selected").val() !== "") 
+            {
+               $("#dstbeginport_cust").prop("readonly", true);
+            }
+            // To port
+            $( function() 
+            {
+                $("#dstendport").on('change', function() 
+                {
+                    if ($(this).val() === "") 
+                    {
+                        $("#dstendport_cust").prop("readonly", false);
+                    } 
+                    else 
+                    {
+                        $("#dstendport_cust").prop("readonly", true);
+                        $('#dstendport_cust[type="text"]').val('');
+                    }
+                });
+            });
+            // Custom
+            if($("#dstendport option:selected").val() !== "") 
+            {
+               $("#dstendport_cust").prop("readonly", true);
+            }
+        </script>
+        {% include '@Principal/templates/declaracionFin.html.twig' %}
+    {% else %}
+        <META HTTP-EQUIV="Refresh" CONTENT="0; URL={{path('login')}}">
+    {% endif %}
+{% else %}
+    <META HTTP-EQUIV="Refresh" CONTENT="0; URL={{path('login')}}">
+{% endif %}

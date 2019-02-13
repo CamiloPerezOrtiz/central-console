@@ -100,38 +100,9 @@ class GruposController extends Controller
 	# Funcion para listar las Ip #
 	public function aplicarCambiosSuperUsuarioAction(Request $request, $id)
 	{
-		$grupo =  new Grupos();
-		$apply = $this->createForm(GruposType::class,$grupo);
-		$apply->handleRequest($request);
-		if($apply->isSubmitted() && $apply->isValid())
-		{
-			$ip = $_POST['ip'];
-			$file=fopen("centralizedConsole/changes.txt","w") or die("Problemas");
-			foreach ($ip as $ipSelecion) 
-			{
-				fputs($file,$ipSelecion."\n");
-			}
-			fclose($file);
-			$process = new Process('python centralizedConsole/apply.py');
-			$process->run();
-			if (!$process->isSuccessful()) {
-			    throw new ProcessFailedException($process);
-			}
-			echo '<script>alert("Successfully executed changes.");window.history.go(-1);</script>';
-		}
-		if(isset($_POST['reset']))
-		{
-			$process = new Process('python centralizedConsole/ctrlz.py');
-			$process->run();
-			if (!$process->isSuccessful()) {
-			    throw new ProcessFailedException($process);
-			}
-			echo '<script>alert("Successfully executed changes.");window.history.go(-1);</script>';
-		}
 		$grupos = $this->aplicarCambiosGrupo($id);
 		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
-			"grupos"=>$grupos,
-			"apply"=>$apply->createView()
+			"grupos"=>$grupos
 		));
 	}
 
@@ -140,7 +111,7 @@ class GruposController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT g.id, g.ip, g.nombre, g.descripcion
+			'SELECT g.id, g.ip, g.descripcion
 				FROM PrincipalBundle:Grupos g
 				WHERE g.nombre = :nombre'
 		)->setParameter('nombre', $grupo);
