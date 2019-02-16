@@ -41,15 +41,37 @@ class AliasesController extends Controller
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
+			$db = $em->getConnection();
 			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo);
 			if(count($verificarNombre)==0)
 			{
+				$query = "SELECT primer_octeto, segundo_octeto, tercer_octeto FROM grupos WHERE nombre = '$grupo'";
+				$stmt = $db->prepare($query);
+				$params =array();
+				$stmt->execute($params);
+				$grupos=$stmt->fetchAll();
+				$leng = count($_POST['ip_port']);
+				foreach ($grupos as $g) 
+				{
+					foreach ($_POST['ip_port'] as $p) 
+					{
+						echo $ip_port_res = $g['primer_octeto'] . "." . $g['segundo_octeto']. "." . $g['tercer_octeto']. "." . $p . "<br>";
+					}
+				}
+				echo "<br>";
+				echo $ip_port_res;
+				echo "<br>";
+				$convertir_ip_port = explode(" ",$ip_port_res);
+				$arreglo_ip_port = implode(" ", $convertir_ip_port);
+				//echo $arreglo_ip_port;
+				die();
+
 				$u = $this->getUser();
 				$grupo=$u->getGrupo();
 				$role=$u->getRole();
-				$ip_port = implode(" ",$_POST['ip_port']);
+				//$ip_port = implode(" ",$_POST['ip_port']);
 				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-				$alias->setIp_port($ip_port);
+				$alias->setIp_port($arreglo_ip_port);
 				$alias->setDescripcion_ip_port($descripcion_ip_port);
 				if($role == 'ROLE_SUPERUSER')
 				{
