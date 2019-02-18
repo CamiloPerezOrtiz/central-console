@@ -50,7 +50,7 @@ class AliasesController extends Controller
 				$params =array();
 				$stmt->execute($params);
 				$grupos=$stmt->fetchAll();
-				$leng = count($_POST['ip_port']);
+				$leng = count($_POST['ip']);
 				foreach ($grupos as $g) 
 				{
 					foreach ($_POST['ip_port'] as $p) 
@@ -63,7 +63,7 @@ class AliasesController extends Controller
 				echo "<br>";
 				$convertir_ip_port = explode(" ",$ip_port_res);
 				$arreglo_ip_port = implode(" ", $convertir_ip_port);
-				//echo $arreglo_ip_port;
+				echo $arreglo_ip_port;
 				die();
 
 				$u = $this->getUser();
