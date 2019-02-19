@@ -1,6 +1,6 @@
 $("#add").click(function (e) 
 {
-    $("#items").append('<div><br><div id="items" class="form-group row"><div class="form-row"><div class="col-md-6"><input type="text" name="ip_port[]" class="form-control form-control-sm" placeholder="Addres"></div><div class="col-md-6"><input type="text" name="descripcion_ip_port[]" class="form-control form-control-sm" placeholder="Description"></div></div></div><button class="delete btn btn-danger btn-sm">Delete</button></div>'); 
+    $("#items").append('<div><br><div id="items" class="form-group"><div class="form-row"><div class="col-md-6"><input type="text" name="ip_port[]" class="form-control form-control-sm" placeholder="Addres"></div><div class="col-md-6"><input type="text" name="descripcion_ip_port[]" class="form-control form-control-sm" placeholder="Description"></div></div></div><button class="delete btn btn-danger btn-sm">Delete</button></div>'); 
 });
 $("body").on("click", ".delete", function (e) {
     $(this).parent("div").remove();

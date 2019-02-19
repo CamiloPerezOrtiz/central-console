@@ -45,53 +45,44 @@ class AliasesController extends Controller
 			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo);
 			if(count($verificarNombre)==0)
 			{
-				$query = "SELECT primer_octeto, segundo_octeto, tercer_octeto FROM grupos WHERE nombre = '$grupo'";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$grupos=$stmt->fetchAll();
-				$leng = count($_POST['ip']);
-				foreach ($grupos as $g) 
+				$nombre = $form->get("nombre")->getData();
+				$descripcion = $form->get("descripcion")->getData();
+				$tipo = $form->get("tipo")->getData();
+				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
+				$ip = $_POST['ip'];
+				$file=fopen("arreglo.txt","w") or die("Problemas");
+				foreach ($_POST['ip'] as $g) 
 				{
 					foreach ($_POST['ip_port'] as $p) 
 					{
-						echo $ip_port_res = $g['primer_octeto'] . "." . $g['segundo_octeto']. "." . $g['tercer_octeto']. "." . $p . "<br>";
+						//substr($myString, 0, -1)
+						$ip_port_res = $g . "." . $p ." ";
+						fputs($file,$ip_port_res);
 					}
+					fputs($file,"|"."\n");
 				}
-				echo "<br>";
-				echo $ip_port_res;
-				echo "<br>";
-				$convertir_ip_port = explode(" ",$ip_port_res);
-				$arreglo_ip_port = implode(" ", $convertir_ip_port);
-				echo $arreglo_ip_port;
-				die();
-
-				$u = $this->getUser();
-				$grupo=$u->getGrupo();
-				$role=$u->getRole();
-				//$ip_port = implode(" ",$_POST['ip_port']);
-				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-				$alias->setIp_port($arreglo_ip_port);
-				$alias->setDescripcion_ip_port($descripcion_ip_port);
-				if($role == 'ROLE_SUPERUSER')
+				$filas=file('arreglo.txt');
+				foreach($filas as $value)
 				{
-					$id=$_REQUEST['id'];
-					$alias->setGrupo($id);
+					list($ip) = explode("|", $value);
+					$query = "INSERT INTO aliases 
+						VALUES (nextval('aliases_id_seq'),'$nombre','$descripcion','$tipo','$ip','$descripcion_ip_port','$grupo')"
+					;
+					$stmt = $db->prepare($query);
+					$params =array();
+					$stmt->execute($params);
 				}
-				if($role == 'ROLE_ADMINISTRATOR')
-					$alias->setGrupo($grupo);
-				$em->persist($alias);
-				$flush=$em->flush();
-				if($flush == null)
+				unlink("arreglo.txt");
+				if($stmt == null)
+				{
+					$estatus="Problems with the server try later.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+				}
+				else
 				{
 					$estatus="Successfully registration.";
 					$this->session->getFlashBag()->add("estatus",$estatus);
 					return $this->redirectToRoute("gruposAliases");
-				}
-				else
-				{
-					$estatus="Problems with the server try later.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
 				}
 			}
 			else
@@ -281,8 +272,9 @@ class AliasesController extends Controller
 	}
 
 	# Funcion para crear el XML de aliases #
-	public function crearXMLAliasesAction($id)
+	public function crearXMLAliasesAction()
 	{
+		$id=$_REQUEST['id'];
 		$recuperarTodoDatos = $this->recuperarTodoDatos($id);
 		$contenido = "<?xml version='1.0'?>\n";
 		$contenido .= "\t<aliases>\n";
@@ -322,21 +314,5 @@ class AliasesController extends Controller
 		)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;
-	}
-
-	# funcion para correr el script aplicar cambios en aliases #
-	public function aplicarXMLAliasesAction($id)
-	{
-    	$archivo = fopen("change_to_do.txt", 'w');
-		fwrite($archivo, "aliases.py");
-		fwrite ($archivo, "\n");
-		fclose($archivo); 
-		# Mover el archivo a la carpeta #
-		$archivoConfig = 'change_to_do.txt';
-		$destinoConfig = "centralizedConsole/change_to_do.txt";
-	   	if (!copy($archivoConfig, $destinoConfig)) 
-		   echo "Error al copiar $archivoConfig...\n";
-		unlink("change_to_do.txt");
-    	return $this->redirectToRoute('grupos');
 	}
 }

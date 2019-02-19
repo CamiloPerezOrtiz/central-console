@@ -15,22 +15,31 @@
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover small" id="dataTables-example">
-                                <thead class="bg-dark text-white">
-                                    <tr>
-                                        <th>Ip</th>   
-                                        <th>Description</th>       
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for grupo in grupos %}
+                            <h1>Instructions</h1>      
+                            <p>Select the Ip to which you want to apply the change.</p>
+                            <form method="post" class="role">
+                                <button class="btn btn-success" name="enviar" type="submit">Save</button>
+                                <br><br>
+                                <table class="table table-striped table-bordered table-hover small" id="dataTables-example">
+                                    <thead class="bg-dark text-white">
                                         <tr>
-                                            <td>{{ grupo.ip }}</td>
-                                            <td>{{ grupo.descripcion }}</td>
+                                            <th>Ip</th>   
+                                            <th>Description</th>       
                                         </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {% for grupo in grupos %}
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" class="form-check-input" name="ip[]" value="{{ grupo.descripcion }}" checked> 
+                                                    {{ grupo.primer_octeto }}.{{ grupo.segundo_octeto }}.{{ grupo.tercer_octeto }}.{{ grupo.cuarto_octeto }}
+                                                </td>
+                                                <td>{{ grupo.descripcion }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -41,6 +50,17 @@
 {% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
 <script src="{{ asset ('vendor/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset ('vendor/datatables/dataTables.bootstrap.min.js') }}"></script>
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
+</script>
+<script>
+    function myFunction() {
+        alert("The ip has been saved");
+    }
 </script>
 <script>
     $(document).ready(function() {

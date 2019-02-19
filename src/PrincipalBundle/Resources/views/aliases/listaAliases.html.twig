@@ -63,28 +63,17 @@
                                 </tbody>
                             </table>
                             {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
-                                <br>
                                 <div class="panel-body text-center">
-                                    When you do click on save button you are saving the target categories list and if you do click on apply button, the process about new configuration changes will be starting. <br>
-                                    <b><span style="color: #800000;">Both the save and apply button must be clicked</span></b>. <br><br>
+                                    When you do click on save button you are saving the target categories list. <br><br>
                                     <div class="form-group">
-                                    {% if aliases == true %} 
-                                        <a href="{{path('crearXMLAliases',{id:aliases[0]['grupo']})}}">
-                                            <button type="button" class="btn btn-primary">
-                                                <b>  
-                                                    Save aliases list <i class="fas fa-save"></i>
-                                                </b>
-                                            </button>
-                                        </a>
-                                        <br><br>
-                                         <a href="{{path('aplicarXMLAliases',{id:aliases[0]['grupo']})}}">
-                                            <button type="" class="btn btn-success">
-                                                <b>  
-                                                    Apply to aliases list <i class="fas fa-caret-square-down"></i>
-                                                </b>
-                                            </button>
-                                        </a>
-                                    {% endif %} 
+                                        {% if aliases == true %} 
+                                            <a href="{{path('crearXMLAliases',{id:aliases[0]['grupo']})}}">
+                                                <button type="button" class="btn btn-success">
+                                                    <b> Save aliases list <i class="fas fa-save"></i></b>
+                                                </button>
+                                            </a>
+                                        {% endif %} 
+                                    </div>
                                 </div>
                             {% endif %}
                         </div>

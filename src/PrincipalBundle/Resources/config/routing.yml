@@ -97,7 +97,7 @@ eliminarAliases:
     defaults: { _controller: PrincipalBundle:Aliases:eliminarAliases }
 
 crearXMLAliases:
-    path:     /crearXMLAliases/{id}
+    path:     /crearXMLAliases
     defaults: { _controller: PrincipalBundle:Aliases:crearXMLAliases }
 
 aplicarXMLAliases:
