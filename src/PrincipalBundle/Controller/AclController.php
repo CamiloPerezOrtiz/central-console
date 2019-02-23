@@ -100,7 +100,7 @@ class AclController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.descripcion
+			'SELECT DISTINCT u.id, u.nombre, u.descripcion, u.ubicacion
 				FROM PrincipalBundle:Target u
 				WHERE  u.grupo = :grupo'
 		)->setParameter('grupo', $grupo);

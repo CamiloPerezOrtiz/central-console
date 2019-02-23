@@ -1,0 +1,13 @@
+<?xml version='1.0'?>
+	<squidguarddest>
+			<config>
+				<name>Twitter</name>
+				<domains>twitter.com</domains>
+				<urls>twitter.com/login</urls>
+				<expressions>|twitter|</expressions>
+				<redirect_mode>rmod_int_bpg</redirect_mode>
+				<redirect>Error</redirect>
+				<description>Bloquear_twitter</description>
+				<enablelog>on</enablelog>
+			</config>
+	</squidguarddest>

@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">
-                    All groups
+                    Groups
                 </h1>
             </div>
         </div>
@@ -25,23 +25,16 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="{{ path('registerFirewallSuperUser',{ id:grupos.nombre }) }}">
+                        <a href="{{ path('registroFirewallWan',{ id:grupos.nombre }) }}">
                             <div class="panel-footer">
-                                <span class="pull-left">Register a new rule WAN</span>
+                                <span class="pull-left">Register Firewall WAN</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                 <div class="clearfix"></div>
                             </div>
                         </a>
-                        <a href="{{ path('registerFirewallLanSuperUser',{id:grupos.nombre }) }}">
+                        <a href="{{ path('listaAcl',{ id:grupos.nombre }) }}">
                             <div class="panel-footer">
-                                <span class="pull-left">Register a new rule LAN</span>
-                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </a>
-                        <a href="{{ path('listFirewallSuperUser',{id:grupos.nombre }) }}">
-                            <div class="panel-footer">
-                                <span class="pull-left">View list</span>
+                                <span class="pull-left">List Firewall</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                 <div class="clearfix"></div>
                             </div>
@@ -53,12 +46,4 @@
     </div>
 </div>
 {% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
-<script src="{{ asset ('js/jsPagina/aliases/registroAliases.js') }}"></script>
-<script>
-    window.setTimeout(function() {
-        $(".alert").fadeTo(500, 0).slideUp(500, function(){
-            $(this).remove(); 
-        });
-    }, 4000);
-</script>
 {% include '@Principal/plantillas/declaracionFin.html.twig' %}

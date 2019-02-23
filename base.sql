@@ -78,8 +78,8 @@ CREATE TABLE acl(
 	target_rules_list TEXT NOT NULL,
 	not_allow_ip BOOLEAN DEFAULT FALSE,
 	redirectMode VARCHAR(50) NOT NULL,
-	redirect VARCHAR(50) NOT NULL,
-	descripcion VARCHAR(50) NOT NULL,
+	redirect VARCHAR(50) DEFAULT NULL,
+	descripcion VARCHAR(50) DEFAULT NULL,
 	log BOOLEAN DEFAULT FALSE,
 	grupo VARCHAR(50) NOT NULL
 );
@@ -92,7 +92,8 @@ CREATE TABLE aliases(
 	tipo VARCHAR(50) NOT NULL,
 	ip_port TEXT NOT NULL,
 	descripcion_ip_port TEXT DEFAULT NULL,
-	grupo VARCHAR(50) NOT NULL
+	grupo VARCHAR(50) NOT NULL,
+	ubicacion VARCHAR(50) NOT NULL
 );
 
 -- Targets categories
@@ -133,31 +134,31 @@ INSERT INTO protocolo VALUES(NEXTVAL('protocolo_id_seq'),'ICMP','icmp');
 CREATE TABLE nat_port_forward(
 	id INT PRIMARY KEY NOT NULL,
 	estatus BOOLEAN DEFAULT FALSE,
-	interface VARCHAR(25) NOT NULL,
-	protocolo VARCHAR(25) NOT NULL,
+	interface VARCHAR(25) DEFAULT NULL,
+	protocolo VARCHAR(25) DEFAULT NULL,
 	source_advanced_invert_match BOOLEAN DEFAULT FALSE,
-	source_advanced_type VARCHAR(25) NOT NULL,
+	source_advanced_type VARCHAR(25) DEFAULT NULL,
 	source_advanced_adress_mask VARCHAR(25) DEFAULT NULL,
 	--source_advanced_mask INT DEFAULT NULL,
-	source_advanced_from_port VARCHAR(20) NOT NULL,
+	source_advanced_from_port VARCHAR(20) DEFAULT NULL,
 	source_advanced_custom VARCHAR(25) DEFAULT NULL,
-	source_advanced_to_port VARCHAR(20) NOT NULL,
+	source_advanced_to_port VARCHAR(20) DEFAULT NULL,
 	source_advanced_custom_to_port VARCHAR(25) DEFAULT NULL,
 	destination_invert_match BOOLEAN DEFAULT FALSE,
-	destination_type VARCHAR(25) NOT NULL,
+	destination_type VARCHAR(25) DEFAULT NULL,
 	destination_adress_mask VARCHAR(25) DEFAULT NULL,
 	--destination_mask INT DEFAULT NULL,
-	destination_range_from_port VARCHAR(20) NOT NULL,
+	destination_range_from_port VARCHAR(20) DEFAULT NULL,
 	destination_range_custom VARCHAR(25) DEFAULT NULL,
-	destination_range_to_port VARCHAR(20) NOT NULL,
+	destination_range_to_port VARCHAR(20) DEFAULT NULL,
 	destination_range_custom_to_port VARCHAR(25) DEFAULT NULL,
-	redirect_target_ip VARCHAR(15) NOT NULL,
-	redirect_target_port VARCHAR(25) NOT NULL,
+	redirect_target_ip VARCHAR(15) DEFAULT NULL,
+	redirect_target_port VARCHAR(25) DEFAULT NULL,
 	redirect_target_port_custom VARCHAR(25) DEFAULT NULL,
-	descripcion VARCHAR(25) NOT NULL,
-	nat_reflection VARCHAR(25) NOT NULL,
-	filter_rule_association VARCHAR(25) NOT NULL,
-	grupo VARCHAR(50) NOT NULL,
+	descripcion VARCHAR(25) DEFAULT NULL,
+	nat_reflection VARCHAR(25) DEFAULT NULL,
+	filter_rule_association VARCHAR(25) DEFAULT NULL,
+	grupo VARCHAR(50) DEFAULT NULL,
 	posicion SERIAL 
 );
 
@@ -165,28 +166,28 @@ CREATE TABLE nat_port_forward(
 CREATE TABLE nat_one_to_one(
 	id INT PRIMARY KEY NOT NULL,
 	estatus BOOLEAN DEFAULT FALSE,
-	interface VARCHAR(25) NOT NULL,
-	external_subnet_ip VARCHAR(25) NOT NULL,
+	interface VARCHAR(25) DEFAULT NULL,
+	external_subnet_ip VARCHAR(25) DEFAULT NULL,
 	internal_ip BOOLEAN DEFAULT FALSE,
-	internal_ip_type VARCHAR(25) NOT NULL,
+	internal_ip_type VARCHAR(25) DEFAULT NULL,
 	internal_adress_mask VARCHAR(25) DEFAULT NULL,
 	destination BOOLEAN DEFAULT FALSE,
-	destination_type VARCHAR(25) NOT NULL,
+	destination_type VARCHAR(25) DEFAULT NULL,
 	destination_adress_mask VARCHAR(25) DEFAULT NULL,
 	descripcion VARCHAR(25) DEFAULT NULL,
-	nat_reflection VARCHAR(25) NOT NULL,
-	grupo VARCHAR(50) NOT NULL,
+	nat_reflection VARCHAR(25) DEFAULT NULL,
+	grupo VARCHAR(50) DEFAULT NULL,
 	posicion SERIAL	
 );
 
 --firewall wan
 CREATE TABLE firewall_lan(
 	id INT PRIMARY KEY NOT NULL,
-	action VARCHAR(25) NOT NULL,
+	action VARCHAR(25) DEFAULT NULL,
 	estatus BOOLEAN DEFAULT FALSE,
-	interface VARCHAR(25) NOT NULL,
-	adress_family VARCHAR(25) NOT NULL,
-	protocolo VARCHAR(25) NOT NULL,
+	interface VARCHAR(25) DEFAULT NULL,
+	adress_family VARCHAR(25) DEFAULT NULL,
+	protocolo VARCHAR(25) DEFAULT NULL,
 	icmp_subtypes TEXT DEFAULT NULL,
 	--source
 	source_invert_match BOOLEAN DEFAULT FALSE,
@@ -206,9 +207,9 @@ CREATE TABLE firewall_lan(
 	destination_port_range_to VARCHAR(20) DEFAULT NULL,
 	destination_port_range_custom_to VARCHAR(20) DEFAULT NULL,
 	log BOOLEAN DEFAULT TRUE,
-	descripcion VARCHAR(40) NOT NULL,
-	grupo VARCHAR(50) NOT NULL,
-	posicion SERIAL NOT NULL 
+	descripcion VARCHAR(40) DEFAULT NULL,
+	grupo VARCHAR(50) DEFAULT NULL,
+	posicion SERIAL
 );
 
 CREATE TABLE informacion_ip(
@@ -219,3 +220,14 @@ CREATE TABLE informacion_ip(
 	cuarto_octeto INT NOT NULL,
 	mascara INT NOT NULL,
 );
+
+-- Firewall --
+CREATE SEQUENCE firewall_action_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
+
+CREATE TABLE firewall_action(
+	id INT PRIMARY KEY NOT NULL,
+	nombre_action VARCHAR(25) NOT NULL,
+	valor_action VARCHAR(25) NOT NULL
+);
+
+INSERT INTO 

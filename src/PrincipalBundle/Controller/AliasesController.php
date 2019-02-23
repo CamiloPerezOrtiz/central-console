@@ -51,26 +51,36 @@ class AliasesController extends Controller
 				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
 				$ip = $_POST['ip'];
 				$file=fopen("arreglo.txt","w") or die("Problemas");
-				foreach ($_POST['ip'] as $g) 
+				foreach ($_POST['ip'] as $ips)
 				{
-					foreach ($_POST['ip_port'] as $p) 
+					$query = "SELECT primer_octeto, segundo_octeto, tercer_octeto FROM grupos WHERE descripcion = '$ips'";
+					$stmt = $db->prepare($query);
+					$params =array();
+					$stmt->execute($params);
+					$grupos=$stmt->fetchAll();
+					foreach ($grupos as $g) 
 					{
-						//substr($myString, 0, -1)
-						$ip_port_res = $g . "." . $p ." ";
-						fputs($file,$ip_port_res);
+						foreach ($_POST['ip_port'] as $p) 
+						{
+							echo $ip_port_res = $g['primer_octeto'] . "." . $g['segundo_octeto'] . "." . $g['tercer_octeto'] . "." . $p ." ";
+							fputs($file,$ip_port_res);
+						}
+						fputs($file,"|"."\n");
 					}
-					fputs($file,"|"."\n");
 				}
 				$filas=file('arreglo.txt');
 				foreach($filas as $value)
 				{
-					list($ip) = explode("|", $value);
-					$query = "INSERT INTO aliases 
-						VALUES (nextval('aliases_id_seq'),'$nombre','$descripcion','$tipo','$ip','$descripcion_ip_port','$grupo')"
-					;
-					$stmt = $db->prepare($query);
-					$params =array();
-					$stmt->execute($params);
+					foreach ($_POST['ip'] as $ips)
+					{
+						list($ip) = explode("|", $value);
+						$query2 = "INSERT INTO aliases 
+							VALUES (nextval('aliases_id_seq'),'$nombre','$descripcion','$tipo','$ip','$descripcion_ip_port','$grupo','$ips')"
+						;
+						$stmt2 = $db->prepare($query2);
+						$params2 =array();
+						$stmt2->execute($params2);
+					}
 				}
 				unlink("arreglo.txt");
 				if($stmt == null)
@@ -95,6 +105,7 @@ class AliasesController extends Controller
 			'form'=>$form->createView(),
 			'ipGrupos'=>$ipGrupos
 		));
+		
 	}
 
 	# Funcion para recuperar nombre por id #
@@ -122,19 +133,6 @@ class AliasesController extends Controller
 		$stmt->execute($params);
 		$grupos=$stmt->fetchAll();
 		return $grupos;
-	}
-
-	# Funcion para recuperar los todos los aliases #
-	private function recuperarIp($grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-	    $db = $em->getConnection();
-		$query = "SELECT * FROM grupos WHERE nombre = '$grupo' ORDER BY id";
-		$stmt = $db->prepare($query);
-		$params =array();
-		$stmt->execute($params);
-		$ip=$stmt->fetchAll();
-		return $ip;
 	}
 
 	# Funcion para mostrar los grupos #
@@ -272,7 +270,7 @@ class AliasesController extends Controller
 	}
 
 	# Funcion para crear el XML de aliases #
-	public function crearXMLAliasesAction()
+	/*public function crearXMLAliasesAction()
 	{
 		$id=$_REQUEST['id'];
 		$recuperarTodoDatos = $this->recuperarTodoDatos($id);
@@ -314,5 +312,5 @@ class AliasesController extends Controller
 		)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;
-	}
+	}*/
 }

@@ -41,6 +41,7 @@
                                 </a>
                                 <br><br>
                             {% endif %}
+                            <!--
                             {% if app.user.role == 'ROLE_SUPERUSER' %}
                                 <a href="{{ path('llenar') }}">
                                     <button type="button" class="btn btn-success">
@@ -48,7 +49,7 @@
                                     </button>
                                 </a>
                                 <br><br>
-                            {% endif %}
+                            {% endif %}-->
                             <table class="table table-sm table-striped table-bordered table-hover text-center table-condensed small" id="dataTables-example">
                                 <div class="col-md-12">
                                     {% for msg in app.session.flashbag().get('estatus') %}

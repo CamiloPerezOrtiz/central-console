@@ -214,77 +214,52 @@ dragAndDropNatOneToOne:
     path:     /dragAndDropNatOneToOne
     defaults: { _controller: PrincipalBundle:NatPortForward:dragAndDropNatOneToOne }
 
-#Listado de grupos controlador: GrupoController funcion: listaGrupoAction #  
-listGroupFirewall:
-    path:     /listGroupFirewall
-    defaults: { _controller: PrincipalBundle:Firewall:listGroupFirewall }
+# Firewall #
 
-#Listado de las target categories controlador: TargetcategoriesController funcion: listaTargetcategoriesAction #  
-listFirewallSuperUser:
-    path:     /listFirewallSuperUser/{id}
-    defaults: { _controller: PrincipalBundle:Firewall:listFirewallSuperUser }
+gruposFirewall:
+    path:     /gruposFirewall
+    defaults: { _controller: PrincipalBundle:Firewall:gruposFirewall }
 
-#Listado de las target categories controlador: TargetcategoriesController funcion: listaTargetcategoriesAction #  
-listFirewall:
-    path:     /listFirewall
-    defaults: { _controller: PrincipalBundle:Firewall:listFirewall }
+registroFirewallWan:
+    path:     /registroFirewallWan 
+    defaults: { _controller: PrincipalBundle:Firewall:registroFirewallWan }
 
-#Registro de un nuevo target categories controlador:NatController funcion registroNatr#
-registerFirewallSuperUser:
-    path:     /registerFirewallSuperUser/{id} 
-    defaults: { _controller: PrincipalBundle:Firewall:registerFirewallSuperUser }
+editarNatPortForward:
+    path:     /editarNatPortForward/{id} 
+    defaults: { _controller: PrincipalBundle:Firewall:editarNatPortForward }
 
-#Registro de un nuevo target categories controlador:NatController funcion registroNatr#
-registerFirewallWan:
-    path:     /registerFirewallWan
-    defaults: { _controller: PrincipalBundle:Firewall:registerFirewallWan }
+listaNat:
+    path:     /listaNat 
+    defaults: { _controller: PrincipalBundle:NatPortForward:listaNat }
 
-#Listado de grupos controlador: GrupoController funcion: listaGrupoAction #  
-refreshFirewallWan:
-    path:     /refreshFirewallWan
-    defaults: { _controller: PrincipalBundle:Firewall:refreshFirewallWan }
+eliminarNatPortForward:
+    path:     /eliminarNatPortForward/{id} 
+    defaults: { _controller: PrincipalBundle:NatPortForward:eliminarNatPortForward }
 
-#Elimina el target categories seleccionado controlador: AliasesController funcion eliminarAliases#
-deleteFirewallWan:
-    path:     /deleteFirewallWan/{id}
-    defaults: { _controller: PrincipalBundle:Firewall:deleteFirewallWan }
+crearXMLNat:
+    path:     /crearXMLNat/{id}
+    defaults: { _controller: PrincipalBundle:NatPortForward:crearXMLNat }
 
-#Edita el usuario el cual fue seleccionado controlador: FirewallWanController funcion editarFirewallWan#
-editFirewallWan:
-    path:     /editFirewallWan/{id}
-    defaults: { _controller: PrincipalBundle:Firewall:editFirewallWan }
+aplicarXMLNat:
+    path:     /aplicarXMLNat/{id}
+    defaults: { _controller: PrincipalBundle:NatPortForward:aplicarXMLNat }
 
-#Registro de un nuevo target categories controlador:NatController funcion registroNatr#
-registerFirewallLanSuperUser:
-    path:     /registerFirewallLanSuperUser/{id} 
-    defaults: { _controller: PrincipalBundle:Firewall:registerFirewallLanSuperUser }
+dragAndDropNatPortForward:
+    path:     /dragAndDropNatPortForward
+    defaults: { _controller: PrincipalBundle:NatPortForward:dragAndDropNatPortForward }
 
-#Registro de un nuevo target categories controlador:NatController funcion registroNatr#
-registerFirewallLan:
-    path:     /registerFirewallLan
-    defaults: { _controller: PrincipalBundle:Firewall:registerFirewallLan }
+registroNatOneToOne:
+    path:     /registroNatOneToOne 
+    defaults: { _controller: PrincipalBundle:NatPortForward:registroNatOneToOne }
 
-#Listado de grupos controlador: GrupoController funcion: listaGrupoAction #  
-refreshFirewallLan:
-    path:     /refreshFirewallLan
-    defaults: { _controller: PrincipalBundle:Firewall:refreshFirewallLan }
+editarNatOneToOne:
+    path:     /editarNatOneToOne/{id} 
+    defaults: { _controller: PrincipalBundle:NatPortForward:editarNatOneToOne }
 
-#Elimina el target categories seleccionado controlador: AliasesController funcion eliminarAliases#
-deleteFirewallLan:
-    path:     /deleteFirewallLan/{id}
-    defaults: { _controller: PrincipalBundle:Firewall:deleteFirewallLan }
+eliminarNatOneToOne:
+    path:     /eliminarNatOneToOne/{id} 
+    defaults: { _controller: PrincipalBundle:NatPortForward:eliminarNatOneToOne }
 
-#Edita el usuario el cual fue seleccionado controlador: FirewallWanController funcion editarFirewallWan#
-editFirewallLan:
-    path:     /editFirewallLan/{id}
-    defaults: { _controller: PrincipalBundle:Firewall:editFirewallLan }
-
-#Crear XML acl groups controlador:NatController funcion crearXMLNat #
-createXMLFirewall:
-    path:     /createXMLFirewall/{id}
-    defaults: { _controller: PrincipalBundle:Firewall:createXMLFirewall }
-
-#Crear XML acl groups controlador:NatController funcion crearXMLNat #
-aplicateXMLFirewall:
-    path:     /aplicateXMLFirewall/{id}
-    defaults: { _controller: PrincipalBundle:Firewall:aplicateXMLFirewall }
+dragAndDropNatOneToOne:
+    path:     /dragAndDropNatOneToOne
+    defaults: { _controller: PrincipalBundle:NatPortForward:dragAndDropNatOneToOne }

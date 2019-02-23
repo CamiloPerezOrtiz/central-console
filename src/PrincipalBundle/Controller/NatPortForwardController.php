@@ -285,14 +285,14 @@ class NatPortForwardController extends Controller
 		$form = $this ->createForm(NatOneToOneType::class, $nat);
 		$form->handleRequest($request);
 		$u = $this->getUser();
-		$role=$u->getRole();
+		$role=$u->getRole();/*
 		if($role == 'ROLE_SUPERUSER')
 		{
 			$id=$_REQUEST['id'];
 			$interfaces = $this->recuperarInterfaces($id);
 		}
 		if($role == 'ROLE_ADMINISTRATOR')
-			$interfaces = $this->recuperarInterfaces($u->getGrupo());
+			$interfaces = $this->recuperarInterfaces($u->getGrupo());*/
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
@@ -319,8 +319,7 @@ class NatPortForwardController extends Controller
 			}
 		}
 		return $this->render('@Principal/natPortForward/registroNatOneToOne.html.twig', array(
-			'form'=>$form->createView(),
-			'interfaces'=>$interfaces
+			'form'=>$form->createView()
 		));
 	}
 

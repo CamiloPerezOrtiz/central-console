@@ -42,7 +42,7 @@
                                                 {% for grupo in ipGrupos %}
                                                     <tr>
                                                         <td>
-                                                            <input type="checkbox" class="form-check-input" name="ip[]" value="{{ grupo.primer_octeto }}.{{ grupo.segundo_octeto }}.{{ grupo.tercer_octeto }}" checked> 
+                                                            <input type="checkbox" class="form-check-input" name="ip[]" value="{{ grupo.descripcion }}" checked> 
                                                             {{ grupo.primer_octeto }}.{{ grupo.segundo_octeto }}.{{ grupo.tercer_octeto }}
                                                         </td>
                                                         <td>{{ grupo.descripcion }}</td>

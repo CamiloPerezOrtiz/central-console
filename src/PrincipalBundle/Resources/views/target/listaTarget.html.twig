@@ -73,8 +73,7 @@
                             {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
                                 <br>
                                 <div class="panel-body text-center">
-                                    When you do click on save button you are saving the target categories list and if you do click on apply button, the process about new configuration changes will be starting. <br>
-                                    <b><span style="color: #800000;">Both the save and apply button must be clicked</span></b>. <br><br>
+                                    When you click on save button you are saving the target categories list. <br><br>
                                     <div class="form-group">
                                     {% if target == true %} 
                                         <a href="{{path('crearXMLTarget',{id:target[0]['grupo']})}}">

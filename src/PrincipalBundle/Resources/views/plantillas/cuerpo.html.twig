@@ -55,7 +55,7 @@
                         <a class="text-white" href="{{ path('leerArchivoTxt') }}">
                             <i class="fa fa-users"></i>
                             <span>
-                                Groups{% if app.user.role == 'ROLE_SUPERUSER' %}/ Add an user {% endif %} 
+                                Groups{% if app.user.role == 'ROLE_SUPERUSER' %}/ Add user {% endif %} 
                             </span>
                         </a>
                     </li>
@@ -110,7 +110,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="text-white" href="{{ path('listGroupFirewall') }}">
+                        <a class="text-white" href="{{ path('gruposFirewall') }}">
                             <i class="fas fa-fire"></i>
                             <span class="nav-link-text">
                                 Firewall rules

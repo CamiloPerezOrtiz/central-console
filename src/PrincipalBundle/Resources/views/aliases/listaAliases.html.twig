@@ -64,14 +64,14 @@
                             </table>
                             {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
                                 <div class="panel-body text-center">
-                                    When you do click on save button you are saving the target categories list. <br><br>
+                                    When you click on save button you are saving the aliases list. <br><br>
                                     <div class="form-group">
                                         {% if aliases == true %} 
-                                            <a href="{{path('crearXMLAliases',{id:aliases[0]['grupo']})}}">
-                                                <button type="button" class="btn btn-success">
-                                                    <b> Save aliases list <i class="fas fa-save"></i></b>
-                                                </button>
-                                            </a>
+                                            <a href="{{path('crearXMLTarget',{id:aliases[0]['grupo']})}}">
+                                            <button type="button" class="btn btn-success">
+                                                <b>  Save aliases list <i class="fas fa-save"></i></b>
+                                            </button>
+                                        </a>
                                         {% endif %} 
                                     </div>
                                 </div>
