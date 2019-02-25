@@ -101,7 +101,7 @@ class GruposController extends Controller
 	public function aplicarCambiosSuperUsuarioAction(Request $request, $id)
 	{
 		$grupos = $this->aplicarCambiosGrupo($id);
-		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
+		return $this->render("@Principal/grupos/aplicarCambiosIp.html.twig", array(
 			"grupos"=>$grupos
 		));
 	}
@@ -153,7 +153,7 @@ class GruposController extends Controller
 		$u = $this->getUser();
 		$grupo=$u->getGrupo();
 		$grupos = $this->aplicarCambiosGrupo($grupo);
-		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
+		return $this->render("@Principal/grupos/aplicarCambiosIp.html.twig", array(
 			"grupos"=>$grupos,
 			"apply"=>$apply->createView()
 		));

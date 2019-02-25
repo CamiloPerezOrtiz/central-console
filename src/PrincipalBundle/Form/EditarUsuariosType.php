@@ -25,28 +25,28 @@ class EditarUsuariosType extends AbstractType
                 "label"=>"Name: ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('apellidos', TextType::class,array(
                 "label"=>"Last name: ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('email', EmailType::class,array(
                 "label"=>"Email: ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('role',ChoiceType::class, array(
                 "label"=>"Role: ",
                 "required"=>"required",
                 "attr"=>array(
-                    "class"=>"form-control"
+                    "class"=>"form-control input-sm"
                 ),'choices' => array(
                     'Administrator' => 'ROLE_ADMINISTRATOR',
                     'User' => 'ROLE_USER',
@@ -57,7 +57,7 @@ class EditarUsuariosType extends AbstractType
                 'invalid_message' => 'The password fields must match.',
                 'options' => array('attr' => array(
                     'class' => 'password-field',
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )),
                 'required'=>false,
                 'first_options'  => array(
@@ -69,7 +69,7 @@ class EditarUsuariosType extends AbstractType
             ))
             ->add('Save', SubmitType::class,array(
                 "attr"=>array(
-                    "class"=>"btn btn-primary btn-block btn-sm"
+                    "class"=>"btn btn-success btn-block btn-sm"
                 )
             ))
             ->add('Clear', ResetType::class, array(

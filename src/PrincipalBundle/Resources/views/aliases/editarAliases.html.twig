@@ -8,10 +8,10 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-8">
-                <div class="panel panel-default">
+            <div class="col-md-6">
+                <div class="panel panel-primary">
                     <div class="panel-heading">
-                        Register aliases
+                        Edit alias
                     </div>
                     <div class="panel-body small">
                         <div class="row">
@@ -107,9 +107,7 @@
                                         </div>
                                     </div>
                                     <div class="container-fluid">
-                                        <div class="col-md-4">
-                                            <input type="button" id="add" class="btn btn-success btn-sm" value="Add">
-                                        </div>
+                                        <input type="button" id="add" class="col-md-3 btn btn-primary btn-sm" value="Add">
                                     </div>
                                     <br>
                                 {{ form_end(form) }}
@@ -118,22 +116,15 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading text-center">
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
                         Instructions
                     </div>
                     <div class="panel-body small">
-                        <div class="row">
-                            <div class="col-md-12 text-justify">
-                                Mark the IPs to which you want to apply the changes. <br>
-                                Remember that when dialing, the IP's are using the LAN interface. <br>
-                                Write the name of the new Aliases, remember not to repeat the name. <br> 
-                                Write the description (this field is not mandatory). <br>
-                                Select the type. <br> 
-                                Write the host to which to apply the new Aliases, in the same way the description (this field is not mandatory).
-                            </div>
-                        </div>
+                        Select the IP (LAN interface) to which it applies. <br><br>
+                        Write the name of the new Aliases, remember that the name must be unique so it can not be repeated. <br><br>
+                        Write the last two acts of the IP address. 
                     </div>
                 </div>
             </div>

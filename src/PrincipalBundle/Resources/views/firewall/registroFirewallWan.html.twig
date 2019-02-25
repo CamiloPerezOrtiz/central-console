@@ -149,7 +149,10 @@
                                     <small class="text-justify small">
                                         The Source Port Range for a connection is typically random and almost never equal to the destination port. In most cases this setting must remain at its default value, any.
                                     </small><br><br>
-                                    <button class="btn btn-info btn-sm" type="button" id="button_display_advanced"><i class="fa fa-cog icon-embed-btn"> </i> Display Advanced</button>
+                                    <!--<button class="btn btn-info btn-sm" type="button" id="button_display_advanced"><i class="fa fa-cog icon-embed-btn"> </i> Display Advanced</button>-->
+                                    <a style='cursor: pointer;' onClick="hide_advanced('source_port_range')"class="btn btn-primary btn-sm boton_mostrar">
+                                        Hide advanced <i class="fa fa-cog icon-embed-btn"></i>
+                                    </a>
                                 </div>
                             </div>
                             <div id="source_port_range">
@@ -320,22 +323,29 @@
                     $("#display_advanced").show();
                     $("#source_port_range").show();
                     $("#destination_port_range").show();
-                    $("#icmp_subtypes").show();
+                    $("#icmp_subtypes").hide();
                 break;
                 case "icmp":
                     $("#display_advanced").hide();
                     $("#source_port_range").hide();
                     $("#destination_port_range").hide();
-                    $("#icmp_subtypes").hide();
+                    $("#icmp_subtypes").show();
                 break;
             }
         }).change();
     });
     // Boton display_advanced
-    $("#button_display_advanced").click(function()
+    function hide_advanced(id)
     {
-        $("#source_port_range").show();
-        $("#source_port_range").hide();
-    });
+        if (document.getElementById)
+        {
+            var el = document.getElementById(id);
+            el.style.display = (el.style.display == "none") ? "block" : "none";
+        }
+    }
+    window.onload = function()
+    {
+        hide_advanced("source_port_range");
+    };
 </script>
 {% include '@Principal/plantillas/declaracionFin.html.twig' %}

@@ -22,21 +22,21 @@ class AliasesType extends AbstractType
                 "label"=>"Name ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('descripcion', TextType::class,array(
                 "label"=>"Description ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('tipo',ChoiceType::class, array(
                 "label"=>"Type: ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control",
+                    "class"=>"form-control input-sm",
                     'onChange' => 'mostrar(this.value);'
                 ),'choices' => array(
                     'Host' => 'host',
@@ -50,7 +50,7 @@ class AliasesType extends AbstractType
             ))
             ->add('Save', SubmitType::class,[
                 'attr' =>[
-                    'class' => 'btn btn-primary btn-block btn-sm'
+                    'class' => 'btn btn-success btn-block btn-sm'
                 ]
             ])
         ;

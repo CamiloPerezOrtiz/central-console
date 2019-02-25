@@ -19,7 +19,7 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
-                <div class="panel panel-default">
+                <div class="panel panel-primary">
                     <div class="panel-heading">
                         {% if app.user.role == 'ROLE_SUPERUSER' %}
                         Table super user - administrator - user
@@ -50,7 +50,7 @@
                                 </a>
                                 <br><br>
                             {% endif %}-->
-                            <table class="table table-sm table-striped table-bordered table-hover text-center table-condensed small" id="dataTables-example">
+                            <table class="table table-sm table-striped table-bordered table-hover text-center table-condensed small " id="dataTables-example">
                                 <div class="col-md-12">
                                     {% for msg in app.session.flashbag().get('estatus') %}
                                         <div class="alert alert-info" aria-label="Close">
