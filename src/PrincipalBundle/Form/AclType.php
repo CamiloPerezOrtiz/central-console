@@ -24,7 +24,7 @@ class AclType extends AbstractType
                 "label"=>"Name ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm",
+                    "class"=>"form-control input-sm",
                     'placeholder' => 'Write the name'
                 )
             ))
@@ -32,7 +32,7 @@ class AclType extends AbstractType
                 "label"=>"Client ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control",
+                    "class"=>"form-control input-sm",
                     'rows' => '2',
                     'placeholder' => 'Write the IP'
                 )
@@ -42,7 +42,7 @@ class AclType extends AbstractType
                 "required"=>false,
                 "data"=>'all [ all]',
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('notAllowIp')
@@ -50,7 +50,7 @@ class AclType extends AbstractType
                 "label"=>"Redirect ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control",
+                    "class"=>"form-control input-sm",
                     'rows' => '2',
                     'placeholder' => 'Write the redirect option'
                 )
@@ -59,7 +59,7 @@ class AclType extends AbstractType
                 "label"=>"Redirect mode: ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'none' => 'rmod_none',
@@ -76,14 +76,14 @@ class AclType extends AbstractType
                 "label"=>"Description ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm",
+                    "class"=>"form-control input-sm",
                     'placeholder' => 'Write the description'
                 )
             ))
             ->add('log')
             ->add('Save',SubmitType::class,array(
                 "attr"=>array("
-                    class"=>"btn btn-primary btn-sm btn-block"
+                    class"=>"btn btn-success btn-sm btn-block"
                 )
             ))
             ->add('Reset', ResetType::class, array(

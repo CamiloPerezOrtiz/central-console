@@ -100,10 +100,6 @@ crearXMLAliases:
     path:     /crearXMLAliases
     defaults: { _controller: PrincipalBundle:Aliases:crearXMLAliases }
 
-aplicarXMLAliases:
-    path:     /aplicarXMLAliases/{id}
-    defaults: { _controller: PrincipalBundle:Aliases:aplicarXMLAliases }
-
 # Acl groups #
 
 gruposAcl:
@@ -159,10 +155,6 @@ eliminarTarget:
 crearXMLTarget:
     path:     /crearXMLTarget
     defaults: { _controller: PrincipalBundle:Target:crearXMLTarget }
-
-aplicarXMLTarget:
-    path:     /aplicarXMLTarget/{id}
-    defaults: { _controller: PrincipalBundle:Target:aplicarXMLTarget }
 
 # NatPortForward #
 

@@ -1,13 +1,10 @@
 <?xml version='1.0'?>
-	<squidguarddest>
-			<config>
-				<name>Facebook</name>
-				<domains>facebook.com</domains>
-				<urls>facebook.com/login</urls>
-				<expressions>|facebook|</expressions>
-				<redirect_mode>rmod_int</redirect_mode>
-				<redirect>Error</redirect>
-				<description>Bloquear_facebook</description>
-				<enablelog>on</enablelog>
-			</config>
-	</squidguarddest>
+	<aliases>
+		<alias>
+			<name>Soporte</name>
+			<type>host</type>
+			<address>192.168.1.1 192.168.1.2 192.168.1.3 192.168.1.4</address>
+			<descr>Area de soporte</descr>
+			<detail>Maquina 1 ||Maquina 2 ||Maquina 3 ||Maquina 4</detail>
+		</alias>
+	</aliases>

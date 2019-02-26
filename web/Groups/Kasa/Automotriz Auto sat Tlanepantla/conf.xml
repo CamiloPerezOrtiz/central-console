@@ -1,3 +1,10 @@
 <?xml version='1.0'?>
-	<squidguarddest>
-	</squidguarddest>
+	<aliases>
+		<alias>
+			<name>Soporte</name>
+			<type>host</type>
+			<address>192.168.4.1 192.168.4.2 192.168.4.3 192.168.4.4</address>
+			<descr>Area de soporte</descr>
+			<detail>Maquina 1 ||Maquina 2 ||Maquina 3 ||Maquina 4</detail>
+		</alias>
+	</aliases>

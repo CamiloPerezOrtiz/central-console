@@ -62,25 +62,21 @@ class AliasesController extends Controller
 					{
 						foreach ($_POST['ip_port'] as $p) 
 						{
-							echo $ip_port_res = $g['primer_octeto'] . "." . $g['segundo_octeto'] . "." . $g['tercer_octeto'] . "." . $p ." ";
+							$ip_port_res = $g['primer_octeto'] . "." . $g['segundo_octeto'] . "." . $g['tercer_octeto'] . "." . $p . " ";
 							fputs($file,$ip_port_res);
 						}
-						fputs($file,"|"."\n");
 					}
-				}
-				$filas=file('arreglo.txt');
-				foreach($filas as $value)
-				{
-					foreach ($_POST['ip'] as $ips)
+					fputs($file,"|"."\n");
+					$filas=file('arreglo.txt');
+					foreach($filas as $value)
 					{
-						list($ip) = explode("|", $value);
-						$query2 = "INSERT INTO aliases 
-							VALUES (nextval('aliases_id_seq'),'$nombre','$descripcion','$tipo','$ip','$descripcion_ip_port','$grupo','$ips')"
-						;
-						$stmt2 = $db->prepare($query2);
-						$params2 =array();
-						$stmt2->execute($params2);
+						list($ip) = explode('|', $value);
 					}
+					$res = trim($ip, " |");
+					$query2 = "INSERT INTO aliases VALUES (nextval('aliases_id_seq'),'$nombre','$descripcion','$tipo','$res','$descripcion_ip_port','$grupo','$ips')";
+					$stmt2 = $db->prepare($query2);
+					$params2 =array();
+					$stmt2->execute($params2);
 				}
 				unlink("arreglo.txt");
 				if($stmt == null)
@@ -208,7 +204,7 @@ class AliasesController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.ip_port, u.grupo
+			'SELECT u.id, u.nombre, u.ip_port, u.grupo, u.ubicacion
 				FROM PrincipalBundle:Aliases u
 				WHERE  u.grupo = :grupo'
 		)->setParameter('grupo', $grupo);
@@ -270,35 +266,44 @@ class AliasesController extends Controller
 	}
 
 	# Funcion para crear el XML de aliases #
-	/*public function crearXMLAliasesAction()
+	public function crearXMLAliasesAction()
 	{
 		$id=$_REQUEST['id'];
-		$recuperarTodoDatos = $this->recuperarTodoDatos($id);
-		$contenido = "<?xml version='1.0'?>\n";
-		$contenido .= "\t<aliases>\n";
-		foreach ($recuperarTodoDatos as $alias) 
+		$grupos = $this->ipGrupos($id);
+		if(isset($_POST['enviar']))
 		{
-			$contenido .= "\t\t<alias>\n";
-		    $contenido .= "\t\t\t<name>" . $alias['nombre'] . "</name>\n";
-		    $contenido .= "\t\t\t<type>" . $alias['tipo'] . "</type>\n";
-		    $contenido .= "\t\t\t<address>" . $alias['ip_port'] . "</address>\n";
-		    $contenido .= "\t\t\t<descr>" . $alias['descripcion'] . "</descr>\n";
-		    $contenido .= "\t\t\t<detail>" . $alias['descripcion_ip_port'] . "</detail>\n";
-		    $contenido .= "\t\t</alias>\n";
+			foreach ($_POST['ip'] as $ips) 
+			{
+				$recuperarTodoDatos = $this->recuperarTodoDatos($ips);
+				$contenido = "<?xml version='1.0'?>\n";
+				$contenido .= "\t<aliases>\n";
+				foreach ($recuperarTodoDatos as $alias) 
+				{
+				    $contenido .= "\t\t<alias>\n";
+				    $contenido .= "\t\t\t<name>" . $alias['nombre'] . "</name>\n";
+				    $contenido .= "\t\t\t<type>" . $alias['tipo'] . "</type>\n";
+				    $contenido .= "\t\t\t<address>" . $alias['ip_port'] . "</address>\n";
+				    $contenido .= "\t\t\t<descr>" . $alias['descripcion'] . "</descr>\n";
+				    $contenido .= "\t\t\t<detail>" . $alias['descripcion_ip_port'] . "</detail>\n";
+				    $contenido .= "\t\t</alias>\n";
+				}
+			    $contenido .= "\t</aliases>";
+				$archivo = fopen("$ips.xml", 'w');
+				fwrite($archivo, $contenido);
+				fclose($archivo);
+				# Mover el archivo a la carpeta #
+				$archivoConfig = "$ips.xml";
+				$serv = '/var/www/html/central-console/web/Groups/';
+				$destinoConfig = $serv . "/" . $id . "/" . $ips . "/conf.xml";
+			   	if (!copy($archivoConfig, $destinoConfig)) 
+				    echo "Error al copiar $archivoConfig...\n";
+				unlink("$ips.xml");
+			}
+			echo '<script> alert("The configuration has been saved.");</script>';
 		}
-		$contenido .= "\t</aliases>";
-		$archivo = fopen("conf.xml", 'w');
-		fwrite($archivo, $contenido);
-		fclose($archivo); 
-		# Mover el archivo a la carpeta #
-		$archivoConfig = 'conf.xml';
-		$destinoConfig = "centralizedConsole/conf.xml";
-	   	if (!copy($archivoConfig, $destinoConfig)) 
-		    echo "Error al copiar $archivoConfig...\n";
-		unlink("conf.xml");
-		$estatus="The configuration has been saved";
-		$this->session->getFlashBag()->add("estatus",$estatus);
-		return $this->redirectToRoute("gruposAliases");
+		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
+			"grupos"=>$grupos
+		));
 	}
 
 	# Funcion para recuperar toda la informacion de target #
@@ -308,9 +313,9 @@ class AliasesController extends Controller
 		$query = $em->createQuery(
 			'SELECT u.nombre, u.tipo, u.descripcion, u.ip_port, u.descripcion_ip_port
 				FROM PrincipalBundle:Aliases u
-				WHERE  u.grupo = :grupo'
-		)->setParameter('grupo', $grupo);
+				WHERE  u.ubicacion = :ubicacion'
+		)->setParameter('ubicacion', $grupo);
 		$datos = $query->getResult();
 		return $datos;
-	}*/
+	}
 }

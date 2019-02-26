@@ -23,14 +23,14 @@ class TargetType extends AbstractType
                 "label"=>"Name ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm",
+                    "class"=>"form-control input-sm",
                     'placeholder' => 'Write the list'
                 )
             ))
             ->add('domainList',TextareaType::class,array(
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm",
+                    "class"=>"form-control input-sm",
                     'rows' => '4',
                     'placeholder' => 'Write the list'
                 )
@@ -38,7 +38,7 @@ class TargetType extends AbstractType
             ->add('urlList',TextareaType::class,array(
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm",
+                    "class"=>"form-control input-sm",
                     'rows' => '4',
                     'placeholder' => 'Write the list'
                 )
@@ -46,7 +46,7 @@ class TargetType extends AbstractType
             ->add('regularExpression',TextareaType::class,array(
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm",
+                    "class"=>"form-control input-sm",
                     'rows' => '4',
                     'placeholder' => 'Write the IP'
                 )
@@ -55,7 +55,7 @@ class TargetType extends AbstractType
                 "label"=>"Redirect mode ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control",
+                    "class"=>"form-control input-sm",
                     'onChange' => 'mostrar(this.value);'
                 ),'choices' => array(
                     'none' => 'rmod_none',
@@ -71,7 +71,7 @@ class TargetType extends AbstractType
             ->add('redirect',TextareaType::class,array(
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm",
+                    "class"=>"form-control input-sm",
                     'rows' => '2',
                     'placeholder' => 'Write the error message'
                 )
@@ -80,13 +80,13 @@ class TargetType extends AbstractType
                 "label"=>"Description ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm",
+                    "class"=>"form-control input-sm",
                     'placeholder' => 'Write the description'
                 )
             ))
             ->add('Save', SubmitType::class,array(
                 "attr"=>array(
-                    "class"=>"btn btn-primary btn-block btn-sm"
+                    "class"=>"btn btn-success btn-block btn-sm"
                 )
             ))
             ->add('Clear', ResetType::class, array(

@@ -26,7 +26,7 @@
                 <ul class="nav" id="side-menu">
                     <li class="sidebar-search" id="sidebar-search">
                         <div class="input-group custom-search-form">
-                            <img src="{{ asset('img/logotipo.png')}}" style="width:200px;">
+                            <a href="{{ path('dashboard') }}"><img src="{{ asset('img/logotipo.png')}}" style="width:200px;"></a>
                         </div>
                     </li>
                     <li class="sidebar-search">
@@ -61,7 +61,7 @@
                     </li>
                     <li>
                         <a class="text-white" href="{{ path('listaUsuarios') }}">
-                            <i class="fas fa-user-friends"></i>
+                            <i class="fas fa-users"></i>
                             <span class="nav-link-text">
                                 List users
                             </span>

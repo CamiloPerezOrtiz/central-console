@@ -37,6 +37,7 @@
                                         <th>Name</th>                         
                                         <th>Values</th>
                                         <th>Group</th>
+                                        <th>Location</th>
                                         {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                             <th>Operaciones</th>
                                         {% endif %}                                 
@@ -48,6 +49,7 @@
                                             <td>{{ alias.nombre }}</td>
                                             <td>{{ alias.ip_port }}</td>
                                             <td>{{ alias.grupo }}</td>
+                                            <td>{{ alias.ubicacion }}</td>
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
                                                     <a href="{{ path('editarAliases',{id:alias.id}) }}">
@@ -67,7 +69,7 @@
                                     When you click on save button you are saving the aliases list. <br><br>
                                     <div class="form-group">
                                         {% if aliases == true %} 
-                                            <a href="{{path('crearXMLTarget',{id:aliases[0]['grupo']})}}">
+                                            <a href="{{path('crearXMLAliases',{id:aliases[0]['grupo']})}}">
                                             <button type="button" class="btn btn-success">
                                                 <b>  Save aliases list <i class="fas fa-save"></i></b>
                                             </button>

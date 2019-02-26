@@ -61,7 +61,6 @@ class TargetController extends Controller
 					$stmt = $db->prepare($query);
 					$params =array();
 					$stmt->execute($params);
-					//$flush=$em->flush();
 					$serv = '/var/www/html/central-console/web/Groups/';
 					$ruta = $serv . $grupo . "/" . $ips;
 					if(!file_exists($ruta))
@@ -179,7 +178,7 @@ class TargetController extends Controller
 	    }
 	}
 
-	# Funcion para recuperar los todos los aliases #
+	# Funcion para recuperar los todos los target #
 	private function recuperarTodoTargetGrupo($grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
@@ -292,21 +291,5 @@ class TargetController extends Controller
 		)->setParameter('ubicacion', $grupo);
 		$datos = $query->getResult();
 		return $datos;
-	}
-
-	# funcion para correr el script aplicar cambios en target #
-	public function aplicarXMLTargetAction($id)
-	{
-    	$archivo = fopen("change_to_do.txt", 'w');
-		fwrite($archivo, "targetcategories.py");
-		fwrite ($archivo, "\n");
-		fclose($archivo); 
-		# Mover el archivo a la carpeta #
-		$archivoConfig = 'change_to_do.txt';
-		$destinoConfig = "centralizedConsole/change_to_do.txt";
-	   	if (!copy($archivoConfig, $destinoConfig)) 
-		   echo "Error al copiar $archivoConfig...\n";
-		unlink("change_to_do.txt");
-    	return $this->redirectToRoute('grupos');
 	}
 }
