@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Acl group</h1>
+                <h1 class="page-header">Acl group location {{ubicacion}}</h1>
             </div>
         </div>
         <div class="row">
@@ -12,7 +12,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            Register acl group
+                            Register acl group <input type="hidden" name="ubicacion" value="{{ubicacion}}">
                         </div>
                         <div class="panel-body small">
                             <div class="form-row">
@@ -51,47 +51,38 @@
                                     {{ form_widget(form.cliente) }} 
                                     <span class="text-danger">{{ form_errors(form.cliente) }}</span>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            Target Rules List
-                        </div>
-                        <div class="panel-body small">
-                            <div class="form-group">   
-                                {{ form_label(form.targetRule) }}
-                                {{ form_widget(form.targetRule) }} 
-                                <span class="text-danger">{{ form_errors(form.targetRule) }}</span>
-                            </div>
-                            <div class="form-group">  
-                                <label>Target Rules List</label><br>
-                                <label>ACCESS: 'whitelist' - always pass; 'deny' - block; 'allow' - pass, if not blocked.</label>
-                                <table class="table table-sm table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Target Categories</th>                                  
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for target_categories in target %}
+                                <div class="form-group">   
+                                    {{ form_label(form.targetRule) }}
+                                    {{ form_widget(form.targetRule) }} 
+                                    <span class="text-danger">{{ form_errors(form.targetRule) }}</span>
+                                </div>
+                                <div class="form-group">  
+                                    <label>Target Rules List</label><br>
+                                    <label>ACCESS: 'whitelist' - always pass; 'deny' - block; 'allow' - pass, if not blocked.</label>
+                                    <table class="table table-sm table-hover table-bordered">
+                                        <thead>
                                             <tr>
-                                                <td>
-                                                    {{ target_categories.descripcion }} [{{ target_categories.nombre }}]({{ target_categories.ubicacion }}) 
-                                                    access 
-                                                    <select name="target_rule[]">
-                                                        <option value="all">----</option>
-                                                        <option value="^{{ target_categories.nombre }}">whitelist</option>
-                                                        <option value="!{{ target_categories.nombre }}">deny</option>
-                                                        <option value="{{ target_categories.nombre }}">allow</option>
-                                                    </select>
-                                                </td>
+                                                <th>Target Categories</th>                                  
                                             </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {% for target_categories in target %}
+                                                <tr>
+                                                    <td>
+                                                        {{ target_categories.descripcion }} [{{ target_categories.nombre }}]
+                                                        access 
+                                                        <select name="target_rule[]">
+                                                            <option value="all">----</option>
+                                                            <option value="^{{ target_categories.nombre }}">whitelist</option>
+                                                            <option value="!{{ target_categories.nombre }}">deny</option>
+                                                            <option value="{{ target_categories.nombre }}">allow</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -151,13 +142,12 @@
                             Instructions
                         </div>
                         <div class="panel-body small">
-                            Select the IP (LAN interface) to which it applies. <br><br>
-                            Write the last two acts of the IP address. 
+                            Complete the form. <br><br> 
                         </div>
                     </div>
                 </div>
             {{ form_end(form) }}
-            </div>
+        </div>
         </div>
     </div>
 </div>

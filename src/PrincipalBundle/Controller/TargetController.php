@@ -54,34 +54,21 @@ class TargetController extends Controller
 				$descripcion = $form->get("descripcion")->getData();
 				foreach ($_POST['ip'] as $ips)
 				{
-					$query = "INSERT INTO target 
-						VALUES (nextval('target_id_seq'),'$nombre','$domainList','$urlList',
-						'$regularExpression','$redirectMode','$redirect','$descripcion','t','$grupo','$ips')"
-					;
+					$query = "INSERT INTO target VALUES (nextval('target_id_seq'),'$nombre','$domainList','$urlList','$regularExpression','$redirectMode','$redirect','$descripcion','t','$grupo','$ips')";
 					$stmt = $db->prepare($query);
 					$params =array();
 					$stmt->execute($params);
-					$serv = '/var/www/html/central-console/web/Groups/';
-					$ruta = $serv . $grupo . "/" . $ips;
-					if(!file_exists($ruta))
-					{
-					  mkdir ($ruta);
-					  echo "Se ha creado el directorio: " . $ruta . "<br>";
-					} 
-					else 
-					  echo "la ruta: " . $ruta . " ya existe ". "<br>";
-					$flush=$em->flush();	
 				}
-				if($flush == null)
+				if($stmt == null)
+				{
+					$estatus="Problems with the server try later.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+				}
+				else
 				{
 					$estatus="Successfully registration.";
 					$this->session->getFlashBag()->add("estatus",$estatus);
 					return $this->redirectToRoute("gruposTarget");
-				}
-				else
-				{
-					$estatus="Problems with the server try later.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
 				}
 			}
 			else

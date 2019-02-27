@@ -1,10 +1,3 @@
 <?xml version='1.0'?>
-	<aliases>
-		<alias>
-			<name>Soporte</name>
-			<type>host</type>
-			<address>192.168.5.1 192.168.5.2 192.168.5.3 192.168.5.4 192.168.5.5</address>
-			<descr>Area de soporte</descr>
-			<detail>Maquina 1 ||Maquina 2 ||Maquina 3 ||Maquina 4 ||Maquina 5</detail>
-		</alias>
-	</aliases>
+	<squidguardacl>
+	</squidguardacl>

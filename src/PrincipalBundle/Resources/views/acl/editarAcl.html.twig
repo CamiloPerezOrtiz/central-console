@@ -8,148 +8,164 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Register acl group
-                    </div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                {% for msg in app.session.flashbag().get('estatus') %}
-                                    <div class="alert alert-info" aria-label="Close">
-                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                        <strong>Info!</strong> {{ msg }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            <div class="col-lg-1">
-                            </div>
-                            <div class="col-lg-9">
-                                {{ form_start(form) }}
-                                    <div class="form-group">   
-                                        {{ form_label(form.estatus) }}
-                                        {{ form_widget(form.estatus) }} <label>Check this to disable this ACL rule.</label>
-                                        <span class="text-danger">{{ form_errors(form.estatus) }}</span>
-                                    </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.nombre) }}
-                                        <footer class="blockquote-footer">
-                                            Enter a unique name of this rule here.
-                                        </footer>
-                                       <footer class="blockquote-footer">
-                                            The name must consist between 2 and 15 symbols [a-Z_0-9]. The first one must be a letter.
-                                        </footer>
-                                        {{ form_widget(form.nombre) }} 
-                                        <span class="text-danger">{{ form_errors(form.nombre) }}</span>
-                                    </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.cliente) }}
-                                        <footer class="blockquote-footer">
-                                            Enter client's IP address or domain here. To separate them use space.
-                                        </footer>
-                                       <footer class="blockquote-footer">
-                                            Example: 192.168.0.1 192.168.0.2 192.168.0.3 192.168.0.4
-                                        </footer>
-                                        {{ form_widget(form.cliente) }} 
-                                        <span class="text-danger">{{ form_errors(form.cliente) }}</span>
-                                    </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.targetRule) }}
-                                        {{ form_widget(form.targetRule) }} 
-                                        <span class="text-danger">{{ form_errors(form.targetRule) }}</span>
-                                    </div>
-                                    <div class="form-group">  
-                                        <label>Target Rules List</label><br>
-                                        <label>ACCESS: 'whitelist' - always pass; 'deny' - block; 'allow' - pass, if not blocked.</label>
-                                        <table class="table table-sm table-hover table-bordered">
-                                            <thead class="bg-dark text-white">
+            {{ form_start(form) }}
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Register acl group
+                        </div>
+                        <div class="panel-body small">
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    {% for msg in app.session.flashbag().get('estatus') %}
+                                        <div class="alert alert-info" aria-label="Close">
+                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                            <strong>Info!</strong> {{ msg }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">   
+                                    {{ form_label(form.estatus) }}
+                                    {{ form_widget(form.estatus) }} <label>Check this to disable this ACL rule.</label>
+                                    <span class="text-danger">{{ form_errors(form.estatus) }}</span>
+                                </div>
+                                <div class="form-group">   
+                                    {{ form_label(form.nombre) }}
+                                    <footer>
+                                        Enter a unique name of this rule here.
+                                    </footer>
+                                   <footer>
+                                        The name must consist between 2 and 15 symbols [a-Z_0-9]. The first one must be a letter.
+                                    </footer>
+                                    {{ form_widget(form.nombre) }} 
+                                    <span class="text-danger">{{ form_errors(form.nombre) }}</span>
+                                </div>
+                                <div class="form-group">   
+                                    {{ form_label(form.cliente) }}
+                                    <footer>
+                                        Enter client's IP address or domain here. To separate them use space.
+                                    </footer>
+                                   <footer>
+                                        Example: 192.168.0.1 192.168.0.2 192.168.0.3 192.168.0.4
+                                    </footer>
+                                    {{ form_widget(form.cliente) }} 
+                                    <span class="text-danger">{{ form_errors(form.cliente) }}</span>
+                                </div>
+                                <div class="form-group">   
+                                    {{ form_label(form.targetRule) }}
+                                    {{ form_widget(form.targetRule) }} 
+                                    <span class="text-danger">{{ form_errors(form.targetRule) }}</span>
+                                </div>
+                                <div class="form-group">  
+                                    <label>Target Rules List</label><br>
+                                    <label>ACCESS: 'whitelist' - always pass; 'deny' - block; 'allow' - pass, if not blocked.</label>
+                                    <table class="table table-sm table-hover table-bordered">
+                                        <thead class="bg-dark text-white">
+                                            <tr>
+                                                <th>Target Categories</th>                                  
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for target_categories in target %}
                                                 <tr>
-                                                    <th>Target Categories</th>                                  
+                                                    <td>
+                                                        {{ target_categories.descripcion }} [{{ target_categories.nombre }}]
+                                                        access 
+                                                        <select name="target_rule[]">
+                                                            <option value="">----</option>
+                                                            <option value="^{{ target_categories.nombre }}"
+                                                            {% for rules in target_rule %}
+                                                                {% if "^"~target_categories.nombre == rules %}
+                                                                    selected 
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            >whitelist</option>
+                                                            <option value="!{{ target_categories.nombre }}"
+                                                            {% for rules in target_rule %}
+                                                                {% if "!"~target_categories.nombre == rules %}
+                                                                    selected 
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            >deny</option>
+                                                            <option value="{{ target_categories.nombre }}"}
+                                                            {% for rules in target_rule %}
+                                                                {% if target_categories.nombre == rules %}
+                                                                    selected 
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            >allow</option>
+                                                        </select>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for target_categories in target %}
-                                                    <tr>
-                                                        <td>
-                                                            {{ target_categories.descripcion }} [{{ target_categories.nombre }}]({{ target_categories.ubicacion }}) 
-                                                            access 
-                                                            <select name="target_rule[]">
-                                                                <option value="">----</option>
-                                                                <option value="^{{ target_categories.nombre }}"
-                                                                {% for rules in target_rule %}
-                                                                    {% if "^"~target_categories.nombre == rules %}
-                                                                        selected 
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                                >whitelist</option>
-                                                                <option value="!{{ target_categories.nombre }}"
-                                                                {% for rules in target_rule %}
-                                                                    {% if "!"~target_categories.nombre == rules %}
-                                                                        selected 
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                                >deny</option>
-                                                                <option value="{{ target_categories.nombre }}"}
-                                                                {% for rules in target_rule %}
-                                                                    {% if target_categories.nombre == rules %}
-                                                                        selected 
-                                                                    {% endif %}
-                                                                {% endfor %}
-                                                                >allow</option>
-                                                            </select>
-                                                        </td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.notAllowIp) }}
-                                        {{ form_widget(form.notAllowIp) }} <label>To make sure that people do not bypass the URL filter by simply using the IP-Addresses instead of the FQDN(is the combination of host name and domain name) you can check this option.</label>
-                                        <span class="text-danger">{{ form_errors(form.notAllowIp) }}</span>
-                                    </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.redirectMode) }}
-                                        <footer class="blockquote-footer">
-                                            Enter the external redirection URL or error message here.
-                                        </footer>
-                                        {{ form_widget(form.redirectMode) }} 
-                                        <span class="text-danger">{{ form_errors(form.redirectMode) }}</span>
-                                    </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.redirect) }}
-                                        <footer class="blockquote-footer">
-                                            Enter the external redirection URL or error message here.
-                                        </footer>
-                                        {{ form_widget(form.redirect) }} 
-                                        <span class="text-danger">{{ form_errors(form.redirect) }}</span>
-                                    </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.descripcion) }}
-                                        <footer class="blockquote-footer">
-                                            You may enter any description here for your reference.
-                                        </footer>
-                                        {{ form_widget(form.descripcion) }} 
-                                        <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
-                                    </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.log) }}
-                                        {{ form_widget(form.log) }} <label>Check this option to enable logging for this ACL.</label>
-                                        <span class="text-danger">{{ form_errors(form.log) }}</span>
-                                    </div>
-                                    <div class="form-group">
-                                        {{ form_widget(form.Save) }}
-                                    </div>
-                                    <div class="form-group">
-                                        {{ form_widget(form.Reset) }}
-                                    </div>
-                                {{ form_end(form) }}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            General Options
+                        </div>
+                        <div class="panel-body small">
+                            <div class="form-group">   
+                                {{ form_label(form.notAllowIp) }}
+                                {{ form_widget(form.notAllowIp) }} <label>To make sure that people do not bypass the URL filter by simply using the IP-Addresses instead of the FQDN(is the combination of host name and domain name) you can check this option.</label>
+                                <span class="text-danger">{{ form_errors(form.notAllowIp) }}</span>
+                            </div>
+                            <div class="form-group">   
+                                {{ form_label(form.redirectMode) }}
+                                <footer>
+                                    Enter the external redirection URL or error message here.
+                                </footer>
+                                {{ form_widget(form.redirectMode) }} 
+                                <span class="text-danger">{{ form_errors(form.redirectMode) }}</span>
+                            </div>
+                            <div class="form-group">   
+                                {{ form_label(form.redirect) }}
+                                <footer>
+                                    Enter the external redirection URL or error message here.
+                                </footer>
+                                {{ form_widget(form.redirect) }} 
+                                <span class="text-danger">{{ form_errors(form.redirect) }}</span>
+                            </div>
+                            <div class="form-group">   
+                                {{ form_label(form.descripcion) }}
+                                <footer>
+                                    You may enter any description here for your reference.
+                                </footer>
+                                {{ form_widget(form.descripcion) }} 
+                                <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                            </div>
+                            <div class="form-group">   
+                                {{ form_label(form.log) }}
+                                {{ form_widget(form.log) }} <label>Check this option to enable logging for this ACL.</label>
+                                <span class="text-danger">{{ form_errors(form.log) }}</span>
+                            </div>
+                            <div class="form-group">
+                                {{ form_widget(form.Save) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_widget(form.Reset) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Instructions
+                        </div>
+                        <div class="panel-body small">
+                            Complete the form. <br><br> 
+                        </div>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
         </div>
     </div>
 </div>

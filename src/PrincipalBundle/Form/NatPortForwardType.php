@@ -26,7 +26,7 @@ class NatPortForwardType extends AbstractType
             ->add('protocolo',ChoiceType::class, array(
                 "label"=>"Protocol ",
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm",
+                    "class"=>"form-control input-sm",
                     'onChange' => 'protocolOnChange(this);'
                 ),
                 'choices' => array(
@@ -44,33 +44,33 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Type ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'Any' => 'any',
                     'Single host or alias' => 'single',
                     'Network' => 'network',
-                    'L2TP' => 'l2tp',
                     'PPPoE clients' => 'pppoe',
+                    'L2TP clients' => 'l2tp',
                     'WAN net' => 'wan',
                     'WAN address' => 'wanip',
                     'LAN net' => 'lan',
                     'LAN address' => 'lanip'
                 ),
-                'data' => 'wanip'
+                'data' => 'any'
             ))
             ->add('sourceAdvancedAdressMask',TextType::class,array(
                 "label"=>"Address ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('sourceAdvancedFromPort',ChoiceType::class, array(
                 "label"=>"From port",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'Other' => '',
@@ -126,14 +126,14 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Custom ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('sourceAdvancedToPort',ChoiceType::class, array(
                 "label"=>"To port",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'Other' => '',
@@ -189,7 +189,7 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Custom ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('destinationInvertMatch',CheckboxType::class,array(
@@ -200,7 +200,7 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Type: ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'Any' => 'any',
@@ -220,14 +220,14 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Address ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('destinationRangeFromPort',ChoiceType::class, array(
                 "label"=>"From port",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'Other' => '',
@@ -282,14 +282,14 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Custom ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('destinationRangeToPort',ChoiceType::class, array(
                 "label"=>"To port",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'Other' => '',
@@ -344,21 +344,21 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Custom ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('redirectTargetIp',TextType::class,array(
                 "label"=>"Redirect target IP ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('redirectTargetPort',ChoiceType::class, array(
                 "label"=>"Port",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'Other' => '',
@@ -414,21 +414,21 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Custom",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('descripcion',TextType::class,array(
                 "label"=>"Description",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 )
             ))
             ->add('natReflection',ChoiceType::class, array(
                 "label"=>"NAT reflection ",
                 "required"=>true,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'Use system default' => 'default',
@@ -441,7 +441,7 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Filter rule association ",
                 "required"=>false,
                 "attr"=>array(
-                    "class"=>"form-control form-control-sm"
+                    "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
                     'None' => '',
@@ -450,7 +450,7 @@ class NatPortForwardType extends AbstractType
             ))
             ->add('Save',SubmitType::class,array(
                 "attr"=>array("
-                    class"=>"btn btn-primary btn-sm btn-block"
+                    class"=>"btn btn-success btn-sm btn-block"
                 )
             ))
             ->add('Reset', ResetType::class, array(

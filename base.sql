@@ -81,7 +81,8 @@ CREATE TABLE acl(
 	redirect VARCHAR(50) DEFAULT NULL,
 	descripcion VARCHAR(50) DEFAULT NULL,
 	log BOOLEAN DEFAULT FALSE,
-	grupo VARCHAR(50) NOT NULL
+	grupo VARCHAR(50) NOT NULL,
+	ubicacion VARCHAR(50) NOT NULL
 );
 
 -- Aliases

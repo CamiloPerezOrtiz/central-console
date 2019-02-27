@@ -82,7 +82,7 @@ class AclEditType extends AbstractType
             ->add('log')
             ->add('Save',SubmitType::class,array(
                 "attr"=>array("
-                    class"=>"btn btn-primary btn-sm btn-block"
+                    class"=>"btn btn-success btn-sm btn-block"
                 )
             ))
             ->add('Reset', ResetType::class, array(

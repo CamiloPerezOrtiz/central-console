@@ -106,6 +106,10 @@ gruposAcl:
     path:     /gruposAcl 
     defaults: { _controller: PrincipalBundle:Acl:gruposAcl }
 
+solicitudAcl:
+    path:     /solicitudAcl 
+    defaults: { _controller: PrincipalBundle:Acl:solicitudAcl }
+
 registroAcl:
     path:     /registroAcl 
     defaults: { _controller: PrincipalBundle:Acl:registroAcl }
@@ -123,12 +127,8 @@ eliminarAcl:
     defaults: { _controller: PrincipalBundle:Acl:eliminarAcl }
 
 crearXMLAcl:
-    path:     /crearXMLAcl/{id}
+    path:     /crearXMLAcl
     defaults: { _controller: PrincipalBundle:Acl:crearXMLAcl }
-
-aplicarXMLAcl:
-    path:     /aplicarXMLAcl/{id}
-    defaults: { _controller: PrincipalBundle:Acl:aplicarXMLAcl }
 
 # Target #
 

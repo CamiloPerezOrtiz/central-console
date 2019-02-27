@@ -8,24 +8,22 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-1">
-            </div>
-            <div class="col-lg-9">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Register target categories
-                    </div>
-                    <div class="panel-body small">
-                        <div class="form-row small">
-                            <div class="col-md-12">
-                                {% for msg in app.session.flashbag().get('estatus') %}
-                                    <div class="alert alert-info" aria-label="Close">
-                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                        <strong>Info!</strong> {{ msg }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            {{ form_start(form) }}
+            {{ form_start(form) }}
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Edit target categories
+                        </div>
+                        <div class="panel-body small">
+                            <div class="form-row small">
+                                <div class="col-md-12">
+                                    {% for msg in app.session.flashbag().get('estatus') %}
+                                        <div class="alert alert-info" aria-label="Close">
+                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                            <strong>Info!</strong> {{ msg }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
                                 <div class="form-group">   
                                     {{ form_label(form.nombre) }}
                                     <footer>
@@ -55,36 +53,55 @@
                                     {{ form_widget(form.regularExpression) }}
                                     <span class="text-danger">{{ form_errors(form.regularExpression) }}</span>
                                 </div>
-                                <div class="form-group">   
-                                    {{ form_label(form.redirectMode) }}
-                                    <footer>Note: if you use 'transparent proxy', then 'int' redirect mode will not accessible.</footer>
-                                    <footer>Options:ext url err page , ext url redirect , ext url as 'move' , ext url as 'found'.</footer>
-                                    {{ form_widget(form.redirectMode) }}
-                                    <span class="text-danger">{{ form_errors(form.redirectMode) }}</span>
-                                </div>
-                                <div class="form-group">   
-                                    {{ form_label(form.redirect) }}
-                                    <footer>Enter the external redirection URL, error message or size (bytes) here.</footer>
-                                    {{ form_widget(form.redirect) }}
-                                    <span class="text-danger">{{ form_errors(form.redirect) }}</span>
-                                </div>
-                                <div class="form-group">   
-                                    {{ form_label(form.descripcion) }}
-                                    <footer>You may enter any description here for your reference.</footer>
-                                    {{ form_widget(form.descripcion) }}
-                                    <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
-                                </div>
-                                <div class="form-group">
-                                    {{ form_widget(form.Save) }}
-                                </div>
-                                <div class="form-group">
-                                    {{ form_widget(form.Clear) }}
-                                </div>
-                            {{ form_end(form) }}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            General Options
+                        </div>
+                        <div class="panel-body small">
+                            <div class="form-group">   
+                                {{ form_label(form.redirectMode) }}
+                                <footer>Note: if you use 'transparent proxy', then 'int' redirect mode will not accessible.</footer>
+                                <footer>Options:ext url err page , ext url redirect , ext url as 'move' , ext url as 'found'.</footer>
+                                {{ form_widget(form.redirectMode) }}
+                                <span class="text-danger">{{ form_errors(form.redirectMode) }}</span>
+                            </div>
+                            <div class="form-group">   
+                                {{ form_label(form.redirect) }}
+                                <footer>Enter the external redirection URL, error message or size (bytes) here.</footer>
+                                {{ form_widget(form.redirect) }}
+                                <span class="text-danger">{{ form_errors(form.redirect) }}</span>
+                            </div>
+                            <div class="form-group">   
+                                {{ form_label(form.descripcion) }}
+                                <footer>You may enter any description here for your reference.</footer>
+                                {{ form_widget(form.descripcion) }}
+                                <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                            </div>
+                            <div class="form-group">
+                                {{ form_widget(form.Save) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_widget(form.Clear) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Instructions
+                        </div>
+                        <div class="panel-body small">
+                            Complete the form. 
+                        </div>
+                    </div>
+                </div>
+            {{ form_end(form) }}
         </div>
     </div>
 </div>

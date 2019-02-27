@@ -8,14 +8,14 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Nat port forward
-                    </div>
-                    <div class="panel-body small">
-                        <div class="row">
-                            <div class="container">
+            {{ form_start(form) }}
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Register nat port forward
+                        </div>
+                        <div class="panel-body small">
+                            <div class="form-row">
                                 <div class="col-md-12">
                                     {% for msg in app.session.flashbag().get('estatus') %}
                                         <div class="alert alert-info" aria-label="Close">
@@ -24,267 +24,257 @@
                                         </div>
                                     {% endfor %}
                                 </div>
-                                <div class="col-lg-1">
+                                <div class="form-group">   
+                                    {{ form_label(form.estatus) }}
+                                    {{ form_widget(form.estatus) }} <small>Disable this rule.</small>
+                                    <span class="text-danger">{{ form_errors(form.estatus) }}</span>
                                 </div>
-                                <div class="col-md-12">
-                                    {{ form_start(form) }}
-                                        <div class="form-group">   
-                                            {{ form_label(form.estatus) }}
-                                            {{ form_widget(form.estatus) }} <label>Disable this rule.</label>
-                                            <span class="text-danger">{{ form_errors(form.estatus) }}</span>
+                                <hr>
+                                <div class="form-group"> 
+                                    <label>Interface</label><br>
+                                    <small>
+                                        Choose which interface this rule applies to. In most cases "WAN" is specified.
+                                    </small><br><br>
+                                    <select class="form-control input-sm" name="interface">
+                                        <option value="wan">WAN</option>
+                                        <option value="lan">LAN</option>
+                                    </select>
+                                </div>
+                                <hr>
+                                <div class="form-group">   
+                                    {{ form_label(form.protocolo) }}<br>
+                                    <small>
+                                        Choose which protocol this rule should match. In most cases "TCP" is specified.
+                                    </small><br><br>
+                                    {{ form_widget(form.protocolo) }}
+                                    <span class="text-danger">{{ form_errors(form.protocolo) }}</span>
+                                </div>
+                                <hr>
+                                <div class="form-group">
+                                    <a style='cursor: pointer;' onClick="hide_advanced('advanced')"class="boton_mostrar btn btn-primary btn-sm">
+                                        Hide advanced <i class="fas fa-angle-double-down"></i>
+                                    </a>
+                                </div>
+                                <div id="advanced">
+                                    <hr>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            {{ form_label(form.sourceAdvancedInvertMatch) }}
+                                            {{ form_widget(form.sourceAdvancedInvertMatch) }} <br><small>Invert match.</small>
                                         </div>
-                                        <hr>
-                                        <div class="form-group"> 
-                                            <label>Interface</label>
-                                            <footer>
-                                                Choose which interface this rule applies to. In most cases "WAN" is specified.
-                                            </footer>
-                                            <div class="col-md-6">
-                                                <select class="form-control form-control-sm" name="interface">
-                                                    <option value="wan">WAN</option>
-                                                    <option value="lan">LAN</option>
+                                        <div class="col-sm-4">
+                                            {{ form_widget(form.sourceAdvancedType, { 'id': 'sourceAdvancedType' }) }}
+                                            <span class="help-block">Type</span>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <div class="input-group">
+                                                {{ form_widget(form.sourceAdvancedAdressMask, { 'id': 'sourceAdvancedAdressMask' }) }}
+                                                <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
+                                                <select class="form-control input-sm" name="mask" id="mask"> 
+                                                    {% for i in 32..1 %}
+                                                        <option value="{{ i }}">{{ i }}</option>
+                                                    {% endfor %}
                                                 </select>
                                             </div>
-                                            
+                                            <span class="help-block">Address/mask</span>
                                         </div>
+                                    </div>
+                                    <div id="advancedSourcePortRange">
+                                        <br><br><br>
                                         <hr>
-                                        <div class="form-group">   
-                                            {{ form_label(form.protocolo) }}
-                                            <footer>
-                                                Choose which protocol this rule should match. In most cases "TCP" is specified.
-                                            </footer>
-                                            {{ form_widget(form.protocolo) }}
-                                            <span class="text-danger">{{ form_errors(form.protocolo) }}</span>
-                                        </div>
-                                        <a style='cursor: pointer;' onClick="hide_advanced('advanced')"class="boton_mostrar btn btn-info btn-sm">
-                                            Hide advanced <i class="fas fa-angle-double-down"></i>
-                                        </a><br><br>
-                                        <div id="advanced">
-                                            <div class="form-row">
-                                                <div class="col-md-3">
-                                                    <div class="form-group">   
-                                                        {{ form_label(form.sourceAdvancedInvertMatch) }}
-                                                        {{ form_widget(form.sourceAdvancedInvertMatch) }} <label>Invert match.</label>
-                                                        <span class="text-danger">{{ form_errors(form.sourceAdvancedInvertMatch) }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">   
-                                                        {{ form_label(form.sourceAdvancedType) }}
-                                                        {{ form_widget(form.sourceAdvancedType, { 'id': 'sourceAdvancedType' }) }}
-                                                        <span class="text-danger">{{ form_errors(form.sourceAdvancedType) }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">   
-                                                        {{ form_label(form.sourceAdvancedAdressMask) }}
-                                                        {{ form_widget(form.sourceAdvancedAdressMask, { 'id': 'sourceAdvancedAdressMask' }) }}
-                                                        <span class="text-danger">{{ form_errors(form.sourceAdvancedAdressMask) }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group"> 
-                                                        <label>Mask</label>
-                                                        <select class="form-control form-control-sm" name="mask" id="mask"> 
-                                                            {% for i in 32..1 %}
-                                                                <option value="{{ i }}">{{ i }}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div id="advancedSourcePortRange">
-                                                <label>Source port range</label>
-                                                <footer>
-                                                    Specify the source port or port range for this rule. This is usually random and almost never equal to the destination port range (and should usually be 'any'). The 'to' field may be left empty if only filtering a single port.
-                                                </footer>
-                                                <br>
-                                                <div class="form-row">
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">   
-                                                            {{ form_label(form.sourceAdvancedFromPort) }}
-                                                            {{ form_widget(form.sourceAdvancedFromPort, { 'id': 'sourceAdvancedFromPort' }) }}
-                                                            <span class="text-danger">{{ form_errors(form.sourceAdvancedFromPort) }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">   
-                                                            {{ form_label(form.sourceAdvancedCustom) }}
-                                                            {{ form_widget(form.sourceAdvancedCustom, { 'id': 'sourceAdvancedCustom' }) }}
-                                                            <span class="text-danger">{{ form_errors(form.sourceAdvancedCustom) }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">   
-                                                            {{ form_label(form.sourceAdvancedToPort) }}
-                                                            {{ form_widget(form.sourceAdvancedToPort, { 'id': 'sourceAdvancedToPort' }) }}
-                                                            <span class="text-danger">{{ form_errors(form.sourceAdvancedToPort) }}</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">   
-                                                            {{ form_label(form.sourceAdvancedCustomToPort) }}
-                                                            {{ form_widget(form.sourceAdvancedCustomToPort, { 'id': 'sourceAdvancedCustomToPort' }) }}
-                                                            <span class="text-danger">{{ form_errors(form.sourceAdvancedCustomToPort) }}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <div class="col-md-3">
-                                                <div class="form-group">   
-                                                    {{ form_label(form.destinationInvertMatch) }}
-                                                    {{ form_widget(form.destinationInvertMatch) }} <label>Invert match.</label>
-                                                    <span class="text-danger">{{ form_errors(form.destinationInvertMatch) }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">   
-                                                    {{ form_label(form.destinationType) }}
-                                                    {{ form_widget(form.destinationType, { 'id': 'destinationType' }) }} <label>Invert match.</label>
-                                                    <span class="text-danger">{{ form_errors(form.destinationType) }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group">   
-                                                    {{ form_label(form.destinationAdressMask) }}
-                                                    {{ form_widget(form.destinationAdressMask, { 'id': 'destinationAdressMask' }) }}
-                                                    <span class="text-danger">{{ form_errors(form.destinationAdressMask) }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <div class="form-group"> 
-                                                    <label>Mask</label>
-                                                    <select class="form-control form-control-sm" name="maskDestination" id="maskDestination"> 
-                                                        {% for i in 32..1 %}
-                                                            <option value="{{ i }}">{{ i }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="destinationTargetPort">
-                                            <label>Destination port range</label>
-                                            <footer>
-                                                Specify the port or port range for the destination of the packet for this mapping. The 'to' field may be left empty if only mapping a single port.
-                                            </footer>
-                                            <div class="form-row">
-                                                <div class="col-md-3">
-                                                    <div class="form-group">   
-                                                        {{ form_label(form.destinationRangeFromPort) }}
-                                                        {{ form_widget(form.destinationRangeFromPort, { 'id': 'destinationRangeFromPort' }) }}
-                                                        <span class="text-danger">{{ form_errors(form.destinationRangeFromPort) }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">   
-                                                        {{ form_label(form.destinationRangeCustom) }}
-                                                        {{ form_widget(form.destinationRangeCustom, { 'id': 'destinationRangeCustom' }) }}
-                                                        <span class="text-danger">{{ form_errors(form.destinationRangeCustom) }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">   
-                                                        {{ form_label(form.destinationRangeToPort) }}
-                                                        {{ form_widget(form.destinationRangeToPort, { 'id': 'destinationRangeToPort' }) }}
-                                                        <span class="text-danger">{{ form_errors(form.destinationRangeToPort) }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">   
-                                                        {{ form_label(form.destinationRangeCustomToPort) }}
-                                                        {{ form_widget(form.destinationRangeCustomToPort, { 'id': 'destinationRangeCustomToPort' }) }}
-                                                        <span class="text-danger">{{ form_errors(form.destinationRangeCustomToPort) }}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">   
-                                            {{ form_label(form.redirectTargetIp) }}
-                                            <footer>
-                                                Enter the internal IP address of the server on which to map the ports.
-                                            </footer>
-                                            <footer>
-                                                e.g.: 192.168.1.12
-                                            </footer>
-                                            {{ form_widget(form.redirectTargetIp) }} 
-                                            <span class="text-danger">{{ form_errors(form.redirectTargetIp) }}</span>
-                                        </div>
-                                        <div id="redirectTargetPort">
-                                            <label>Redirect target port</label>
-                                            <footer>
-                                                Specify the port on the machine with the IP address entered above. In case of a port range, specify the beginning port of the range (the end port will be calculated automatically).
-                                            </footer>
-                                            <footer>
-                                                This is usually identical to the "From port" above.
-                                            </footer>
-                                            <div class="form-row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">   
-                                                        {{ form_label(form.redirectTargetPort) }}
-                                                        {{ form_widget(form.redirectTargetPort, { 'id': 'redirectTargetPort' }) }}
-                                                        <span class="text-danger">{{ form_errors(form.redirectTargetPort) }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">   
-                                                        {{ form_label(form.redirectTargetPortCustom) }}
-                                                        {{ form_widget(form.redirectTargetPortCustom, { 'id': 'redirectTargetPortCustom' }) }}
-                                                        <span class="text-danger">{{ form_errors(form.redirectTargetPortCustom) }}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">   
-                                            {{ form_label(form.descripcion) }}
-                                            <footer>
-                                                A description may be entered here for administrative reference (not parsed).
-                                            </footer>
-                                            {{ form_widget(form.descripcion) }}
-                                            <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
-                                        </div>
-                                        <div class="form-group">   
-                                            {{ form_label(form.natReflection) }}
-                                            {{ form_widget(form.natReflection) }}
-                                            <span class="text-danger">{{ form_errors(form.natReflection) }}</span>
-                                        </div>
-                                        <div class="form-group">   
-                                            {{ form_label(form.filterRuleAssociation) }}
-                                            <footer>
-                                                 The "pass" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.
-                                            </footer>
-                                            {{ form_widget(form.filterRuleAssociation) }}
-                                            <span class="text-danger">{{ form_errors(form.filterRuleAssociation) }}</span>
-                                        </div>
                                         <div class="form-group">
-                                            {{ form_widget(form.Save) }}
+                                            <label>Source port range</label><br>
+                                            <small class="text-justify">
+                                                Specify the source port or port range for this rule. This is usually random and almost never equal to the destination port range (and should usually be 'any'). The 'to' field may be left empty if only filtering a single port.
+                                            </small>
+                                            <br><br>
+                                            <div class="form-group">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">   
+                                                        {{ form_widget(form.sourceAdvancedFromPort, { 'id': 'sourceAdvancedFromPort' }) }}
+                                                        <span class="help-block">From</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">   
+                                                        {{ form_widget(form.sourceAdvancedCustom, { 'id': 'sourceAdvancedCustom' }) }}
+                                                        <span class="help-block">Custom</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">   
+                                                        {{ form_widget(form.sourceAdvancedToPort, { 'id': 'sourceAdvancedToPort' }) }}
+                                                        <span class="help-block">To</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">   
+                                                        {{ form_widget(form.sourceAdvancedCustomToPort, { 'id': 'sourceAdvancedCustomToPort' }) }}
+                                                        <span class="help-block">Custom</span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+                                    </div>
+                                    <br>
+                                    <hr>
+                                </div>
+                                <hr>
+                                <div class="form-group">
+                                    <label>Destination</label><br>
+                                    <div class="col-md-3">
+                                        <div class="form-group">   
+                                            {{ form_label(form.destinationInvertMatch) }}
+                                            {{ form_widget(form.destinationInvertMatch) }} <br><small>Invert match.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">   
+                                            {{ form_widget(form.destinationType, { 'id': 'destinationType' }) }}
+                                            <span class="help-block">Type</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <div class="input-group">
+                                            {{ form_widget(form.destinationAdressMask, { 'id': 'destinationAdressMask' }) }}
+                                            <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
+                                            <select class="form-control input-sm" name="maskDestination" id="maskDestination"> 
+                                                {% for i in 32..1 %}
+                                                    <option value="{{ i }}">{{ i }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <span class="help-block">Address/mask</span>
+                                    </div>
+                                </div>
+                                <div id="destinationTargetPort">
+                                    <br><br>
+                                    <hr>
+                                    <div class="form-group">
+                                        <label>Destination port range</label><br>
+                                        <small>
+                                            Specify the port or port range for the destination of the packet for this mapping. The 'to' field may be left empty if only mapping a single port.
+                                        </small><br><br>
                                         <div class="form-group">
-                                            {{ form_widget(form.Reset) }}
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    {{ form_widget(form.destinationRangeFromPort, { 'id': 'destinationRangeFromPort' }) }}
+                                                    <span class="help-block">From</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">   
+                                                    {{ form_widget(form.destinationRangeCustom, { 'id': 'destinationRangeCustom' }) }}
+                                                    <span class="help-block">Custom</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">   
+                                                    {{ form_widget(form.destinationRangeToPort, { 'id': 'destinationRangeToPort' }) }}
+                                                    <span class="help-block">To</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">   
+                                                    {{ form_widget(form.destinationRangeCustomToPort, { 'id': 'destinationRangeCustomToPort' }) }}
+                                                    <span class="help-block">Custom</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    {{ form_end(form) }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            General Options
+                        </div>
+                        <div class="panel-body small">
+                            <div id="redirectTargetPort">
+                                <div class="form-group">
+                                    <label>Redirect target port</label><br>
+                                    <small>
+                                        Specify the port on the machine with the IP address entered above. In case of a port range, specify the beginning port of the range (the end port will be calculated automatically).
+                                    </small><br>
+                                    <small>
+                                        This is usually identical to the "From port" above.
+                                    </small><br><br>
+                                    <div class="form-group">
+                                        <div class="col-md-6">
+                                            <div class="form-group">   
+                                                {{ form_label(form.redirectTargetPort) }}
+                                                {{ form_widget(form.redirectTargetPort, { 'id': 'redirectTargetPort' }) }}
+                                                <span class="text-danger">{{ form_errors(form.redirectTargetPort) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">   
+                                                {{ form_label(form.redirectTargetPortCustom) }}
+                                                {{ form_widget(form.redirectTargetPortCustom, { 'id': 'redirectTargetPortCustom' }) }}
+                                                <span class="text-danger">{{ form_errors(form.redirectTargetPortCustom) }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br><br>
+                            <hr>
+                            <div class="form-group">   
+                                {{ form_label(form.redirectTargetIp) }}<br>
+                                <small>
+                                    Enter the internal IP address of the server on which to map the ports. E.g.: 192.168.1.12
+                                </small><br><br>
+                                {{ form_widget(form.redirectTargetIp) }} 
+                                <span class="text-danger">{{ form_errors(form.redirectTargetIp) }}</span>
+                            </div>
+                            <hr>
+                            <div class="form-group">   
+                                {{ form_label(form.descripcion) }}
+                                <footer>
+                                    A description may be entered here for administrative reference (not parsed).
+                                </footer>
+                                {{ form_widget(form.descripcion) }}
+                                <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                            </div>
+                            <hr>
+                            <div class="form-group">   
+                                {{ form_label(form.natReflection) }}
+                                {{ form_widget(form.natReflection) }}
+                                <span class="text-danger">{{ form_errors(form.natReflection) }}</span>
+                            </div>
+                            <hr>
+                            <div class="form-group">   
+                                {{ form_label(form.filterRuleAssociation) }}
+                                <footer>
+                                     The "pass" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.
+                                </footer>
+                                {{ form_widget(form.filterRuleAssociation) }}
+                                <span class="text-danger">{{ form_errors(form.filterRuleAssociation) }}</span>
+                            </div>
+                            <div class="form-group">
+                                {{ form_widget(form.Save) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_widget(form.Reset) }}
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            {{ form_end(form) }}
         </div>
     </div>
 </div>
 {% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
 <script src="{{ asset ('js/jsPagina/aliases/registroAliases.js') }}"></script>
 <script>
-    // Notificacion del sistema //
-        window.setTimeout(function() 
-        {
-            $(".alert").fadeTo(500, 0).slideUp(500, function(){
-                $(this).remove(); 
-            });
-        }, 4000);
-    // Fin de notificacion del sistema //
-
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
     // Boton para activar y mostrar el contendo del apartado de hide advanced //
         function hide_advanced(id)
         {
@@ -299,66 +289,54 @@
             hide_advanced("advanced");
         };
     // Fin de Boton para activar hide advanced //
-    
-    // Se activa al selecionar el tipo de protocolo lo que realiza es ocultar o mostar el contenido de //
-    // de Destination port range y el redirect target port si se selecciona el protocolo ICMP.         //
-        function protocolOnChange(sel) 
+    // Source //
+    $(function() 
+    {
+        $("#sourceAdvancedType").on('change', function() 
         {
-            if (sel.value=="tcp" || sel.value=="udp" || sel.value=="tcp/udp")
+            var selectValue = $(this).val();
+            switch (selectValue) 
             {
-                divA = document.getElementById("advancedSourcePortRange");
-                divA.style.display="block";
-                divC = document.getElementById("destinationTargetPort");
-                divC.style.display="block";
-                divD = document.getElementById("redirectTargetPort");
-                divD.style.display="block";
+                case "any":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();                
+                break;
+                case "single":
+                    $("#sourceAdvancedAdressMask").show();
+                    $("#mask").hide();
+                break;
+                case "network":
+                    $("#sourceAdvancedAdressMask").show();
+                    $("#mask").show();
+                break;
+                case "pppoe":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "l2tp":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "wan":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "wanip":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "lan":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "lanip":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
             }
-            else
-            {
-                divA = document.getElementById("advancedSourcePortRange");
-                divA.style.display="none";
-                divC = document.getElementById("destinationTargetPort");
-                divC.style.display="none";
-                divD = document.getElementById("redirectTargetPort");
-                divD.style.display="none";
-            }
-        }
+        }).change();
+    });
     // Fin //
-    
-    // Funciones exclusivas  del apartado hide advanced                       //
-    // El sourceAdvancedType lo que realiza es activar o desactivar el campo  //
-    // sourceAdvancedAdressMask dependiendo que tipo de sourceAdvancedType se //
-    // alla seleccionado, de la misma manera para el campo mask               //
-        $("#sourceAdvancedType").change( function() 
-        {
-            if ($(this).val() === "single" || $(this).val() === "network") 
-            {
-                $("#sourceAdvancedAdressMask").prop("readonly", false);
-                $('#sourceAdvancedAdressMask[type="text"]').val('');
-                $("#mask").prop("hidden", true);
-            } 
-            else 
-            {
-                $("#sourceAdvancedAdressMask").prop("readonly", true);
-                $('#sourceAdvancedAdressMask[type="text"]').val('');
-                $("#mask").prop("hidden", false);
-            }
-            if ($(this).val() === "network") 
-            {
-                $("#mask").prop("hidden", false);
-            } 
-            else 
-            {
-                $("#mask").prop("hidden", true);
-            }
-        });
-        if($("#sourceAdvancedType option:selected").val() !== "") 
-        {
-           $("#sourceAdvancedAdressMask").prop("readonly", true);
-           $("#mask").prop("hidden", false);
-        }
-    // Fin //
-    
     // Funciones exclusivas para el apartado source port range             //
     // Donde el campo from port activa o desactiva el campo custom,  de    //
     // la misma manera el campo to port activa o desactiva el campo custom //
@@ -408,63 +386,60 @@
                 }
             });
         });
-        $( function() 
-        {
-            $("#sourceAdvancedToPort").change( function() 
-            {
-                if ($(this).val() === "") 
-                {
-                    $("#sourceAdvancedCustomToPort").prop("readonly", false);
-                } 
-                else 
-                {
-                    $("#sourceAdvancedCustomToPort").prop("readonly", true);
-                }
-            });
-        });
         if($("#sourceAdvancedToPort option:selected").val() !== "") 
         {
            $("#sourceAdvancedCustomToPort").prop("readonly", true);
         }
     // Fin //
-    
-    // Funciones exclusivas  del apartado Destination                         //
-    // El destinationType lo que realiza es activar o desactivar el campo     //
-    // destinationAdressMask dependiendo que tipo de destinationType se       //
-    // alla seleccionado, de la misma manera para el campo maskDestination    //
-        $("#destinationType").change( function() 
+    // Destination //
+    $(function() 
+    {
+        $("#destinationType").on('change', function() 
         {
-            if ($(this).val() === "single" || $(this).val() === "network") 
+            var selectValue = $(this).val();
+            switch (selectValue) 
             {
-                $("#destinationAdressMask").prop("readonly", false);
-                $('#destinationAdressMask[type="text"]').val('');
-                $("#maskDestination").prop("hidden", true);
-            } 
-            else 
-            {
-                $("#destinationAdressMask").prop("readonly", true);
-                $('#destinationAdressMask[type="text"]').val('');
-                $("#maskDestination").prop("hidden", false);
+                case "any":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();                
+                break;
+                case "single":
+                    $("#destinationAdressMask").show();
+                    $("#maskDestination").hide();
+                break;
+                case "network":
+                    $("#destinationAdressMask").show();
+                    $("#maskDestination").show();
+                break;
+                case "pppoe":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "l2tp":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "wan":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "wanip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "lan":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "lanip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
             }
-            if ($(this).val() === "network") 
-            {
-                $("#maskDestination").prop("hidden", false);
-            } 
-            else 
-            {
-                $("#maskDestination").prop("hidden", true);
-            }
-        });
-        if($("#destinationType option:selected").val() !== "") 
-        {
-           $("#destinationAdressMask").prop("readonly", true);
-           $("#maskDestination").prop("hidden", true);
-        }
+        }).change();
+    });
     // Fin //
-    
-    // Funciones exclusivas para el apartado Destination port range        //
-    // Donde el campo from port activa o desactiva el campo custom,  de    //
-    // la misma manera el campo to port activa o desactiva el campo custom //
+    // Destination port range //
         $( function() 
         {
             $("#destinationRangeFromPort").change( function() 
@@ -494,7 +469,7 @@
 
         if($("#destinationRangeFromPort option:selected").val() !== "") 
         {
-           $("#destinationRangeCustom").prop("readonly", true);
+           $("#sourceAdvancedCustom").prop("readonly", true);
         }
 
         $( function() 
@@ -516,28 +491,5 @@
            $("#destinationRangeCustomToPort").prop("readonly", true);
         }
     // Fin //
-    
-    // 
-        $( function() 
-        {
-            $("#redirectTargetPort").change( function() 
-            {
-                if ($(this).val() === "") 
-                {
-                    $("#redirectTargetPortCustom").prop("readonly", false);
-                } 
-                else 
-                {
-                    $("#redirectTargetPortCustom").prop("readonly", true);
-                }
-            });
-        });
-
-        if($("#redirectTargetPort option:selected").val() !== "") 
-        {
-           $("#redirectTargetPortCustom").prop("readonly", true);
-        }
-
-    //
 </script>
 {% include '@Principal/plantillas/declaracionFin.html.twig' %}

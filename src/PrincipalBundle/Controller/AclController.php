@@ -30,12 +30,18 @@ class AclController extends Controller
 		$u = $this->getUser();
 		$role=$u->getRole();
 		if($role == 'ROLE_SUPERUSER')
+		{
 			$id=$_REQUEST['id'];
+			$ipGrupos = $this->ipGrupos($id);
+		}
 		else
+		{
 			$id=$u->getGrupo();
-		$target = $this->recuperarNombreTarget($id);
+			$ipGrupos = $this->ipGrupos($id);
+		}
 		if($form->isSubmitted() && $form->isValid())
 		{
+			$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
 			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData());
 			if(count($verificarNombre)==0)
@@ -56,6 +62,7 @@ class AclController extends Controller
 					$acl->setTargetRule($target_rule." all [ all]");
 					$acl->setTargetRulesList($target_rule);
 				}
+				$acl->setUbicacion($ubicacion);
 				$em->persist($acl);
 				$flush=$em->flush();
 				if($flush == null)
@@ -71,15 +78,22 @@ class AclController extends Controller
 				}
 			}
 			else
-			{
-				$estatus="The name of alias that you are trying to register already exists try again.";
-				$this->session->getFlashBag()->add("estatus",$estatus);
-			}
+				echo '<script> alert("The name of alias that you are trying to register already exists try again.");window.history.go(-1);</script>';
 		}
-		return $this->render('@Principal/acl/registroAcl.html.twig', array(
-			'form'=>$form->createView(),
-			"target"=>$target
-		));
+		if(isset($_POST['solicitar']))
+		{
+			$ubicacion = $_POST['ubicacion'];
+			$target = $this->recuperarNombreTarget($ubicacion, $id);
+			return $this->render('@Principal/acl/registroAcl.html.twig', array(
+				'form'=>$form->createView(),
+				"target"=>$target,
+				'ipGrupos'=>$ipGrupos,
+				'ubicacion'=>$ubicacion
+			));
+		}
+		return $this->render('@Principal/acl/solicitudAcl.html.twig', array(
+				'ipGrupos'=>$ipGrupos
+			));
 	}
 
 	# Funcion para recuperar nombre por id #
@@ -95,15 +109,28 @@ class AclController extends Controller
 		return $datos;
 	}
 
+	private function ipGrupos($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+
 	# Funcion para recuperar los todos los aliases #
-	private function recuperarNombreTarget($grupo)
+	private function recuperarNombreTarget($ubicacion, $grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT DISTINCT u.id, u.nombre, u.descripcion, u.ubicacion
+			'SELECT u.id, u.nombre, u.descripcion, u.ubicacion
 				FROM PrincipalBundle:Target u
-				WHERE  u.grupo = :grupo'
-		)->setParameter('grupo', $grupo);
+				WHERE  u.ubicacion = :ubicacion
+				AND u.grupo =:grupo'
+		)->setParameter('ubicacion', $ubicacion)->setParameter('grupo', $grupo);
 		$target = $query->getResult();
 		return $target;
 	}
@@ -181,7 +208,7 @@ class AclController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.id, u.estatus, u.nombre, u.descripcion, u.grupo
+			'SELECT u.id, u.estatus, u.nombre, u.descripcion, u.grupo, u.ubicacion
 				FROM PrincipalBundle:Acl u
 				WHERE  u.grupo = :grupo'
 		)->setParameter('grupo', $grupo);
@@ -195,7 +222,7 @@ class AclController extends Controller
 		$acl = $em->getRepository("PrincipalBundle:Acl")->find($id);
 		$form = $this->createForm(AclEditType::class,$acl);
 		$grupo = $this->recuperarGrupoTarget($id);
-		$target = $this->recuperarNombreTarget($grupo);
+		$target = $this->recuperarNombreTarget($grupo[0]['ubicacion'],$grupo[0]['grupo']);
 		$recuperarDatosId = $this->recuperarDatosId($id);
 		$target_rule= explode(' ',$recuperarDatosId[0]['targetRulesList']);
 		$form->handleRequest($request);
@@ -229,7 +256,7 @@ class AclController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.grupo
+			'SELECT u.grupo, u.ubicacion
 				FROM PrincipalBundle:Acl u
 				WHERE  u.id = :id'
 		)->setParameter('id', $id);
@@ -264,43 +291,52 @@ class AclController extends Controller
 		return $this->redirectToRoute("gruposAcl");
 	}
 
-	# Funcion para crear el XML de target #
-	public function crearXMLAclAction($id)
+	public function crearXMLAclAction()
 	{
-		$recuperarTodoDatos = $this->recuperarTodoDatos($id);
-		$contenido = "<?xml version='1.0'?>\n";
-		$contenido .= "\t<squidguardacl>\n";
-		foreach ($recuperarTodoDatos as $acl) 
+		$id=$_REQUEST['id'];
+		$grupos = $this->ipGrupos($id);
+		if(isset($_POST['enviar']))
 		{
-		    $contenido .= "\t\t\t<config>\n";
-		    $contenido .= "\t\t\t\t<disabled>" . $acl['estatus'] . "</disabled>\n";
-		    $contenido .= "\t\t\t\t<name>" . $acl['nombre'] . "</name>\n";
-		    $contenido .= "\t\t\t\t<source>" . $acl['cliente'] . "</source>\n";
-		    $contenido .= "\t\t\t\t<time></time>\n";
-		    $contenido .= "\t\t\t\t<dest>" . $acl['targetRule'] . "</dest>\n";
-		    $contenido .= "\t\t\t\t<notallowingip>" . $acl['notAllowIp'] . "</notallowingip>\n";
-		    $contenido .= "\t\t\t\t<redirect_mode>" . $acl['redirectMode'] . "</redirect_mode>\n";
-		    $contenido .= "\t\t\t\t<redirect>" . $acl['redirect'] . "</redirect>\n";
-		    $contenido .= "\t\t\t\t<safesearch></safesearch>\n";
-		    $contenido .= "\t\t\t\t<rewrite></rewrite>\n";
-		    $contenido .= "\t\t\t\t<overrewrite></overrewrite>\n";
-		    $contenido .= "\t\t\t\t<description>" . $acl['descripcion'] . "</description>\n";
-		    $contenido .= "\t\t\t\t<enablelog>" . $acl['log'] . "</enablelog>\n";
-		    $contenido .= "\t\t\t</config>\n";
+			foreach ($_POST['ip'] as $ips) 
+			{
+				$recuperarTodoDatos = $this->recuperarTodoDatos($ips);
+				$contenido = "<?xml version='1.0'?>\n";
+				$contenido .= "\t<squidguardacl>\n";
+				foreach ($recuperarTodoDatos as $acl) 
+				{
+				    $contenido .= "\t\t\t<config>\n";
+				    $contenido .= "\t\t\t\t<disabled>" . $acl['estatus'] . "</disabled>\n";
+				    $contenido .= "\t\t\t\t<name>" . $acl['nombre'] . "</name>\n";
+				    $contenido .= "\t\t\t\t<source>" . $acl['cliente'] . "</source>\n";
+				    $contenido .= "\t\t\t\t<time></time>\n";
+				    $contenido .= "\t\t\t\t<dest>" . $acl['targetRule'] . "</dest>\n";
+				    $contenido .= "\t\t\t\t<notallowingip>" . $acl['notAllowIp'] . "</notallowingip>\n";
+				    $contenido .= "\t\t\t\t<redirect_mode>" . $acl['redirectMode'] . "</redirect_mode>\n";
+				    $contenido .= "\t\t\t\t<redirect>" . $acl['redirect'] . "</redirect>\n";
+				    $contenido .= "\t\t\t\t<safesearch></safesearch>\n";
+				    $contenido .= "\t\t\t\t<rewrite></rewrite>\n";
+				    $contenido .= "\t\t\t\t<overrewrite></overrewrite>\n";
+				    $contenido .= "\t\t\t\t<description>" . $acl['descripcion'] . "</description>\n";
+				    $contenido .= "\t\t\t\t<enablelog>" . $acl['log'] . "</enablelog>\n";
+				    $contenido .= "\t\t\t</config>\n";
+				}
+			    $contenido .= "\t</squidguardacl>";
+				$archivo = fopen("$ips.xml", 'w');
+				fwrite($archivo, $contenido);
+				fclose($archivo);
+				# Mover el archivo a la carpeta #
+				$archivoConfig = "$ips.xml";
+				$serv = '/var/www/html/central-console/web/Groups/';
+				$destinoConfig = $serv . "/" . $id . "/" . $ips . "/conf.xml";
+			   	if (!copy($archivoConfig, $destinoConfig)) 
+				    echo "Error al copiar $archivoConfig...\n";
+				unlink("$ips.xml");
+			}
+			echo '<script> alert("The configuration has been saved.");</script>';
 		}
-		$contenido .= "\t</squidguardacl>";
-		$archivo = fopen("conf.xml", 'w');
-		fwrite($archivo, $contenido);
-		fclose($archivo); 
-		# Mover el archivo a la carpeta #
-		$archivoConfig = 'conf.xml';
-		$destinoConfig = "centralizedConsole/conf.xml";
-	   	if (!copy($archivoConfig, $destinoConfig)) 
-		    echo "Error al copiar $archivoConfig...\n";
-		unlink("conf.xml");
-		$estatus="The configuration has been saved";
-		$this->session->getFlashBag()->add("estatus",$estatus);
-		return $this->redirectToRoute("gruposAcl");
+		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
+			"grupos"=>$grupos
+		));
 	}
 
 	# Funcion para recuperar toda la informacion de target #
@@ -314,21 +350,5 @@ class AclController extends Controller
 		)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;
-	}
-
-	# funcion para correr el script aplicar cambios en target #
-	public function aplicarXMLAclAction($id)
-	{
-    	$archivo = fopen("change_to_do.txt", 'w');
-		fwrite($archivo, "aclgroups.py");
-		fwrite ($archivo, "\n");
-		fclose($archivo); 
-		# Mover el archivo a la carpeta #
-		$archivoConfig = 'change_to_do.txt';
-		$destinoConfig = "centralizedConsole/change_to_do.txt";
-	   	if (!copy($archivoConfig, $destinoConfig)) 
-		   echo "Error al copiar $archivoConfig...\n";
-		unlink("change_to_do.txt");
-    	return $this->redirectToRoute('grupos');
 	}
 }

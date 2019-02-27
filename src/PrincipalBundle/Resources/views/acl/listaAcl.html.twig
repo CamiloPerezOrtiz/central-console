@@ -9,7 +9,7 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
-                <div class="panel panel-default">
+                <div class="panel panel-primary">
                     <div class="panel-heading">
                         Table acl group
                     </div>
@@ -38,6 +38,7 @@
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>Group</th>
+                                        <th>Location</th>
                                         {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                             <th>Operations</th>
                                         {% endif %}                                 
@@ -52,6 +53,7 @@
                                             <td>{{ acl_groups.nombre }}</td>
                                             <td>{{ acl_groups.descripcion }}</td>
                                             <td>{{ acl_groups.grupo }}</td>
+                                            <td>{{ acl_groups.ubicacion }}</td>
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
                                                     <a href="{{ path('editarAcl',{id:acl_groups.id}) }}">
@@ -74,7 +76,7 @@
                                     When you click on save button you are saving the acl groups list. <br><br>
                                     <div class="form-group">
                                         {% if acl == true %} 
-                                            <a href="{{path('crearXMLTarget',{id:acl[0]['grupo']})}}">
+                                            <a href="{{path('crearXMLAcl',{id:acl[0]['grupo']})}}">
                                             <button type="button" class="btn btn-success">
                                                 <b>  Save acl groups list <i class="fas fa-save"></i></b>
                                             </button>
