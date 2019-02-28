@@ -1,161 +1,268 @@
 {% include '@Principal/plantillas/declaracionCabezera.html.twig' %}
 {% include '@Principal/plantillas/cuerpo.html.twig' %}
-<dir class="container small">
-    <div id="content-wrapper">
-        <div class="container-fluid">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="{{ path('dashboard') }}">Dashboard</a>
-                </li>     
-                <li class="breadcrumb-item">
-                    <a href="{{ path('listaUsuarios') }}">
-                        Nat one to one
-                    </a>
-                </li>       
-            </ol>
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="container">
-                        <div class="container">
-                            <div class="col-md-12">
-                                {% for msg in app.session.flashbag().get('estatus') %}
-                                    <div class="alert alert-info" aria-label="Close">
-                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                        <strong>Info!</strong> {{ msg }}
-                                    </div>
-                                {% endfor %}
-                            </div>
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">Nat one to one</h1>
+            </div>
+        </div>
+        <div class="row">
+            {{ form_start(form) }}
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Edit nat one to one
                         </div>
-                        <div class="card card-register mx-auto mt-">
-                            <div class="card-header bg-dark text-white">Aliases</div>
-                            <div class="card-body">
-                                {{ form_start(form) }}
-                                    <div class="form-group">   
-                                        {{ form_label(form.estatus) }}
-                                        {{ form_widget(form.estatus) }} <label>Disable this rule.</label>
-                                        <span class="text-danger">{{ form_errors(form.estatus) }}</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Interface</label>
-                                        <footer class="blockquote-footer">
-                                            Choose which interface this rule applies to. In most cases "WAN" is specified.
-                                        </footer>
-                                        <select class="form-control form-control-sm" name="interface">
-                                            {% for item in inter %}
-                                                <option value="wan" {% if item.interface == "WAN"%}selected{% endif %} >WAN</option>
-                                                <option value="lan" {% if item.interface == "LAN"%}selected{% endif %} >LAN</option>
-                                            {% endfor %}
-                                            {% for interfaz in interfaces %}
-                                                <option value ="{{ interfaz.nombre }}"
-                                                {% for item in inter %}
-                                                     {% if interfaz.nombre == item.interface %}selected{% endif %} 
-                                                 {% endfor %} 
-                                                >{{ interfaz.nombre }}</option>
-                                            {% endfor %}
-                                        </select>  
-                                    </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.externalSubnetIp) }}
-                                        <footer class="blockquote-footer">
-                                            Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping. The subnet mask from the internal address below will be applied to this IP address.
-                                        </footer>
-                                        {{ form_widget(form.externalSubnetIp) }}
-                                        <span class="text-danger">{{ form_errors(form.externalSubnetIp) }}</span>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">   
-                                                {{ form_label(form.internalIp) }}
-                                                {{ form_widget(form.internalIp) }} <label>Invert the sense of the match.</label>
-                                                <span class="text-danger">{{ form_errors(form.internalIp) }}</span>
-                                            </div>
+                        <div class="panel-body small">
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    {% for msg in app.session.flashbag().get('estatus') %}
+                                        <div class="alert alert-info" aria-label="Close">
+                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                            <strong>Info!</strong> {{ msg }}
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">   
-                                                {{ form_label(form.internalIpType) }}
-                                                {{ form_widget(form.internalIpType, { 'id': 'internalIpType' }) }}
-                                                <span class="text-danger">{{ form_errors(form.internalIpType) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">   
-                                                {{ form_label(form.internalAdressMask) }}
-                                                {{ form_widget(form.internalAdressMask, { 'id': 'internalAdressMask' }) }}
-                                                <span class="text-danger">{{ form_errors(form.internalAdressMask) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group"> 
-                                                <label>Mask</label>
-                                                <select class="form-control form-control-sm" name="mask" id="mask"> 
-                                                    {% for i in 32..1 %}
-                                                        <option value="{{ i }}">{{ i }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="form-group">   
+                                    {{ form_label(form.estatus) }}
+                                    {{ form_widget(form.estatus) }} <label>Disable this rule.</label>
+                                    <span class="text-danger">{{ form_errors(form.estatus) }}</span>
+                                </div>
+                                <hr>
+                                <div class="form-group">
+                                    <label>Interface</label>
+                                    <small class="blockquote-footer">
+                                        Choose which interface this rule applies to. In most cases "WAN" is specified.
+                                    </small>
+                                    <select class="form-control input-sm" name="interface">
+                                        <option value="wan">WAN</option>
+                                        <option value="lan">LAN</option>
+                                    </select>  
+                                </div>
+                                <hr>
+                                <div class="form-group">   
+                                    {{ form_label(form.externalSubnetIp) }}
+                                    <small class="blockquote-footer">
+                                        Enter the external (usually on a WAN) subnet's starting address for the 1:1 mapping. The subnet mask from the internal address below will be applied to this IP address.
+                                    </small>
+                                    {{ form_widget(form.externalSubnetIp) }}
+                                    <span class="text-danger">{{ form_errors(form.externalSubnetIp) }}</span>
+                                </div>
+                                <hr>
+                                <div class="form-group">
+                                    <label>Internal IP</label><br>
+                                    <small>
+                                        Enter the internal (LAN) subnet for the 1:1 mapping. The subnet size specified for the internal subnet will be applied to the external subnet.
+                                    </small><br><br>
+                                    <div class="col-md-3">
+                                        <div class="form-group">   
+                                            {{ form_label(form.internalIp) }}
+                                            {{ form_widget(form.internalIp) }} <br><small>Invert the sense of the match.</small>
                                         </div>
                                     </div>
-                                    <div class="form-row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">   
-                                                {{ form_label(form.destination) }}
-                                                {{ form_widget(form.destination) }} <label>Invert the sense of the match.</label>
-                                                <span class="text-danger">{{ form_errors(form.destination) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">   
-                                                {{ form_label(form.destinationType) }}
-                                                {{ form_widget(form.destinationType, { 'id': 'destinationType' }) }}
-                                                <span class="text-danger">{{ form_errors(form.destinationType) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">   
-                                                {{ form_label(form.destinationAdressMask) }}
-                                                {{ form_widget(form.destinationAdressMask, { 'id': 'destinationAdressMask' }) }}
-                                                <span class="text-danger">{{ form_errors(form.destinationAdressMask) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group"> 
-                                                <label>Mask</label>
-                                                <select class="form-control form-control-sm" name="mask" id="mask"> 
-                                                    {% for i in 32..1 %}
-                                                        <option value="{{ i }}">{{ i }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">   
+                                            {{ form_widget(form.internalIpType, { 'id': 'internalIpType' }) }}
+                                            <span class="help-block">Type</span>
                                         </div>
                                     </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.descripcion) }}
-                                        <footer class="blockquote-footer">
-                                            A description may be entered here for administrative reference (not parsed).
-                                        </footer>
-                                        {{ form_widget(form.descripcion) }}
-                                        <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                                    <div class="col-sm-5">
+                                        <div class="input-group">
+                                            {{ form_widget(form.internalAdressMask, { 'id': 'internalAdressMask' }) }}
+                                            <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
+                                            <select class="form-control input-sm" name="maskInternal" id="maskInternal"> 
+                                                {% for i in 32..1 %}
+                                                    <option value="{{ i }}">{{ i }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <span class="help-block">Address/mask</span>
                                     </div>
-                                    <div class="form-group">   
-                                        {{ form_label(form.natReflection) }}
-                                        {{ form_widget(form.natReflection) }}
-                                        <span class="text-danger">{{ form_errors(form.natReflection) }}</span>
-                                    </div>  
-                                    <div class="form-group">
-                                        {{ form_widget(form.Save) }}
-                                    </div>
-                                    <div class="form-group">
-                                        {{ form_widget(form.Reset) }}
-                                    </div>
-                                {{ form_end(form) }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            General Options
+                        </div>
+                        <div class="panel-body small">
+                            <div class="form-group">
+                                <label>Destination</label><br>
+                                <small>
+                                    The 1:1 mapping will only be used for connections to or from the specified destination. Hint: this is usually "Any".
+                                </small><br><br>
+                                <div class="col-md-3">
+                                    <div class="form-group">   
+                                        {{ form_label(form.destination) }}
+                                        {{ form_widget(form.destination) }} <br><small>Invert the sense of the match.</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">   
+                                        {{ form_widget(form.destinationType, { 'id': 'destinationType' }) }}
+                                        <span class="help-block">Type</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="input-group">
+                                        {{ form_widget(form.destinationAdressMask, { 'id': 'destinationAdressMask' }) }}
+                                        <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
+                                        <select class="form-control input-sm" name="maskDestination" id="maskDestination"> 
+                                            {% for i in 32..1 %}
+                                                <option value="{{ i }}">{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <span class="help-block">Address/mask</span>
+                                </div>
+                            </div>
+                            <br><br><br>
+                            <hr>
+                            <div class="form-group">   
+                                {{ form_label(form.descripcion) }}
+                                <small class="blockquote-footer">
+                                    A description may be entered here for administrative reference (not parsed).
+                                </small>
+                                {{ form_widget(form.descripcion) }}
+                                <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                            </div>
+                            <hr>
+                            <div class="form-group">   
+                                {{ form_label(form.natReflection) }}
+                                {{ form_widget(form.natReflection) }}
+                                <span class="text-danger">{{ form_errors(form.natReflection) }}</span>
+                            </div>  
+                            <div class="form-group">
+                                {{ form_widget(form.Save) }}
+                            </div>
+                            <div class="form-group">
+                                {{ form_widget(form.Reset) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Instructions
+                        </div>
+                        <div class="panel-body small">
+                            Complete the form. <br><br> 
+                        </div>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
         </div>
     </div>
-</dir>
+</div>
 {% include '@Principal/plantillas/declaracionPiePagina.html.twig' %}
 <script src="{{ asset ('js/jsPagina/aliases/registroAliases.js') }}"></script>
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove(); 
+        });
+    }, 4000);
+    // Internal IP //
+    $(function() 
+    {
+        $("#internalIpType").on('change', function() 
+        {
+            var selectValue = $(this).val();
+            switch (selectValue) 
+            {
+                case "any":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();                
+                break;
+                case "single":
+                    $("#internalAdressMask").show();
+                    $("#maskInternal").hide();
+                break;
+                case "network":
+                    $("#internalAdressMask").show();
+                    $("#maskInternal").show();
+                break;
+                case "pppoe":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "l2tp":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "wan":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "wanip":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "lan":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "lanip":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+            }
+        }).change();
+    });
+    // Fin //
+    // // Internal IP //
+    $(function() 
+    {
+        $("#destinationType").on('change', function() 
+        {
+            var selectValue = $(this).val();
+            switch (selectValue) 
+            {
+                case "any":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();                
+                break;
+                case "single":
+                    $("#destinationAdressMask").show();
+                    $("#maskDestination").hide();
+                break;
+                case "network":
+                    $("#destinationAdressMask").show();
+                    $("#maskDestination").show();
+                break;
+                case "pppoe":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "l2tp":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "wan":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "wanip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "lan":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "lanip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+            }
+        }).change();
+    });
+    // Fin //
+</script>
 {% include '@Principal/plantillas/declaracionFin.html.twig' %}

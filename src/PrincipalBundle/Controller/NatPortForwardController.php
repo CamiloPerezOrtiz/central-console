@@ -12,6 +12,7 @@ use PrincipalBundle\Entity\Interfaces;
 use PrincipalBundle\Form\NatPortForwardType;
 use PrincipalBundle\Form\NatPortForwardEditType;
 use PrincipalBundle\Form\NatOneToOneType;
+use PrincipalBundle\Form\NatOneToOneEditType;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class NatPortForwardController extends Controller
@@ -33,16 +34,22 @@ class NatPortForwardController extends Controller
 		$form->handleRequest($request);
 		$u = $this->getUser();
 		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
+		{
+			$id=$_REQUEST['id'];
+			$nat->setGrupo($id);
+			$ipGrupos = $this->ipGrupos($id);
+		}
+		if($role == 'ROLE_ADMINISTRATOR')
+		{
+			$nat->setGrupo($u->getGrupo());
+			$id=$u->getGrupo();
+			$ipGrupos = $this->ipGrupos($id);
+		}
 		if($form->isSubmitted() && $form->isValid())
 		{
+			$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
-			if($role == 'ROLE_SUPERUSER')
-			{
-				$id=$_REQUEST['id'];
-				$nat->setGrupo($id);
-			}
-			if($role == 'ROLE_ADMINISTRATOR')
-				$nat->setGrupo($u->getGrupo());
 			$mask = $_POST['mask'];
 			if($mask == "32")
 				$nat->setSourceAdvancedAdressMask($form->get("sourceAdvancedAdressMask")->getData());
@@ -61,6 +68,8 @@ class NatPortForwardController extends Controller
 				$adress_mask = $address . "/" . $maskDestination; 
 				$nat->setdestinationAdressMask($adress_mask);
 			}
+			$nat->setInterface($_POST['interface']);
+			$nat->setUbicacion($ubicacion);
 			$em->persist($nat);
 			$flush=$em->flush();
 			if($flush == null)
@@ -70,14 +79,32 @@ class NatPortForwardController extends Controller
 				return $this->redirectToRoute("gruposNat");
 			}
 			else
-			{
-				$estatus="Problems with the server try later.";
-				$this->session->getFlashBag()->add("estatus",$estatus);
-			}
+				echo '<script> alert("The name of alias that you are trying to register already exists try again.");window.history.go(-1);</script>';
 		}
-		return $this->render('@Principal/natPortForward/registroNatPortForward.html.twig', array(
-			'form'=>$form->createView()
+		if(isset($_POST['solicitar']))
+		{
+			$ubicacion = $_POST['ubicacion'];
+			return $this->render('@Principal/natPortForward/registroNatPortForward.html.twig', array(
+				'form'=>$form->createView(),
+				'ubicacion'=>$ubicacion
+			));
+		}
+
+		return $this->render('@Principal/natPortForward/solicitudNatPort.html.twig', array(
+			'ipGrupos'=>$ipGrupos
 		));
+	}
+
+	private function ipGrupos($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
 	}
 
 	# Funcion para mostrar los grupos #
@@ -187,10 +214,7 @@ class NatPortForwardController extends Controller
 		$form = $this->createForm(NatPortForwardEditType::class,$nat);
 		$u = $this->getUser();
 		$role=$u->getRole();
-		$grupo = $this->recuperarGrupoId($id);
-		$interfaces = $this->recuperarInterfaces($grupo);
 		$form->handleRequest($request);
-		$inter = $this->recuperarInterfaceGrupoId($id);
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$nat->setInterface($_POST['interface']);
@@ -217,36 +241,8 @@ class NatPortForwardController extends Controller
 			return $this->redirectToRoute("gruposNat");
 		}
 		return $this->render('@Principal/natPortForward/editarNatPortForward.html.twig', array(
-			'form'=>$form->createView(),
-			'interfaces'=>$interfaces,
-			'inter'=>$inter
+			'form'=>$form->createView()
 		));
-	}
-
-	# Funcion para recuperar nombre por id #
-	private function recuperarGrupoId($id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.grupo
-				FROM PrincipalBundle:NatPortForward u
-				WHERE u.id = :id'
-		)->setParameter('id', $id);
-		$datos = $query->getResult();
-		return $datos;
-	}
-
-	# Funcion para recuperar nombre por id #
-	private function recuperarInterfaceGrupoId($id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.interface
-				FROM PrincipalBundle:NatPortForward u
-				WHERE u.id = :id'
-		)->setParameter('id', $id);
-		$datos = $query->getResult();
-		return $datos;
 	}
 
 	# Funcion para eliminar un target #
@@ -285,16 +281,22 @@ class NatPortForwardController extends Controller
 		$form = $this ->createForm(NatOneToOneType::class, $nat);
 		$form->handleRequest($request);
 		$u = $this->getUser();
-		$role=$u->getRole();/*
+		$role=$u->getRole();
 		if($role == 'ROLE_SUPERUSER')
 		{
 			$id=$_REQUEST['id'];
-			$interfaces = $this->recuperarInterfaces($id);
+			$nat->setGrupo($id);
+			$ipGrupos = $this->ipGrupos($id);
 		}
 		if($role == 'ROLE_ADMINISTRATOR')
-			$interfaces = $this->recuperarInterfaces($u->getGrupo());*/
+		{
+			$nat->setGrupo($u->getGrupo());
+			$id=$u->getGrupo();
+			$ipGrupos = $this->ipGrupos($id);
+		}
 		if($form->isSubmitted() && $form->isValid())
 		{
+			$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
 			if($role == 'ROLE_SUPERUSER')
 			{
@@ -304,6 +306,7 @@ class NatPortForwardController extends Controller
 			if($role == 'ROLE_ADMINISTRATOR')
 				$nat->setGrupo($u->getGrupo());
 			$nat->setInterface($_POST['interface']);
+			$nat->setUbicacion($ubicacion);
 			$em->persist($nat);
 			$flush=$em->flush();
 			if($flush == null)
@@ -313,13 +316,18 @@ class NatPortForwardController extends Controller
 				return $this->redirectToRoute("gruposNat");
 			}
 			else
-			{
-				$estatus="Problems with the server try later.";
-				$this->session->getFlashBag()->add("estatus",$estatus);
-			}
+				echo '<script> alert("The name of alias that you are trying to register already exists try again.");window.history.go(-1);</script>';
 		}
-		return $this->render('@Principal/natPortForward/registroNatOneToOne.html.twig', array(
-			'form'=>$form->createView()
+		if(isset($_POST['solicitar']))
+		{
+			$ubicacion = $_POST['ubicacion'];
+			return $this->render('@Principal/natPortForward/registroNatOneToOne.html.twig', array(
+				'form'=>$form->createView(),
+				'ubicacion'=>$ubicacion
+			));
+		}
+		return $this->render('@Principal/natPortForward/solicitudNatOne.html.twig', array(
+			'ipGrupos'=>$ipGrupos
 		));
 	}
 
@@ -327,13 +335,10 @@ class NatPortForwardController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$nat = $em->getRepository("PrincipalBundle:NatOneToOne")->find($id);
-		$form = $this->createForm(NatOneToOneType::class,$nat);
+		$form = $this->createForm(NatOneToOneEditType::class,$nat);
 		$u = $this->getUser();
 		$role=$u->getRole();
-		$grupo = $this->recuperarGrupoOneId($id);
-		$interfaces = $this->recuperarInterfaces($grupo);
 		$form->handleRequest($request);
-		$inter = $this->recuperarInterfaceGrupoOneId($id);
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$nat->setInterface($_POST['interface']);
@@ -342,36 +347,8 @@ class NatPortForwardController extends Controller
 			return $this->redirectToRoute("gruposTarget");
 		}
 		return $this->render('@Principal/natPortForward/editarNatOneToOne.html.twig', array(
-			'form'=>$form->createView(),
-			'interfaces'=>$interfaces,
-			'inter'=>$inter
+			'form'=>$form->createView()
 		));
-	}
-
-	# Funcion para recuperar nombre por id #
-	private function recuperarGrupoOneId($id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.grupo
-				FROM PrincipalBundle:NatOneToOne u
-				WHERE u.id = :id'
-		)->setParameter('id', $id);
-		$datos = $query->getResult();
-		return $datos;
-	}
-
-	# Funcion para recuperar nombre por id #
-	private function recuperarInterfaceGrupoOneId($id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.interface
-				FROM PrincipalBundle:NatOneToOne u
-				WHERE u.id = :id'
-		)->setParameter('id', $id);
-		$datos = $query->getResult();
-		return $datos;
 	}
 
 	# Funcion para eliminar un target #
@@ -756,21 +733,5 @@ class NatPortForwardController extends Controller
 		$estatus="The configuration has been saved";
 		$this->session->getFlashBag()->add("estatus",$estatus);
 		return $this->redirectToRoute("gruposNat");
-	}
-
-	# funcion para correr el script aplicar cambios en target #
-	public function aplicarXMLNatAction($id)
-	{
-    	$archivo = fopen("change_to_do.txt", 'w');
-		fwrite($archivo, "nats.py");
-		fwrite ($archivo, "\n");
-		fclose($archivo); 
-		# Mover el archivo a la carpeta #
-		$archivoConfig = 'change_to_do.txt';
-		$destinoConfig = "centralizedConsole/change_to_do.txt";
-	   	if (!copy($archivoConfig, $destinoConfig)) 
-		   echo "Error al copiar $archivoConfig...\n";
-		unlink("change_to_do.txt");
-    	return $this->redirectToRoute('grupos');
 	}
 }

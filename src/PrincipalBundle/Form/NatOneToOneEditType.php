@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ResetType;
 
-class NatOneToOneType extends AbstractType
+class NatOneToOneEditType extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -45,7 +45,6 @@ class NatOneToOneType extends AbstractType
                     'LAN net' => 'lan',
                     'LAN address' => 'lanip'
                 ),
-                'data' => 'single'
             ))
             ->add('internalAdressMask',TextType::class,array(
                 "label"=>"Address ",
@@ -72,7 +71,6 @@ class NatOneToOneType extends AbstractType
                     'LAN' => 'lan',
                     'LAN address' => 'lanip'
                 ),
-                'data' => 'wanip'
             ))
             ->add('destinationAdressMask',TextType::class,array(
                 "label"=>"Address ",

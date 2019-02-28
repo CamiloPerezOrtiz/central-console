@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Nat port forward</h1>
+                <h1 class="page-header">Nat port forward location {{ubicacion}}</h1>
             </div>
         </div>
         <div class="row">
@@ -12,7 +12,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            Register nat port forward
+                            Register nat port forward <input type="hidden" name="ubicacion" value="{{ubicacion}}">
                         </div>
                         <div class="panel-body small">
                             <div class="form-row">
@@ -35,7 +35,7 @@
                                     <small>
                                         Choose which interface this rule applies to. In most cases "WAN" is specified.
                                     </small><br><br>
-                                    <select class="form-control input-sm" name="interface">
+                                    <select class="form-control input-sm" name="interface" id="interface">
                                         <option value="wan">WAN</option>
                                         <option value="lan">LAN</option>
                                     </select>
@@ -220,8 +220,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <br><br>
-                            <hr>
                             <div class="form-group">   
                                 {{ form_label(form.redirectTargetIp) }}<br>
                                 <small>
@@ -490,6 +488,69 @@
         {
            $("#destinationRangeCustomToPort").prop("readonly", true);
         }
+    // Fin //
+    // Redirect targert port //
+    $( function() 
+    {
+        $("#redirectTargetPort").on('change', function() 
+        {
+            if($("#redirectTargetPort option:selected").val() == "") 
+            {
+                $("#redirectTargetPortCustom").prop("readonly", false);
+            }
+            else
+            {
+                $("#redirectTargetPortCustom").prop("readonly", true);
+            }
+        });
+    });
+
+    if($("#redirectTargetPort option:selected").val() !== "") 
+    {
+       $("#redirectTargetPortCustom").prop("readonly", true);
+    }
+    // Fin
+    // Interfaze change //
+    $(function() 
+    {
+        $("#interface").on('change', function() 
+        {
+            var selectValue = $(this).val();
+            switch (selectValue) 
+            {
+                case "lan":
+                    $('#destinationType').val(lan);            
+                break;
+                case "wan":
+                    $("#destinationType").show();
+                break;
+            }
+        }).change();
+    });
+    // Fin //
+    // // Se activa al selecionar el tipo de protocolo lo que realiza es ocultar o mostar el contenido de //
+    // de Destination port range y el redirect target port si se selecciona el protocolo ICMP.         //
+    function protocolOnChange(sel) 
+    {
+        if (sel.value=="tcp" || sel.value=="udp" || sel.value=="tcp/udp")
+        {
+            divA = document.getElementById("advancedSourcePortRange");
+            divA.style.display="block";
+            divC = document.getElementById("destinationTargetPort");
+            divC.style.display="block";
+            divD = document.getElementById("redirectTargetPort");
+            divD.style.display="block";
+        }
+        else
+        {
+            divA = document.getElementById("advancedSourcePortRange");
+            divA.style.display="none";
+            divC = document.getElementById("destinationTargetPort");
+            divC.style.display="none";
+            divD = document.getElementById("redirectTargetPort");
+            divD.style.display="none";
+        }
+    }
     // Fin //
 </script>
 {% include '@Principal/plantillas/declaracionFin.html.twig' %}

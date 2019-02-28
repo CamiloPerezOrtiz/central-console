@@ -162,6 +162,10 @@ gruposNat:
     path:     /gruposNat
     defaults: { _controller: PrincipalBundle:NatPortForward:gruposNat }
 
+solicitudNatPort:
+    path:     /solicitudNatPort 
+    defaults: { _controller: PrincipalBundle:NatPortForward:solicitudNatPort }
+
 registroNatPortForward:
     path:     /registroNatPortForward 
     defaults: { _controller: PrincipalBundle:NatPortForward:registroNatPortForward }

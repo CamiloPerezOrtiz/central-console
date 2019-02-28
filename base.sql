@@ -160,6 +160,7 @@ CREATE TABLE nat_port_forward(
 	nat_reflection VARCHAR(25) DEFAULT NULL,
 	filter_rule_association VARCHAR(25) DEFAULT NULL,
 	grupo VARCHAR(50) DEFAULT NULL,
+	ubicacion VARCHAR(50) NOT NULL,
 	posicion SERIAL 
 );
 
@@ -178,6 +179,7 @@ CREATE TABLE nat_one_to_one(
 	descripcion VARCHAR(25) DEFAULT NULL,
 	nat_reflection VARCHAR(25) DEFAULT NULL,
 	grupo VARCHAR(50) DEFAULT NULL,
+	ubicacion VARCHAR(50) NOT NULL,
 	posicion SERIAL	
 );
 

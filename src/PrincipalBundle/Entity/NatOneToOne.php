@@ -105,6 +105,13 @@ class NatOneToOne
      */
     private $grupo;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ubicacion", type="string", length=50)
+     */
+    private $ubicacion;
+
 
     /**
      * Get id
@@ -402,6 +409,30 @@ class NatOneToOne
     public function getGrupo()
     {
         return $this->grupo;
+    }
+
+    /**
+     * Set ubicacion
+     *
+     * @param string $ubicacion
+     *
+     * @return NatOneToOne
+     */
+    public function setUbicacion($ubicacion)
+    {
+        $this->ubicacion = $ubicacion;
+
+        return $this;
+    }
+
+    /**
+     * Get ubicacion
+     *
+     * @return string
+     */
+    public function getUbicacion()
+    {
+        return $this->ubicacion;
     }
 }
 
