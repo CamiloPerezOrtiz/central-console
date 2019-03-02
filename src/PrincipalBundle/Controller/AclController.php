@@ -43,7 +43,7 @@ class AclController extends Controller
 		{
 			$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
-			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData());
+			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $id);
 			if(count($verificarNombre)==0)
 			{
 				if($role == 'ROLE_SUPERUSER')
@@ -97,14 +97,15 @@ class AclController extends Controller
 	}
 
 	# Funcion para recuperar nombre por id #
-	private function recuperarNombreId($nombre)
+	private function recuperarNombreId($nombre, $grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
 			'SELECT u.nombre
 				FROM PrincipalBundle:Acl u
-				WHERE  u.nombre = :nombre'
-		)->setParameter('nombre', $nombre);
+				WHERE  u.nombre = :nombre
+				AND u.grupo = :grupo'
+		)->setParameter('nombre', $nombre)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;
 	}
@@ -346,8 +347,8 @@ class AclController extends Controller
 		$query = $em->createQuery(
 			'SELECT u.estatus, u.nombre, u.cliente, u.targetRule, u.notAllowIp, u.redirectMode, u.redirect, u.descripcion, u.log
 				FROM PrincipalBundle:Acl u
-				WHERE  u.grupo = :grupo'
-		)->setParameter('grupo', $grupo);
+				WHERE  u.ubicacion = :ubicacion'
+		)->setParameter('ubicacion', $grupo);
 		$datos = $query->getResult();
 		return $datos;
 	}

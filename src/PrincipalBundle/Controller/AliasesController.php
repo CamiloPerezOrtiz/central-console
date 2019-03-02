@@ -77,15 +77,6 @@ class AliasesController extends Controller
 					$stmt2 = $db->prepare($query2);
 					$params2 =array();
 					$stmt2->execute($params2);
-					$serv = '/var/www/html/central-console/web/Groups/';
-					$ruta = $serv . $grupo . "/" . $ips;
-					if(!file_exists($ruta))
-					{
-					  mkdir ($ruta);
-					  echo "Se ha creado el directorio: " . $ruta . "<br>";
-					} 
-					else 
-					  echo "la ruta: " . $ruta . " ya existe ". "<br>";
 				}
 				unlink("arreglo.txt");
 				if($stmt == null)

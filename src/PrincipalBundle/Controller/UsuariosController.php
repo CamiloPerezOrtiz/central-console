@@ -119,7 +119,9 @@ class UsuariosController extends Controller
 		$email=$usuario->getEmail();
 		$recuperarEstado = $this->recuperarEstado($email);
 		if($recuperarEstado[0]['estado'] == false)
+		{
 			echo '<script> alert("Your user has been blocked. Communicate with the company to be unlocked.");window.location.href="logout";</script>';
+		}
 		else
 		{
 			$actualizarIntentos = $this->actualizarIntentos($contador = 0, $email);

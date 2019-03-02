@@ -15,14 +15,6 @@
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
-                            {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                <a href="{{ path('registroAliases') }}">
-                                    <button type="button" class="btn btn-success">
-                                        Add nat
-                                    </button>
-                                </a>
-                                <br><br>
-                            {% endif %}
                             <ul class="nav nav-tabs">
                                 <li class="active">
                                     <a class="nav-link active" data-toggle="tab" href="#home">Port forward</a>
@@ -34,7 +26,7 @@
                             <div class="tab-content">
                                 <div id="home" class="container tab-pane active"><br>
                                     {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                        <a href="{{path ('registerNat') }}">
+                                        <a href="{{path ('registroNatPortForward') }}">
                                             <button type="button" class="btn btn-success">
                                                 Add Port forward <i class="fas fa-search-plus"></i>
                                             </button>
@@ -416,8 +408,8 @@
                                     </div>
                                 </div>
                                 <div id="menu1" class="container tab-pane fade"><br>
-                                    {% if app.user.role == 'ROLE_ADMIN' %}
-                                        <a href="{{path ('registerNatOne') }}">
+                                    {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
+                                        <a href="{{path ('registroNatOneToOne') }}">
                                             <button type="button" class="btn btn-success">
                                                 Add 1:1 <i class="fas fa-search-plus"></i>
                                             </button>
@@ -531,7 +523,7 @@
                                    When you click on save button you are saving the acl groups list. <br><br>
                                     <div class="form-group">
                                         {% if nat == true %} 
-                                            <a href="{{path('crearXMLTarget',{id:nat[0]['grupo']})}}">
+                                            <a href="{{path('crearXMLNat',{id:nat[0]['grupo']})}}">
                                             <button type="button" class="btn btn-success">
                                                 <b>  Save nat list <i class="fas fa-save"></i></b>
                                             </button>

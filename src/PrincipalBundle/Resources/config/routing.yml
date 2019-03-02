@@ -183,7 +183,7 @@ eliminarNatPortForward:
     defaults: { _controller: PrincipalBundle:NatPortForward:eliminarNatPortForward }
 
 crearXMLNat:
-    path:     /crearXMLNat/{id}
+    path:     /crearXMLNat
     defaults: { _controller: PrincipalBundle:NatPortForward:crearXMLNat }
 
 aplicarXMLNat:

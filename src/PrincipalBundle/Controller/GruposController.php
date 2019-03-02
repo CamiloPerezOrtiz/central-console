@@ -48,8 +48,15 @@ class GruposController extends Controller
 			$params =array();
 			$stmt->execute($params);
 			$flush=$em->flush();
-			$serv = '/var/www/html/central-console/web/Groups/';
-			$ruta = $serv . $nombre;
+			$serv = "/var/www/html/central-console/web/Groups/$nombre";
+			if(!file_exists($serv))
+			{
+			  mkdir ($serv);
+			  echo "Se ha creado el directorio: " . $serv;
+			} 
+			else 
+			  echo "la ruta: " . $serv . " ya existe ";
+			$ruta = $serv . "/" . $descripcion;
 			if(!file_exists($ruta))
 			{
 			  mkdir ($ruta);

@@ -1,10 +1,17 @@
 <?xml version='1.0'?>
 	<aliases>
 		<alias>
-			<name>Soporte</name>
+			<name>Recursos Humanos</name>
 			<type>host</type>
-			<address>192.168.5.1 192.168.5.2 192.168.5.3</address>
-			<descr>Area de soporte</descr>
-			<detail>Maquina 1 ||Maquina 2 ||Maquina 3</detail>
+			<address>192.168.15.23 192.168.15.45 192.168.15.78 192.168.15.123</address>
+			<descr>Area de recursos humanos</descr>
+			<detail>Encargada del area ||Becario 1 ||Becario 2 ||Secretaria</detail>
+		</alias>
+		<alias>
+			<name>Marketing</name>
+			<type>host</type>
+			<address>192.168.15.90 192.168.15.2 192.168.15.200 192.168.15.45 192.168.15.205</address>
+			<descr>Area de marketing</descr>
+			<detail>Diseñador 1 ||Diseñador 2 ||Ventas 1 ||Ventas 2 ||Becario 1</detail>
 		</alias>
 	</aliases>

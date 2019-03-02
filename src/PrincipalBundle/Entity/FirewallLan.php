@@ -189,6 +189,13 @@ class FirewallLan
      */
     private $posicion;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ubicacion", type="string", length=50)
+     */
+    private $ubicacion;
+
 
     /**
      * Get id
@@ -774,6 +781,30 @@ class FirewallLan
     public function getPosicion()
     {
         return $this->posicion;
+    }
+
+    /**
+     * Set ubicacion
+     *
+     * @param string $ubicacion
+     *
+     * @return FirewallLan
+     */
+    public function setUbicacion($ubicacion)
+    {
+        $this->ubicacion = $ubicacion;
+
+        return $this;
+    }
+
+    /**
+     * Get ubicacion
+     *
+     * @return string
+     */
+    public function getUbicacion()
+    {
+        return $this->ubicacion;
     }
 }
 

@@ -1,3 +1,10 @@
 <?xml version='1.0'?>
-	<squidguardacl>
-	</squidguardacl>
+	<aliases>
+		<alias>
+			<name>Recursos Humanos</name>
+			<type>host</type>
+			<address>192.168.14.34 192.168.14.78 192.168.14.145 192.168.14.160 192.168.14.186 192.168.14.146</address>
+			<descr>Area de recursos humanos</descr>
+			<detail>Encargado ||Secretaria 1 ||Secretaria 2 ||Becario 1 ||Becario 2 ||Becario 2</detail>
+		</alias>
+	</aliases>
