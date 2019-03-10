@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Table IP</h1>
+                <h1 class="page-header">Table public IP</h1>
             </div>
         </div>
         <div class="row">
@@ -26,9 +26,6 @@
                                     {% for grupo in grupos %}
                                         <tr>
                                             <td>
-                                                {% if app.user.role == "ROLE_SUPERUSER" or app.user.role == "ROLE_ADMINISTRATOR" %}
-                                                    <input type="checkbox" class="form-check-input" name="ip[]" value="{{ grupo.ip }}" checked> 
-                                                {% endif %}
                                                 {{ grupo.ip }}
                                             </td>
                                             <td>{{ grupo.descripcion }}</td>

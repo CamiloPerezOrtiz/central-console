@@ -183,13 +183,6 @@ class FirewallLan
     private $grupo;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="posicion", type="integer")
-     */
-    private $posicion;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="ubicacion", type="string", length=50)
@@ -757,30 +750,6 @@ class FirewallLan
     public function getGrupo()
     {
         return $this->grupo;
-    }
-
-    /**
-     * Set posicion
-     *
-     * @param integer $posicion
-     *
-     * @return FirewallLan
-     */
-    public function setPosicion($posicion)
-    {
-        $this->posicion = $posicion;
-
-        return $this;
-    }
-
-    /**
-     * Get posicion
-     *
-     * @return int
-     */
-    public function getPosicion()
-    {
-        return $this->posicion;
     }
 
     /**

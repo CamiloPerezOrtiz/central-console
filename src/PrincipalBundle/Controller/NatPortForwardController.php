@@ -146,39 +146,58 @@ class NatPortForwardController extends Controller
 	public function listaNatAction()
 	{
 		$u = $this->getUser();
-		if($u != null)
+		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
 		{
-	        $role=$u->getRole();
-	        $grupo=$u->getGrupo();
-	        if($role == "ROLE_SUPERUSER")
-	        {
-	        	$id=$_REQUEST['id'];
-				$nat = $this->recuperarTodoNatPortGrupo($id);
-				$natOne = $this->recuperarOneToOneGrupo($id);
-				return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
-					"nat"=>$nat,
-					"natOne"=>$natOne
-				));
-	        }
-	        if($role == "ROLE_ADMINISTRATOR")
-	        {
-	        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
-	        	$natOne = $this->recuperarOneToOneGrupo($grupo);
-				return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
-					"nat"=>$nat,
-					"natOne"=>$natOne
-				));
-	        }
-	        if($role == "ROLE_USER")
-	        {
-	        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
-	        	$natOne = $this->recuperarOneToOneGrupo($grupo);
-				return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
-					"nat"=>$nat,
-					"natOne"=>$natOne
-				));
-	        }
-	    }
+			$id=$_REQUEST['id'];
+			$ipGrupos = $this->ipGrupos($id);
+		}
+		if($role == 'ROLE_ADMINISTRATOR')
+		{
+			$id=$u->getGrupo();
+			$ipGrupos = $this->ipGrupos($id);
+		}
+		if(isset($_POST['solicitar']))
+		{
+			#$u = $this->getUser();
+			if($u != null)
+			{
+		        $role=$u->getRole();
+		        $grupo=$u->getGrupo();
+		        if($role == "ROLE_SUPERUSER")
+		        {
+		        	$id=$_REQUEST['id'];
+					$nat = $this->recuperarTodoNatPortGrupo($id);
+					$natOne = $this->recuperarOneToOneGrupo($id);
+					return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
+						"nat"=>$nat,
+						"natOne"=>$natOne
+					));
+		        }
+		        if($role == "ROLE_ADMINISTRATOR")
+		        {
+		        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
+		        	$natOne = $this->recuperarOneToOneGrupo($grupo);
+					return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
+						"nat"=>$nat,
+						"natOne"=>$natOne
+					));
+		        }
+		        if($role == "ROLE_USER")
+		        {
+		        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
+		        	$natOne = $this->recuperarOneToOneGrupo($grupo);
+					return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
+						"nat"=>$nat,
+						"natOne"=>$natOne
+					));
+		        }
+		    }
+		}
+
+		return $this->render('@Principal/natPortForward/solicitudNatPort.html.twig', array(
+			'ipGrupos'=>$ipGrupos
+		));
 	}
 
 	# Funcion para recuperar los todos los aliases #

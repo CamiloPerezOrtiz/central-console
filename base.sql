@@ -192,7 +192,7 @@ CREATE TABLE firewall_lan(
 	interface VARCHAR(25) DEFAULT NULL,
 	adress_family VARCHAR(25) DEFAULT NULL,
 	protocolo VARCHAR(25) DEFAULT NULL,
-	icmp_subtypes TEXT DEFAULT NULL,
+	icm_subtypes TEXT DEFAULT NULL,
 	--source
 	source_invert_match BOOLEAN DEFAULT FALSE,
 	source_type VARCHAR(25) DEFAULT NULL,

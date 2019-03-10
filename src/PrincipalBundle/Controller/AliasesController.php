@@ -170,44 +170,64 @@ class AliasesController extends Controller
 	public function listaAliasesAction()
 	{
 		$u = $this->getUser();
-		if($u != null)
+		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
 		{
-	        $role=$u->getRole();
-	        $grupo=$u->getGrupo();
-	        if($role == "ROLE_SUPERUSER")
-	        {
-	        	$id=$_REQUEST['id'];
-				$aliases = $this->recuperarTodoAliasesGrupo($id);
-				return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-					"aliases"=>$aliases
-				));
-	        }
-	        if($role == "ROLE_ADMINISTRATOR")
-	        {
-	        	$aliases = $this->recuperarTodoAliasesGrupo($grupo);
-				return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-					"aliases"=>$aliases
-				));
-	        }
-	        if($role == "ROLE_USER")
-	        {
-	        	$aliases = $this->recuperarTodoAliasesGrupo($grupo);
-				return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-					"aliases"=>$aliases
-				));
-	        }
-	    }
+			$grupo=$_REQUEST['id'];
+			$ipGrupos = $this->ipGrupos($grupo);
+		}
+		else
+		{
+			$grupo=$u->getGrupo();
+			$ipGrupos = $this->ipGrupos($grupo);
+		}
+		if(isset($_POST['solicitar']))
+		{
+			#$u = $this->getUser();
+			if($u != null)
+			{
+		        #$role=$u->getRole();
+		        #$grupo=$u->getGrupo();
+		       	$ubicacion = $_REQUEST['ubicacion'];
+		        if($role == "ROLE_SUPERUSER")
+		        {
+		        	#$id=$_REQUEST['id'];
+					$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
+					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
+						"aliases"=>$aliases
+					));
+		        }
+		        /*if($role == "ROLE_ADMINISTRATOR")
+		        {
+		        	$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
+					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
+						"aliases"=>$aliases
+					));
+		        }
+		        if($role == "ROLE_USER")
+		        {
+		        	$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
+					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
+						"aliases"=>$aliases
+					));
+		        }*/
+		    }
+		}
+	    return $this->render('@Principal/plantillas/solicitudGrupo.html.twig', array(
+			'ipGrupos'=>$ipGrupos
+		));
 	}
 
 	# Funcion para recuperar los todos los aliases #
-	private function recuperarTodoAliasesGrupo($grupo)
+	private function recuperarTodoAliasesGrupo($grupo, $ubicacion)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
 			'SELECT u.id, u.nombre, u.ip_port, u.grupo, u.ubicacion
 				FROM PrincipalBundle:Aliases u
-				WHERE  u.grupo = :grupo'
-		)->setParameter('grupo', $grupo);
+				WHERE  u.grupo = :grupo
+				AND u.ubicacion = :ubicacion'
+		)->setParameter('grupo', $grupo)->setParameter('ubicacion', $ubicacion);
 		$grupoAliases = $query->getResult();
 		return $grupoAliases;
 	}

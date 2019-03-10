@@ -224,9 +224,9 @@ editarNatPortForward:
     path:     /editarNatPortForward/{id} 
     defaults: { _controller: PrincipalBundle:Firewall:editarNatPortForward }
 
-listaNat:
-    path:     /listaNat 
-    defaults: { _controller: PrincipalBundle:NatPortForward:listaNat }
+listaFirewallWan:
+    path:     /listaFirewallWan 
+    defaults: { _controller: PrincipalBundle:Firewall:listaFirewallWan }
 
 eliminarNatPortForward:
     path:     /eliminarNatPortForward/{id} 
