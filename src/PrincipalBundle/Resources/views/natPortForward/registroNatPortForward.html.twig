@@ -70,11 +70,7 @@
                                             <div class="input-group">
                                                 {{ form_widget(form.sourceAdvancedAdressMask, { 'id': 'sourceAdvancedAdressMask' }) }}
                                                 <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                                <select class="form-control input-sm" name="mask" id="mask"> 
-                                                    {% for i in 32..1 %}
-                                                        <option value="{{ i }}">{{ i }}</option>
-                                                    {% endfor %}
-                                                </select>
+                                                {{ form_widget(form.sourceAdvancedAdressMask1, { 'id': 'mask' }) }}
                                             </div>
                                             <span class="help-block">Address/mask</span>
                                         </div>
@@ -138,11 +134,7 @@
                                         <div class="input-group">
                                             {{ form_widget(form.destinationAdressMask, { 'id': 'destinationAdressMask' }) }}
                                             <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                            <select class="form-control input-sm" name="maskDestination" id="maskDestination"> 
-                                                {% for i in 32..1 %}
-                                                    <option value="{{ i }}">{{ i }}</option>
-                                                {% endfor %}
-                                            </select>
+                                            {{ form_widget(form.destinationAdressMask2, { 'id': 'maskDestination' }) }}
                                         </div>
                                         <span class="help-block">Address/mask</span>
                                     </div>

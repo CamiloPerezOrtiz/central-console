@@ -136,45 +136,64 @@ class TargetController extends Controller
 	public function listaTargetAction()
 	{
 		$u = $this->getUser();
-		if($u != null)
+		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
 		{
-	        $role=$u->getRole();
-	        $grupo=$u->getGrupo();
-	        if($role == "ROLE_SUPERUSER")
-	        {
-	        	$id=$_REQUEST['id'];
-				$target = $this->recuperarTodoTargetGrupo($id);
-				return $this->render('@Principal/target/listaTarget.html.twig', array(
-					"target"=>$target
-				));
-	        }
-	        if($role == "ROLE_ADMINISTRATOR")
-	        {
-	        	$target = $this->recuperarTodoTargetGrupo($grupo);
-				return $this->render('@Principal/target/listaTarget.html.twig', array(
-					"target"=>$target
-				));
-	        }
-	        if($role == "ROLE_USER")
-	        {
-	        	$target = $this->recuperarTodoTargetGrupo($grupo);
-				return $this->render('@Principal/target/listaTarget.html.twig', array(
-					"target"=>$target
-				));
-	        }
-	    }
+			$grupo=$_REQUEST['id'];
+			$ipGrupos = $this->ipGrupos($grupo);
+		}
+		else
+		{
+			$grupo=$u->getGrupo();
+			$ipGrupos = $this->ipGrupos($grupo);
+		}
+		if(isset($_POST['solicitar']))
+		{
+			#$u = $this->getUser();
+			if($u != null)
+			{
+		        #$role=$u->getRole();
+		        #$grupo=$u->getGrupo();
+		        $ubicacion = $_REQUEST['ubicacion'];
+		        if($role == "ROLE_SUPERUSER")
+		        {
+		        	#$id=$_REQUEST['id'];
+					$target = $this->recuperarTodoTargetGrupo($grupo, $ubicacion);
+					return $this->render('@Principal/target/listaTarget.html.twig', array(
+						"target"=>$target
+					));
+		        }
+		        if($role == "ROLE_ADMINISTRATOR")
+		        {
+		        	$target = $this->recuperarTodoTargetGrupo($grupo, $ubicacion);
+					return $this->render('@Principal/target/listaTarget.html.twig', array(
+						"target"=>$target
+					));
+		        }
+		        if($role == "ROLE_USER")
+		        {
+		        	$target = $this->recuperarTodoTargetGrupo($grupo, $ubicacion);
+					return $this->render('@Principal/target/listaTarget.html.twig', array(
+						"target"=>$target
+					));
+		        }
+		    }
+		}
+		return $this->render('@Principal/plantillas/solicitudGrupo.html.twig', array(
+			'ipGrupos'=>$ipGrupos
+		));
 	}
 
 	# Funcion para recuperar los todos los target #
-	private function recuperarTodoTargetGrupo($grupo)
+	private function recuperarTodoTargetGrupo($grupo, $ubicacion)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
 			'SELECT u.id, u.nombre, u.redirect, u.descripcion, u.grupo, u.ubicacion
 				FROM PrincipalBundle:Target u
 				WHERE  u.grupo = :grupo
-				ORDER BY u.id'
-		)->setParameter('grupo', $grupo);
+				AND u.ubicacion = :ubicacion'
+		)->setParameter('grupo', $grupo)->setParameter('ubicacion', $ubicacion);
 		$target = $query->getResult();
 		return $target;
 	}

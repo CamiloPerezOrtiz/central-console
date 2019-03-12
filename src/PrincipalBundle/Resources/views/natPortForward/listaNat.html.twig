@@ -62,7 +62,11 @@
                                                             {% if natPort.source_advanced_type == "any" %} 
                                                                 *
                                                             {% elseif natPort.source_advanced_type == "network" %}
-                                                                {{ natPort.source_advanced_adress_mask }}
+                                                                {% if natPort.source_advanced_adress_mask1 ==32 %}
+                                                                    {{ natPort.source_advanced_adress_mask }}
+                                                                {% else %}
+                                                                    {{ natPort.source_advanced_adress_mask }} / {{ natPort.source_advanced_adress_mask1 }}
+                                                                {% endif %}
                                                             {% elseif natPort.source_advanced_type == "pppoe" %}
                                                                 PPPoE
                                                             {% elseif natPort.source_advanced_type == "l2tp" %}
@@ -180,7 +184,11 @@
                                                             {% if natPort.destination_type == "any" %} 
                                                                 *
                                                             {% elseif natPort.destination_type == "network" %}
-                                                                {{ natPort.destination_adress_mask }}
+                                                                {% if natPort.destination_adress_mask2 ==32 %}
+                                                                    {{ natPort.destination_adress_mask }}
+                                                                {% else %}
+                                                                    {{ natPort.destination_adress_mask }} / {{ natPort.destination_adress_mask2 }}
+                                                                {% endif %}
                                                             {% elseif natPort.destination_type == "pppoe" %}
                                                                 PPPoE
                                                             {% elseif natPort.destination_type == "l2tp" %}

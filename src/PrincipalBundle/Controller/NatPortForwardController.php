@@ -50,16 +50,17 @@ class NatPortForwardController extends Controller
 		{
 			$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
-			$mask = $_POST['mask'];
-			if($mask == "32")
+			//$mask = $_POST['mask'];
+			/*if($mask == "32")
 				$nat->setSourceAdvancedAdressMask($form->get("sourceAdvancedAdressMask")->getData());
 			elseif($mask <= "31")
 			{
 				$address = $form->get("sourceAdvancedAdressMask")->getData();
 				$adress_mask = $address . "/" . $mask; 
 				$nat->setSourceAdvancedAdressMask($adress_mask);
-			}
-			$maskDestination = $_POST['maskDestination'];
+			}*/
+			/**/
+			/*$maskDestination = $_POST['maskDestination'];
 			if($maskDestination == "32")
 				$nat->setdestinationAdressMask($form->get("destinationAdressMask")->getData());
 			elseif($maskDestination <= "31")
@@ -67,7 +68,7 @@ class NatPortForwardController extends Controller
 				$address = $form->get("destinationAdressMask")->getData();
 				$adress_mask = $address . "/" . $maskDestination; 
 				$nat->setdestinationAdressMask($adress_mask);
-			}
+			}*/
 			$nat->setInterface($_POST['interface']);
 			$nat->setUbicacion($ubicacion);
 			$em->persist($nat);
@@ -149,26 +150,27 @@ class NatPortForwardController extends Controller
 		$role=$u->getRole();
 		if($role == 'ROLE_SUPERUSER')
 		{
-			$id=$_REQUEST['id'];
-			$ipGrupos = $this->ipGrupos($id);
+			$grupo=$_REQUEST['id'];
+			$ipGrupos = $this->ipGrupos($grupo);
 		}
 		if($role == 'ROLE_ADMINISTRATOR')
 		{
-			$id=$u->getGrupo();
-			$ipGrupos = $this->ipGrupos($id);
+			$grupo=$u->getGrupo();
+			$ipGrupos = $this->ipGrupos($grupo);
 		}
 		if(isset($_POST['solicitar']))
 		{
 			#$u = $this->getUser();
 			if($u != null)
 			{
-		        $role=$u->getRole();
-		        $grupo=$u->getGrupo();
+		        #$role=$u->getRole();
+		        #$grupo=$u->getGrupo();
+		        $ubicacion = $_REQUEST['ubicacion'];
 		        if($role == "ROLE_SUPERUSER")
 		        {
-		        	$id=$_REQUEST['id'];
-					$nat = $this->recuperarTodoNatPortGrupo($id);
-					$natOne = $this->recuperarOneToOneGrupo($id);
+		        	#$id=$_REQUEST['id'];
+					$nat = $this->recuperarTodoNatPortGrupo($grupo, $ubicacion);
+					$natOne = $this->recuperarOneToOneGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
 						"nat"=>$nat,
 						"natOne"=>$natOne
@@ -176,8 +178,8 @@ class NatPortForwardController extends Controller
 		        }
 		        if($role == "ROLE_ADMINISTRATOR")
 		        {
-		        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
-		        	$natOne = $this->recuperarOneToOneGrupo($grupo);
+		        	$nat = $this->recuperarTodoNatPortGrupo($grupo, $ubicacion);
+		        	$natOne = $this->recuperarOneToOneGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
 						"nat"=>$nat,
 						"natOne"=>$natOne
@@ -185,8 +187,8 @@ class NatPortForwardController extends Controller
 		        }
 		        if($role == "ROLE_USER")
 		        {
-		        	$nat = $this->recuperarTodoNatPortGrupo($grupo);
-		        	$natOne = $this->recuperarOneToOneGrupo($grupo);
+		        	$nat = $this->recuperarTodoNatPortGrupo($grupo, $ubicacion);
+		        	$natOne = $this->recuperarOneToOneGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
 						"nat"=>$nat,
 						"natOne"=>$natOne
@@ -201,11 +203,11 @@ class NatPortForwardController extends Controller
 	}
 
 	# Funcion para recuperar los todos los aliases #
-	private function recuperarTodoNatPortGrupo($grupo)
+	private function recuperarTodoNatPortGrupo($grupo, $ubicacion)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM nat_port_forward WHERE grupo ='$grupo' ORDER BY posicion";
+		$query = "SELECT * FROM nat_port_forward WHERE grupo ='$grupo' AND ubicacion = '$ubicacion' ORDER BY posicion";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
@@ -214,11 +216,11 @@ class NatPortForwardController extends Controller
 	}
 
 	# Funcion para recuperar los todos los aliases #
-	private function recuperarOneToOneGrupo($grupo)
+	private function recuperarOneToOneGrupo($grupo, $ubicacion)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM nat_one_to_one WHERE grupo ='$grupo' ORDER BY posicion";
+		$query = "SELECT * FROM nat_one_to_one WHERE grupo ='$grupo' AND ubicacion = '$ubicacion' ORDER BY posicion";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
@@ -409,8 +411,8 @@ class NatPortForwardController extends Controller
 		{
 			foreach ($_POST['ip'] as $ips) 
 			{
-				$recuperarTodoDatos = $this->recuperarTodoNatPortGrupo($id);
-				$recuperarTodoDatosOneToOne = $this->recuperarOneToOneGrupo($id);
+				$recuperarTodoDatos = $this->recuperarTodoNatPortGrupo($id, $ips);
+				$recuperarTodoDatosOneToOne = $this->recuperarOneToOneGrupo($id, $ips);
 				$contenido = "<?xml version='1.0'?>\n";
 				$contenido .= "\t<nat>\n";
 				foreach ($recuperarTodoDatos as $nat) 
@@ -425,7 +427,10 @@ class NatPortForwardController extends Controller
 						if($nat['source_advanced_type'] === "single")
 							$contenido .= "\t\t\t\t<address>" . $nat['source_advanced_adress_mask'] . "</address>\n";
 						if($nat['source_advanced_type'] === "network")
-							$contenido .= "\t\t\t\t<network>" . $nat['source_advanced_adress_mask'] . "</network>\n";
+							if ($nat['source_advanced_adress_mask1'] == 32) 
+								$contenido .= "\t\t\t\t<network>" . $nat['source_advanced_adress_mask'] . "</network>\n";
+							else
+								$contenido .= "\t\t\t\t<network>" . $nat['source_advanced_adress_mask'] . "/" . $nat['source_advanced_adress_mask1'] . "</network>\n";
 						if($nat['source_advanced_type'] === "pppoe")
 							$contenido .= "\t\t\t\t<network>pppoe</network>\n";
 						if($nat['source_advanced_type'] === "l2tp")
@@ -546,7 +551,10 @@ class NatPortForwardController extends Controller
 						if($nat['destination_type'] === "single")
 							$contenido .= "\t\t\t\t<address>" . $nat['destination_adress_mask'] . "</address>\n";
 						if($nat['destination_type'] === "network")
-							$contenido .= "\t\t\t\t<network>" . $nat['destination_adress_mask'] . "</network>\n";
+							if ($nat['destination_adress_mask2'] == 32) 
+								$contenido .= "\t\t\t\t<network>" . $nat['destination_adress_mask'] . "</network>\n";
+							else
+								$contenido .= "\t\t\t\t<network>" . $nat['destination_adress_mask'] . "/" . $nat['destination_adress_mask2'] . "</network>\n";
 						if($nat['destination_type'] === "pppoe")
 							$contenido .= "\t\t\t\t<network>pppoe</network>\n";
 						if($nat['destination_type'] === "l2tp")

@@ -197,7 +197,7 @@ class AliasesController extends Controller
 						"aliases"=>$aliases
 					));
 		        }
-		        /*if($role == "ROLE_ADMINISTRATOR")
+		        if($role == "ROLE_ADMINISTRATOR")
 		        {
 		        	$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
@@ -210,7 +210,7 @@ class AliasesController extends Controller
 					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
 						"aliases"=>$aliases
 					));
-		        }*/
+		        }
 		    }
 		}
 	    return $this->render('@Principal/plantillas/solicitudGrupo.html.twig', array(

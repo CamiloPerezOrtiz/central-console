@@ -5,6 +5,9 @@
 187.189.69.45|192|168|85|0|23|opt1|Kasa|Automotriz Auto sat Insurgentes|
 187.89.69.45|192|168|4|0|24|opt1|Crista facil|Metro normal|
 187.189.69.45|192|168|15|0|23|opt1|Beneficia|Metro Tlatelolco|
-187.89.69.45|192|168|1|30|24|opt1|UI|Plantel Via Morelos Ecatepec|
-187.189.69.45|192|168|27|0|23|opt1|UI|Plantel CD. Azteca Ecatepec|
-187.89.169.45|192|168|39|0|22|opt1|UI|Plantel Sur I|
+187.89.69.45|192|168|0|125|23|opt1|UI|Plantel Via Morelos Ecatepec|
+187.189.69.45|192|168|0|110|23|opt1|UI|Plantel CD. Azteca Ecatepec|
+187.89.169.45|192|168|0|50|23|opt1|UI|Plantel Sur I|
+187.189.69.45|192|168|0|30|23|opt1|UI|Plantel Sur II|
+187.19.69.45|192|168|0|90|23|opt1|UI|Plantel Viaducto|
+187.9.169.45|192|168|0|78|22|opt1|UI|Plantel Norte|

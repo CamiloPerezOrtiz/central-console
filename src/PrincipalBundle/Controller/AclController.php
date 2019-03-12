@@ -175,44 +175,64 @@ class AclController extends Controller
 	public function listaAclAction()
 	{
 		$u = $this->getUser();
-		if($u != null)
+		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
 		{
-	        $role=$u->getRole();
-	        $grupo=$u->getGrupo();
-	        if($role == "ROLE_SUPERUSER")
-	        {
-	        	$id=$_REQUEST['id'];
-				$acl = $this->recuperarTodoAclGrupo($id);
-				return $this->render('@Principal/acl/listaAcl.html.twig', array(
-					"acl"=>$acl
-				));
-	        }
-	        if($role == "ROLE_ADMINISTRATOR")
-	        {
-	        	$acl = $this->recuperarTodoAclGrupo($grupo);
-				return $this->render('@Principal/acl/listaAcl.html.twig', array(
-					"acl"=>$acl
-				));
-	        }
-	        if($role == "ROLE_USER")
-	        {
-	        	$acl = $this->recuperarTodoAclGrupo($grupo);
-				return $this->render('@Principal/acl/listaAcl.html.twig', array(
-					"acl"=>$acl
-				));
-	        }
-	    }
+			$grupo=$_REQUEST['id'];
+			$ipGrupos = $this->ipGrupos($grupo);
+		}
+		else
+		{
+			$grupo=$u->getGrupo();
+			$ipGrupos = $this->ipGrupos($grupo);
+		}
+		if(isset($_POST['solicitar']))
+		{
+			#$u = $this->getUser();
+			if($u != null)
+			{
+		        #$role=$u->getRole();
+		        #$grupo=$u->getGrupo();
+		        $ubicacion = $_REQUEST['ubicacion'];
+		        if($role == "ROLE_SUPERUSER")
+		        {
+		        	#$id=$_REQUEST['id'];
+					$acl = $this->recuperarTodoAclGrupo($grupo, $ubicacion);
+					return $this->render('@Principal/acl/listaAcl.html.twig', array(
+						"acl"=>$acl
+					));
+		        }
+		        if($role == "ROLE_ADMINISTRATOR")
+		        {
+		        	$acl = $this->recuperarTodoAclGrupo($grupo, $ubicacion);
+					return $this->render('@Principal/acl/listaAcl.html.twig', array(
+						"acl"=>$acl
+					));
+		        }
+		        if($role == "ROLE_USER")
+		        {
+		        	$acl = $this->recuperarTodoAclGrupo($grupo, $ubicacion);
+					return $this->render('@Principal/acl/listaAcl.html.twig', array(
+						"acl"=>$acl
+					));
+		        }
+		    }
+		}
+		return $this->render('@Principal/plantillas/solicitudGrupo.html.twig', array(
+			'ipGrupos'=>$ipGrupos
+		));
 	}
 
 	# Funcion para recuperar los todos los aliases #
-	private function recuperarTodoAclGrupo($grupo)
+	private function recuperarTodoAclGrupo($grupo, $ubicacion)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
 			'SELECT u.id, u.estatus, u.nombre, u.descripcion, u.grupo, u.ubicacion
 				FROM PrincipalBundle:Acl u
-				WHERE  u.grupo = :grupo'
-		)->setParameter('grupo', $grupo);
+				WHERE  u.grupo = :grupo
+				AND u.ubicacion = :ubicacion'
+		)->setParameter('grupo', $grupo)->setParameter('ubicacion', $ubicacion);
 		$acl = $query->getResult();
 		return $acl;
 	}

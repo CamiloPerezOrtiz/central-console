@@ -1,17 +1,42 @@
 <?xml version='1.0'?>
-	<aliases>
-		<alias>
-			<name>Recursos Humanos</name>
-			<type>host</type>
-			<address>192.168.15.23 192.168.15.45 192.168.15.78 192.168.15.123</address>
-			<descr>Area de recursos humanos</descr>
-			<detail>Encargada del area ||Becario 1 ||Becario 2 ||Secretaria</detail>
-		</alias>
-		<alias>
-			<name>Marketing</name>
-			<type>host</type>
-			<address>192.168.15.90 192.168.15.2 192.168.15.200 192.168.15.45 192.168.15.205</address>
-			<descr>Area de marketing</descr>
-			<detail>Diseñador 1 ||Diseñador 2 ||Ventas 1 ||Ventas 2 ||Becario 1</detail>
-		</alias>
-	</aliases>
+	<nat>
+		<rule>
+			<source>
+				<network>192.168.1.168</network>
+			</source>
+			<destination>
+				<network>192.168.18.18/24</network>
+			</destination>
+			<protocol>tcp</protocol>
+			<interface>wan</interface>
+			<descr>Prueba</descr>
+			<associated-rule-id></associated-rule-id>
+		</rule>
+		<rule>
+			<source>
+				<network>192.168.1.169/26</network>
+			</source>
+			<destination>
+				<network>wanip</network>
+				<port>53</port>
+			</destination>
+			<protocol>tcp</protocol>
+			<interface>wan</interface>
+			<descr>Prueba 2</descr>
+			<associated-rule-id></associated-rule-id>
+		</rule>
+		<onetoone>
+			<disabled></disabled>
+			<external>192.168.1.12</external>
+			<descr>Prueba</descr>
+			<interface>wan</interface>
+			<source>
+				<any></any>
+				<not></not>
+			</source>
+			<destination>
+				<network>wanip</network>
+				<not></not>
+			</destination>
+		</onetoone>
+	</nat>

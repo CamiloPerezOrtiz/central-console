@@ -120,7 +120,8 @@ class GruposController extends Controller
 		$query = $em->createQuery(
 			'SELECT g.id, g.ip, g.descripcion
 				FROM PrincipalBundle:Grupos g
-				WHERE g.nombre = :nombre'
+				WHERE g.nombre = :nombre
+				ORDER BY g.descripcion ASC'
 		)->setParameter('nombre', $grupo);
 		$grupos = $query->getResult();
 		return $grupos;

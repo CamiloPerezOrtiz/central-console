@@ -66,6 +66,47 @@ class NatPortForwardType extends AbstractType
                     "class"=>"form-control input-sm"
                 )
             ))
+            ->add('sourceAdvancedAdressMask1',ChoiceType::class, array(
+                "required"=>false,
+                "attr"=>array(
+                    "class"=>"form-control input-sm"
+                ),
+                'choices' => array(
+                    '32' => '32',
+                    '31' => '31',
+                    '30' => '30',
+                    '29' => '29',
+                    '28' => '28',
+                    '27' => '27',
+                    '26' => '26',
+                    '25' => '25',
+                    '24' => '24',
+                    '23' => '23',
+                    '22' => '22',
+                    '21' => '21',
+                    '20' => '20',
+                    '19' => '19',
+                    '18' => '18',
+                    '17' => '17',
+                    '16' => '16',
+                    '15' => '15',
+                    '14' => '14',
+                    '13' => '13',
+                    '12' => '12',
+                    '11' => '11',
+                    '10' => '10',
+                    '9' => '9',
+                    '8' => '8',
+                    '7' => '7',
+                    '6' => '6',
+                    '5' => '5',
+                    '4' => '4',
+                    '3' => '3',
+                    '2' => '2',
+                    '1' => '1'
+                ),
+                'data' => '32'
+            ))
             ->add('sourceAdvancedFromPort',ChoiceType::class, array(
                 "label"=>"From port",
                 "required"=>false,
@@ -222,6 +263,47 @@ class NatPortForwardType extends AbstractType
                 "attr"=>array(
                     "class"=>"form-control input-sm"
                 )
+            ))
+            ->add('destinationAdressMask2',ChoiceType::class, array(
+                "required"=>false,
+                "attr"=>array(
+                    "class"=>"form-control input-sm"
+                ),
+                'choices' => array(
+                    '32' => '32',
+                    '31' => '31',
+                    '30' => '30',
+                    '29' => '29',
+                    '28' => '28',
+                    '27' => '27',
+                    '26' => '26',
+                    '25' => '25',
+                    '24' => '24',
+                    '23' => '23',
+                    '22' => '22',
+                    '21' => '21',
+                    '20' => '20',
+                    '19' => '19',
+                    '18' => '18',
+                    '17' => '17',
+                    '16' => '16',
+                    '15' => '15',
+                    '14' => '14',
+                    '13' => '13',
+                    '12' => '12',
+                    '11' => '11',
+                    '10' => '10',
+                    '9' => '9',
+                    '8' => '8',
+                    '7' => '7',
+                    '6' => '6',
+                    '5' => '5',
+                    '4' => '4',
+                    '3' => '3',
+                    '2' => '2',
+                    '1' => '1'
+                ),
+                'data' => '32'
             ))
             ->add('destinationRangeFromPort',ChoiceType::class, array(
                 "label"=>"From port",
