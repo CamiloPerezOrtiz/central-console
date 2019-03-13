@@ -19,29 +19,18 @@
                                 <li class="active">
                                     <a class="nav-link active" data-toggle="tab" href="#home">WAN</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#menu1">LAN</a>
-                                </li>
                             </ul>
                             <div class="tab-content">
                                 <div id="home" class="container tab-pane active"><br>
                                     {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                        <a href="{{path ('registroNatPortForward') }}">
+                                        <a href="{{path ('registroFirewallWan') }}">
                                             <button type="button" class="btn btn-success">
-                                                Add Port forward <i class="fas fa-search-plus"></i>
+                                                Add rule WAN <i class="fas fa-search-plus"></i>
                                             </button>
                                         </a>
                                     <br><br>
                                     {% endif %} 
                                     <div class="table-responsive">
-                                        {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                            <a href="{{ path('registroAcl') }}">
-                                                <button type="button" class="btn btn-success">
-                                                    Add target
-                                                </button>
-                                            </a>
-                                            <br><br>
-                                        {% endif %}
                                         <table class="table table-sm table-striped table-bordered table-hover text-center small" id="dataTables-example">
                                             <div class="col-md-12">
                                                 {% for msg in app.session.flashbag().get('estatus') %}
@@ -333,9 +322,9 @@
                                                 When you click on save button you are saving the acl groups list. <br><br>
                                                 <div class="form-group">
                                                     {% if firewallWan == true %} 
-                                                        <a href="{{path('crearXMLTarget',{id:firewallWan[0]['grupo']})}}">
+                                                        <a href="#">
                                                         <button type="button" class="btn btn-success">
-                                                            <b>  Save acl groups list <i class="fas fa-save"></i></b>
+                                                            <b>  In process <i class="fas fa-save"></i></b>
                                                         </button>
                                                     </a>
                                                     {% endif %} 

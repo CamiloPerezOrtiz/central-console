@@ -18,7 +18,7 @@
                             {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
                                 <a href="{{ path('registroTarget') }}">
                                     <button type="button" class="btn btn-success">
-                                        Add target
+                                        Add target categorie
                                     </button>
                                 </a>
                                 <br><br>
@@ -72,7 +72,7 @@
                                     When you click on save button you are saving the target categories list. <br><br>
                                     <div class="form-group">
                                     {% if target == true %} 
-                                        <a href="{{path('crearXMLTarget',{id:target[0]['grupo']})}}">
+                                        <a href="{{path('crearXMLTarget',{id:target[0]['ubicacion']})}}">
                                             <button type="button" class="btn btn-success">
                                                 <b>  Save target list <i class="fas fa-save"></i></b>
                                             </button>

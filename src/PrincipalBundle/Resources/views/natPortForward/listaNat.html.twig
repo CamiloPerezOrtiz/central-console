@@ -47,7 +47,7 @@
                                                     <th>NAT IP</th>
                                                     <th>NAT Ports</th>
                                                     <th>Description</th>
-                                                    {% if app.user.role == "ROLE_ADMIN" or app.user.role == "ROLE_SUPERUSER" %}
+                                                    {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
                                                         <th>Operations</th>
                                                     {% endif %}                 
                                                 </tr>
@@ -399,7 +399,7 @@
                                                             {% endif %}
                                                         </td>
                                                         <td>{{ natPort.descripcion }}</td>
-                                                        {% if app.user.role == "ROLE_ADMIN" or app.user.role == "ROLE_SUPERUSER" %}
+                                                        {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
                                                             <td>
                                                                 <a href="{{path('editarNatPortForward',{id:natPort.id})}}">
                                                                     <i class="far fa-edit"></i>
@@ -434,7 +434,7 @@
                                                     <th>Internal IP</th>
                                                     <th>Destination IP</th>
                                                     <th>Description</th>
-                                                    {% if app.user.role == "ROLE_ADMIN" or app.user.role == "ROLE_SUPERUSER" %}
+                                                    {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
                                                         <th>Operations</th>
                                                     {% endif %}                 
                                                 </tr>
@@ -452,7 +452,7 @@
                                                                 *
                                                             {% endif %}
                                                             {% if natOTO.internal_ip_type == 'single' %}
-                                                                {{ natOTO.dst }}
+                                                                {{ natOTO.internal_adress_mask }}
                                                             {% endif %}
                                                             {% if natOTO.internal_ip_type == 'network' %}
                                                                 {{ natOTO.internal_adress_mask }}
@@ -531,7 +531,7 @@
                                    When you click on save button you are saving the acl groups list. <br><br>
                                     <div class="form-group">
                                         {% if nat == true %} 
-                                            <a href="{{path('crearXMLNat',{id:nat[0]['grupo']})}}">
+                                            <a href="{{path('crearXMLNat',{id:nat[0]['ubicacion']})}}">
                                             <button type="button" class="btn btn-success">
                                                 <b>  Save nat list <i class="fas fa-save"></i></b>
                                             </button>

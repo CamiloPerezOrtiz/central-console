@@ -314,13 +314,12 @@ class AclController extends Controller
 
 	public function crearXMLAclAction()
 	{
-		$id=$_REQUEST['id'];
-		$grupos = $this->ipGrupos($id);
 		if(isset($_POST['enviar']))
 		{
-			foreach ($_POST['ip'] as $ips) 
-			{
-				$recuperarTodoDatos = $this->recuperarTodoDatos($ips);
+			//foreach ($_POST['ip'] as $ips) 
+			//{
+				$ip = $_POST['ip'];
+				$recuperarTodoDatos = $this->recuperarTodoDatos($ip);
 				$contenido = "<?xml version='1.0'?>\n";
 				$contenido .= "\t<squidguardacl>\n";
 				foreach ($recuperarTodoDatos as $acl) 
@@ -342,22 +341,60 @@ class AclController extends Controller
 				    $contenido .= "\t\t\t</config>\n";
 				}
 			    $contenido .= "\t</squidguardacl>";
-				$archivo = fopen("$ips.xml", 'w');
+				$archivo = fopen("conf.xml", 'w');
 				fwrite($archivo, $contenido);
 				fclose($archivo);
+				#ips_to_change#
+				$ips_to_change = fopen("ips_to_change.txt", 'w');
+				$em = $this->getDoctrine()->getEntityManager();
+			    $db = $em->getConnection();
+				$query = "SELECT primer_octeto, segundo_octeto, tercer_octeto, cuarto_octeto FROM grupos WHERE descripcion = '$ip'";
+				$stmt = $db->prepare($query);
+				$params =array();
+				$stmt->execute($params);
+				$grupos=$stmt->fetchAll();
+				fwrite($ips_to_change,$grupos[0]['primer_octeto'].".".$grupos[0]['segundo_octeto'].".".$grupos[0]['tercer_octeto'].".".$grupos[0]['cuarto_octeto']."\n");
+				fclose($ips_to_change);
+				$ipstochange = "ips_to_change.txt";
+				#change_to_do#
+				$change_to_do = fopen("change_to_do.txt", 'w');
+				fwrite($change_to_do,'aclgroups.py'."\n");
+				fclose($change_to_do);
+				$changetodo = "change_to_do.txt";
 				# Mover el archivo a la carpeta #
-				$archivoConfig = "$ips.xml";
+				$archivoConfig = "conf.xml";
 				$serv = '/var/www/html/central-console/web/Groups/';
-				$destinoConfig = $serv . "/" . $id . "/" . $ips . "/conf.xml";
+				//$destinoConfig = $serv . "/" . $id . "/" . $ips . "/conf.xml";
+				$destinoConfig = '/var/www/html/central-console/web/clients/UI/conf.xml';
 			   	if (!copy($archivoConfig, $destinoConfig)) 
 				    echo "Error al copiar $archivoConfig...\n";
-				unlink("$ips.xml");
-			}
+				$destinoConfigips_to_change = '/var/www/html/central-console/web/clients/UI/ips_to_change.txt';
+			   	copy($ipstochange, $destinoConfigips_to_change);
+			   	$destinoConfigchange_to_do = '/var/www/html/central-console/web/clients/UI/change_to_do.txt';
+			   	copy($changetodo, $destinoConfigchange_to_do);
+				unlink("conf.xml");
+				unlink("ips_to_change.txt");
+				unlink("change_to_do.txt");
+			//}
 			echo '<script> alert("The configuration has been saved.");</script>';
 		}
-		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
+		$id=$_REQUEST['id'];
+		$grupos = $this->ipGruposSolo($id);
+		return $this->render("@Principal/acl/aplicarCambios.html.twig", array(
 			"grupos"=>$grupos
 		));
+	}
+
+	private function ipGruposSolo($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM grupos WHERE descripcion = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
 	}
 
 	# Funcion para recuperar toda la informacion de target #

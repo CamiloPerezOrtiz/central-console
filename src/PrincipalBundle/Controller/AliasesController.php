@@ -320,12 +320,12 @@ class AliasesController extends Controller
 				$params =array();
 				$stmt->execute($params);
 				$grupos=$stmt->fetchAll();
-				fwrite($ips_to_change,$grupos[0]['primer_octeto'].".".$grupos[0]['segundo_octeto'].".".$grupos[0]['tercer_octeto'].".".$grupos[0]['cuarto_octeto']);
+				fwrite($ips_to_change,$grupos[0]['primer_octeto'].".".$grupos[0]['segundo_octeto'].".".$grupos[0]['tercer_octeto'].".".$grupos[0]['cuarto_octeto']."\n");
 				fclose($ips_to_change);
 				$ipstochange = "ips_to_change.txt";
 				#change_to_do#
 				$change_to_do = fopen("change_to_do.txt", 'w');
-				fwrite($change_to_do,'aliases.py');
+				fwrite($change_to_do,'aliases.py'."\n");
 				fclose($change_to_do);
 				$changetodo = "change_to_do.txt";
 				# Mover el archivo a la carpeta #
@@ -356,7 +356,7 @@ class AliasesController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$query = "SELECT * FROM grupos WHERE descripcion = '$grupo'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);

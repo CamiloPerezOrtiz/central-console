@@ -4,21 +4,21 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">List acl group</h1>
+                <h1 class="page-header">List ACL group</h1>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        Table acl group
+                        Table ACL group
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
                             {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
                                 <a href="{{ path('registroAcl') }}">
                                     <button type="button" class="btn btn-success">
-                                        Add target
+                                        Add ACL group
                                     </button>
                                 </a>
                                 <br><br>
@@ -76,9 +76,9 @@
                                     When you click on save button you are saving the acl groups list. <br><br>
                                     <div class="form-group">
                                         {% if acl == true %} 
-                                            <a href="{{path('crearXMLAcl',{id:acl[0]['grupo']})}}">
+                                            <a href="{{path('crearXMLAcl',{id:acl[0]['ubicacion']})}}">
                                             <button type="button" class="btn btn-success">
-                                                <b>  Save acl groups list <i class="fas fa-save"></i></b>
+                                                <b>  Save ACL groups list <i class="fas fa-save"></i></b>
                                             </button>
                                         </a>
                                         {% endif %} 
