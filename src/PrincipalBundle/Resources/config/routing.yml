@@ -228,21 +228,21 @@ listaFirewallWan:
     path:     /listaFirewallWan 
     defaults: { _controller: PrincipalBundle:Firewall:listaFirewallWan }
 
-eliminarNatPortForward:
-    path:     /eliminarNatPortForward/{id} 
-    defaults: { _controller: PrincipalBundle:NatPortForward:eliminarNatPortForward }
+eliminarFirewallWan:
+    path:     /eliminarFirewallWan/{id} 
+    defaults: { _controller: PrincipalBundle:Firewall:eliminarFirewallWan }
 
-crearXMLNat:
-    path:     /crearXMLNat/{id}
-    defaults: { _controller: PrincipalBundle:NatPortForward:crearXMLNat }
+crearXMLFirewallWan:
+    path:     /crearXMLFirewallWan/{id}
+    defaults: { _controller: PrincipalBundle:Firewall:crearXMLFirewallWan }
 
-aplicarXMLNat:
-    path:     /aplicarXMLNat/{id}
-    defaults: { _controller: PrincipalBundle:NatPortForward:aplicarXMLNat }
+aplicarXMLFirewallWan:
+    path:     /aplicarXMLFirewallWan/{id}
+    defaults: { _controller: PrincipalBundle:Firewall:aplicarXMLFirewallWan }
 
-dragAndDropNatPortForward:
-    path:     /dragAndDropNatPortForward
-    defaults: { _controller: PrincipalBundle:NatPortForward:dragAndDropNatPortForward }
+dragAndDropFirewallWan:
+    path:     /dragAndDropFirewallWan
+    defaults: { _controller: PrincipalBundle:Firewall:dragAndDropFirewallWan }
 
 registroNatOneToOne:
     path:     /registroNatOneToOne 

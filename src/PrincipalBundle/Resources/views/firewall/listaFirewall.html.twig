@@ -31,7 +31,7 @@
                                     <br><br>
                                     {% endif %} 
                                     <div class="table-responsive">
-                                        <table class="table table-sm table-striped table-bordered table-hover text-center small" id="dataTables-example">
+                                        <table class="table table-sm table-striped table-bordered table-hover text-center small">
                                             <div class="col-md-12">
                                                 {% for msg in app.session.flashbag().get('estatus') %}
                                                     <div class="alert alert-info" aria-label="Close">
@@ -49,14 +49,14 @@
                                                     <th>Destination</th>
                                                     <th>Port</th>
                                                     <th>Description</th>
-                                                    {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
+                                                    {% if app.user.role == 'ROLE_SUPERUSE' or app.user.role == 'ROLE_ADMINISTRATO' %}
                                                         <th>Operations</th>
                                                     {% endif %}                                 
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody class="row_position">
                                                 {% for firewall_wan in firewallWan %}
-                                                    <tr>
+                                                    <tr id="{{ firewall_wan.id }}" style="cursor: all-scroll;">
                                                         <td>
                                                             {% if firewall_wan.estatus == true %} On {% else %} Off {% endif %}
                                                         </td>
@@ -300,7 +300,7 @@
                                                             {% endif %}
                                                         </td>
                                                         <td>{{ firewall_wan.descripcion }}</td>
-                                                        {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
+                                                        {% if app.user.role == 'ROLE_SUPERUSE' or app.user.role == 'ROLE_ADMINISTRATO' %}
                                                             <td>
                                                                 <a href="{{ path('editarAcl',{id:firewall_wan.id}) }}">
                                                                         <i class="fas fa-pencil-alt"></i>
@@ -362,5 +362,51 @@
                 responsive: true
         });
     });
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script>
+    // Drag and drop wan //
+        $( ".row_position" ).sortable({
+            delay: 150,
+            stop: function() {
+                var selectedData = new Array();
+                $('.row_position>tr').each(function() {
+                    selectedData.push($(this).attr("id"));
+                });
+                updateOrder(selectedData);
+            }
+        });
+
+
+        function updateOrder(data) {
+            $.ajax({
+                url:"{{path('dragAndDropFirewallWan')}}",
+                type:'post',
+                data:{position:data}
+            })
+        }
+    // Fin //
+    
+    // Drag and drop one to one //
+        $( ".row_position_one" ).sortable({
+            delay: 150,
+            stop: function() {
+                var selectedDataOne = new Array();
+                $('.row_position_one>tr').each(function() {
+                    selectedDataOne.push($(this).attr("id"));
+                });
+                updateOrderOne(selectedDataOne);
+            }
+        });
+
+
+        function updateOrderOne(data) {
+            $.ajax({
+                url:"{{path('dragAndDropNatOneToOne')}}",
+                type:'post',
+                data:{position:data}
+            })
+        }
+    // Fin //
 </script>
 {% include '@Principal/plantillas/declaracionFin.html.twig' %}

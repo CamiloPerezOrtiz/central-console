@@ -442,7 +442,7 @@
                                             <tbody class="row_position_one">
                                                 {% for natOTO in natOne %}
                                                     <tr id="{{ natOTO.id }}" style="cursor: all-scroll;">
-                                                        <td>{{ natOTO.estatus }}</td>
+                                                        <td>{% if natOTO.estatus == true %} on {% else %} off {% endif %}</td>
                                                         <td>{{ natOTO.interface|upper }} </td>
                                                         <td>
                                                             {{ natOTO.external_subnet_ip }}
