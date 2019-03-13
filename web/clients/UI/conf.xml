@@ -1,0 +1,10 @@
+<?xml version='1.0'?>
+	<aliases>
+		<alias>
+			<name>Desarrollo</name>
+			<type>host</type>
+			<address>192.168.0.26 192.168.0.27 192.168.0.28 192.168.0.29 192.168.0.30 192.168.0.31 192.168.0.32</address>
+			<descr>Area de desarrollo</descr>
+			<detail>Maquina 1 ||Maquina 2 ||Maquina 3 ||Maquina 4 ||Maquina 5 ||Maquina 6 ||Maquina 7</detail>
+		</alias>
+	</aliases>

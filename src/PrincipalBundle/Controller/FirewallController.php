@@ -37,7 +37,7 @@ class FirewallController extends Controller
 	        }
 	        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
 	        {
-	        	return $this->redirectToRoute("listaFirewall");
+	        	return $this->redirectToRoute("listaFirewallWan");
 	        }
 	    }
 	}
