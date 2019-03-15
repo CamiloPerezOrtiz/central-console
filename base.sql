@@ -116,8 +116,11 @@ CREATE TABLE target(
 --interfaces
 CREATE TABLE interfaces(
 	id INT PRIMARY KEY NOT NULL,
+	interfaz VARCHAR(20) NOT NULL,
 	nombre VARCHAR(20) NOT NULL,
-	grupo VARCHAR(50) NOT NULL
+	ip VARCHAR(50) NOT NULL,
+	grupo VARCHAR(50) NOT NULL,
+	descripcion VARCHAR(50) NOT NULL
 );
 
 --Protocol
@@ -133,6 +136,9 @@ INSERT INTO protocolo VALUES(NEXTVAL('protocolo_id_seq'),'TCP/UDP','tcp/udp');
 INSERT INTO protocolo VALUES(NEXTVAL('protocolo_id_seq'),'ICMP','icmp');
 
 --nats
+
+
+
 CREATE TABLE nat_port_forward(
 	id INT PRIMARY KEY NOT NULL,
 	estatus BOOLEAN DEFAULT FALSE,

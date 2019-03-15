@@ -28,16 +28,9 @@ class AliasesController extends Controller
 		$form->handleRequest($request);
 		$u = $this->getUser();
 		$role=$u->getRole();
-		if($role == 'ROLE_SUPERUSER')
-		{
-			$grupo=$_REQUEST['id'];
-			$ipGrupos = $this->ipGrupos($grupo);
-		}
-		else
-		{
-			$grupo=$u->getGrupo();
-			$ipGrupos = $this->ipGrupos($grupo);
-		}
+		$grupo=$_REQUEST['id'];
+		$ipGrupos = $this->ipInterfaces($grupo);
+		$grupo_plantel=$u->getGrupo();
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
@@ -45,6 +38,7 @@ class AliasesController extends Controller
 			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo);
 			if(count($verificarNombre)==0)
 			{
+				$plantel = $_POST['plantel'];
 				$nombre = $form->get("nombre")->getData();
 				$descripcion = $form->get("descripcion")->getData();
 				$tipo = $form->get("tipo")->getData();
@@ -53,18 +47,10 @@ class AliasesController extends Controller
 				$file=fopen("arreglo.txt","w") or die("Problemas");
 				foreach ($_POST['ip'] as $ips)
 				{
-					$query = "SELECT primer_octeto, segundo_octeto, tercer_octeto FROM grupos WHERE descripcion = '$ips'";
-					$stmt = $db->prepare($query);
-					$params =array();
-					$stmt->execute($params);
-					$grupos=$stmt->fetchAll();
-					foreach ($grupos as $g) 
+					foreach ($_POST['ip_port'] as $p) 
 					{
-						foreach ($_POST['ip_port'] as $p) 
-						{
-							$ip_port_res = $g['primer_octeto'] . "." . $g['segundo_octeto'] . "." . $g['tercer_octeto'] . "." . $p . " ";
-							fputs($file,$ip_port_res);
-						}
+						$ip_port_res = $ips. $p . " ";
+						fputs($file,$ip_port_res);
 					}
 					fputs($file,"|"."\n");
 					$filas=file('arreglo.txt');
@@ -73,22 +59,22 @@ class AliasesController extends Controller
 						list($ip) = explode('|', $value);
 					}
 					$res = trim($ip, " |");
-					$query2 = "INSERT INTO aliases VALUES (nextval('aliases_id_seq'),'$nombre','$descripcion','$tipo','$res','$descripcion_ip_port','$grupo','$ips')";
+					$query2 = "INSERT INTO aliases VALUES (nextval('aliases_id_seq'),'$nombre','$descripcion','$tipo','$res','$descripcion_ip_port','$grupo_plantel','$plantel')";
 					$stmt2 = $db->prepare($query2);
 					$params2 =array();
 					$stmt2->execute($params2);
-				}
+				};
 				unlink("arreglo.txt");
 				if($stmt == null)
-				{
-					$estatus="Problems with the server try later.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
-				}
-				else
 				{
 					$estatus="Successfully registration.";
 					$this->session->getFlashBag()->add("estatus",$estatus);
 					return $this->redirectToRoute("gruposAliases");
+				}
+				else
+				{
+					$estatus="Problems with the server try later.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
 				}
 			}
 			else
@@ -97,9 +83,11 @@ class AliasesController extends Controller
 				$this->session->getFlashBag()->add("estatus",$estatus);
 			}
 		}
+		$ubicacion = $_POST['ubicacion'];
 		return $this->render('@Principal/aliases/registroAliases.html.twig', array(
 			'form'=>$form->createView(),
-			'ipGrupos'=>$ipGrupos
+			'ipGrupos'=>$ipGrupos,
+			'grupo'=>$grupo
 		));
 		
 	}
@@ -124,6 +112,18 @@ class AliasesController extends Controller
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
 		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+
+	private function ipInterfaces($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM interfaces WHERE descripcion = '$grupo'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
@@ -184,6 +184,7 @@ class AliasesController extends Controller
 		if(isset($_POST['solicitar']))
 		{
 			#$u = $this->getUser();
+			$ubicacion = $_POST['ubicacion'];
 			if($u != null)
 			{
 		        #$role=$u->getRole();
@@ -194,21 +195,24 @@ class AliasesController extends Controller
 		        	#$id=$_REQUEST['id'];
 					$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-						"aliases"=>$aliases
+						"aliases"=>$aliases,
+						'ubicacion'=>$ubicacion
 					));
 		        }
 		        if($role == "ROLE_ADMINISTRATOR")
 		        {
 		        	$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-						"aliases"=>$aliases
+						"aliases"=>$aliases,
+						'ubicacion'=>$ubicacion
 					));
 		        }
 		        if($role == "ROLE_USER")
 		        {
 		        	$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-						"aliases"=>$aliases
+						"aliases"=>$aliases,
+						'ubicacion'=>$ubicacion
 					));
 		        }
 		    }
@@ -291,10 +295,10 @@ class AliasesController extends Controller
 	{
 		if(isset($_POST['enviar']))
 		{
-			//foreach ($_POST['ip'] as $ips) 
-			//{
-				$ip = $_POST['ip'];
-				$recuperarTodoDatos = $this->recuperarTodoDatos($_POST['ip']);
+			//$ubicacion=$_POST['ubicacion'];
+			foreach ($_POST['ip'] as $ips) 
+			{
+				$recuperarTodoDatos = $this->recuperarTodoDatos($ips);
 				$contenido = "<?xml version='1.0'?>\n";
 				$contenido .= "\t<aliases>\n";
 				foreach ($recuperarTodoDatos as $alias) 
@@ -308,47 +312,30 @@ class AliasesController extends Controller
 				    $contenido .= "\t\t</alias>\n";
 				}
 			    $contenido .= "\t</aliases>";
-				$archivo = fopen("conf.xml", 'w');
+				$archivo = fopen("$ips.xml", 'w');
 				fwrite($archivo, $contenido);
 				fclose($archivo);
-				#ips_to_change#
-				$ips_to_change = fopen("ips_to_change.txt", 'w');
-				$em = $this->getDoctrine()->getEntityManager();
-			    $db = $em->getConnection();
-				$query = "SELECT primer_octeto, segundo_octeto, tercer_octeto, cuarto_octeto FROM grupos WHERE descripcion = '$ip'";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$grupos=$stmt->fetchAll();
-				fwrite($ips_to_change,$grupos[0]['primer_octeto'].".".$grupos[0]['segundo_octeto'].".".$grupos[0]['tercer_octeto'].".".$grupos[0]['cuarto_octeto']."\n");
-				fclose($ips_to_change);
-				$ipstochange = "ips_to_change.txt";
-				#change_to_do#
 				$change_to_do = fopen("change_to_do.txt", 'w');
 				fwrite($change_to_do,'aliases.py'."\n");
 				fclose($change_to_do);
 				$changetodo = "change_to_do.txt";
 				# Mover el archivo a la carpeta #
-				$archivoConfig = "conf.xml";
-				$serv = '/var/www/html/central-console/web/Groups/';
-				#$destinoConfig = $serv . "/" . $id . "/" . $ips . "/conf.xml";
-				$destinoConfig = '/var/www/html/central-console/web/clients/UI/conf.xml';
-			   	if (!copy($archivoConfig, $destinoConfig)) 
-				    echo "Error al copiar $archivoConfig...\n";
-				$destinoConfigips_to_change = '/var/www/html/central-console/web/clients/UI/ips_to_change.txt';
-			   	copy($ipstochange, $destinoConfigips_to_change);
-			   	$destinoConfigchange_to_do = '/var/www/html/central-console/web/clients/UI/change_to_do.txt';
+				$archivoConfig = "$ips.xml";
+				$serv = '/var/www/html/central-console/web/clients/Ejemplo_2/';
+				$destinoConfig = $serv . $ips;
+				$res = $destinoConfig . "/conf.xml";
+			   	copy($archivoConfig, $res);
+			   	$destinoConfigchange_to_do = $destinoConfig . '/change_to_do.txt';
 			   	copy($changetodo, $destinoConfigchange_to_do);
-				unlink("conf.xml");
-				unlink("ips_to_change.txt");
+				unlink("$ips.xml");
 				unlink("change_to_do.txt");
-			//}
+			}
 			echo '<script> alert("The configuration has been saved.");</script>';
 		}
 		$id=$_REQUEST['id'];
 		//ubicacion=$_REQUEST['ubicacion'];
 		$grupos = $this->ipGruposSolo($id);
-		return $this->render("@Principal/aliases/aplicarCambios.html.twig", array(
+		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
 			"grupos"=>$grupos
 		));
 	}
@@ -356,7 +343,7 @@ class AliasesController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM grupos WHERE descripcion = '$grupo'";
+		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
@@ -369,9 +356,10 @@ class AliasesController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.nombre, u.tipo, u.descripcion, u.ip_port, u.descripcion_ip_port
+			'SELECT u.id, u.nombre, u.tipo, u.descripcion, u.ip_port, u.descripcion_ip_port
 				FROM PrincipalBundle:Aliases u
-				WHERE  u.ubicacion = :ubicacion'
+				WHERE  u.ubicacion = :ubicacion
+				ORDER BY u.id'
 		)->setParameter('ubicacion', $grupo);
 		$datos = $query->getResult();
 		return $datos;

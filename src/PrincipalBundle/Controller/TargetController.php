@@ -247,10 +247,9 @@ class TargetController extends Controller
 	{
 		if(isset($_POST['enviar']))
 		{
-			//foreach ($_POST['ip'] as $ips) 
-			//{
-				$ip = $_POST['ip'];
-				$recuperarTodoDatos = $this->recuperarTodoDatos($_POST['ip']);
+			foreach ($_POST['ip'] as $ips) 
+			{
+				$recuperarTodoDatos = $this->recuperarTodoDatos($ips);
 				$contenido = "<?xml version='1.0'?>\n";
 				$contenido .= "\t<squidguarddest>\n";
 				foreach ($recuperarTodoDatos as $target) 
@@ -267,21 +266,9 @@ class TargetController extends Controller
 				    $contenido .= "\t\t\t</config>\n";
 				}
 			    $contenido .= "\t</squidguarddest>";
-				$archivo = fopen("conf.xml", 'w');
+				$archivo = fopen("$ips.xml", 'w');
 				fwrite($archivo, $contenido);
 				fclose($archivo);
-				#ips_to_change#
-				$ips_to_change = fopen("ips_to_change.txt", 'w');
-				$em = $this->getDoctrine()->getEntityManager();
-			    $db = $em->getConnection();
-				$query = "SELECT primer_octeto, segundo_octeto, tercer_octeto, cuarto_octeto FROM grupos WHERE descripcion = '$ip'";
-				$stmt = $db->prepare($query);
-				$params =array();
-				$stmt->execute($params);
-				$grupos=$stmt->fetchAll();
-				fwrite($ips_to_change,$grupos[0]['primer_octeto'].".".$grupos[0]['segundo_octeto'].".".$grupos[0]['tercer_octeto'].".".$grupos[0]['cuarto_octeto']."\n");
-				fclose($ips_to_change);
-				$ipstochange = "ips_to_change.txt";
 				#change_to_do#
 				$change_to_do = fopen("change_to_do.txt", 'w');
 				fwrite($change_to_do,'targetcategories.py'."\n");
@@ -289,24 +276,21 @@ class TargetController extends Controller
 				$changetodo = "change_to_do.txt";
 				# Mover el archivo a la carpeta #
 				$archivoConfig = "conf.xml";
-				$serv = '/var/www/html/central-console/web/Groups/';
-				//$destinoConfig = $serv . "/" . $id . "/" . $ips . "/conf.xml";
-				$destinoConfig = '/var/www/html/central-console/web/clients/UI/conf.xml';
-			   	if (!copy($archivoConfig, $destinoConfig)) 
-				    echo "Error al copiar $archivoConfig...\n";
-				$destinoConfigips_to_change = '/var/www/html/central-console/web/clients/UI/ips_to_change.txt';
-			   	copy($ipstochange, $destinoConfigips_to_change);
-			   	$destinoConfigchange_to_do = '/var/www/html/central-console/web/clients/UI/change_to_do.txt';
+				$serv = '/var/www/html/central-console/web/clients/Ejemplo_2/';
+				$destinoConfig = $serv . $ips;
+				$res = $destinoConfig . "/conf.xml";
+			   	if (!copy($archivoConfig, $res)) 
+				    echo "Error al copiar $res...\n";
+			   	$destinoConfigchange_to_do = $destinoConfig . '/change_to_do.txt';
 			   	copy($changetodo, $destinoConfigchange_to_do);
-				unlink("conf.xml");
-				unlink("ips_to_change.txt");
+				unlink("$ips.xml");
 				unlink("change_to_do.txt");
-			//}
+			}
 			echo '<script> alert("The configuration has been saved.");</script>';
 		}
 		$id=$_REQUEST['id'];
 		$grupos = $this->ipGruposSolo($id);
-		return $this->render("@Principal/target/aplicarCambios.html.twig", array(
+		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
 			"grupos"=>$grupos
 		));
 	}
@@ -315,7 +299,7 @@ class TargetController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM grupos WHERE descripcion = '$grupo'";
+		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);

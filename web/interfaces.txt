@@ -1,9 +1,9 @@
-opt1|Kasa|
-opt1|UI|
-opt2|UI|
-opt1|Crista facil|
-TELMEX|UI|
-AXTEL|UI|
-ALESTRA|UI|
-TELMEX|Kasa|
-TELMEX_2|Hospital Satelite|
+em0|BBS|170.0.|UI|Plantel Tlalpan|
+em1|ADMON|10.0.|UI|Plantel Tlalpan|
+em2|LAB|192.168.|UI|Plantel Tlalpan|
+em3|IUSACELL|192.168.|UI|Plantel Tlalpan|
+em5|TELMEX|192.168.|UI|Plantel Tlalpan|
+em1|IUSACELL|192.168.|UI|Plantel Viaducto|
+em2|IUSACELL|192.168.|UI|Plantel Hermita|
+em3|IUSACELL|192.168.|UI|Plantel Xola|
+em5|IUSACELL|192.168.|UI|Plantel Xola|

@@ -29,6 +29,20 @@ class GruposController extends Controller
 		$paramsReset =array();
 		$stmtReset->execute($paramsReset);
 		$flushReset=$em->flush();
+		#####
+		# Query para borrar la tabla grupos de la base de datos #
+		$q = "DELETE FROM interfaces";
+		$s = $db->prepare($q);
+		$p =array();
+		$s->execute($p);
+		$f=$em->flush();
+		# Query para que la secuencia del contador regrese a 1 #
+		$qu = "ALTER SEQUENCE interfaces_id_seq RESTART WITH 1";
+		$st = $db->prepare($qu);
+		$pa =array();
+		$st->execute($pa);
+		$fl=$em->flush();
+		#####
 		# Variable para leer el archivo informacionGrupo.txt #
 		$filas=file('informacion.txt'); 
 		foreach($filas as $value)
@@ -64,6 +78,21 @@ class GruposController extends Controller
 			} 
 			else 
 			  echo "la ruta: " . $ruta . " ya existe ";
+		}
+		$archivo_interfaces=file('interfaces.txt'); 
+		foreach($archivo_interfaces as $archivo_interfas)
+		{
+			list($interfaz, $nombre, $ip, $grupo, $descripcion) = explode("|", $archivo_interfas);
+			'interfaz: '.$interfaz.'<br/>'; 
+			'nombre: '.$nombre.'<br/>'; 
+			'ip: '.$ip.'<br/>';
+			'grupo: '.$grupo.'<br/>';
+			'descripcion: '.$descripcion.'<br/><br/>';
+			$query_interfaces = "INSERT INTO interfaces VALUES (nextval('interfaces_id_seq'),'$interfaz','$nombre','$ip','$grupo','$descripcion')";
+			$stmt_interfaces = $db->prepare($query_interfaces);
+			$params_interfaces =array();
+			$stmt_interfaces->execute($params_interfaces);
+			$flush_interfaces=$em->flush();
 		}
 		return $this->redirectToRoute("grupos");
 	}
