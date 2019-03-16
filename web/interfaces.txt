@@ -3,7 +3,24 @@ em1|ADMON|10.0.|UI|Plantel Tlalpan|
 em2|LAB|192.168.|UI|Plantel Tlalpan|
 em3|IUSACELL|192.168.|UI|Plantel Tlalpan|
 em5|TELMEX|192.168.|UI|Plantel Tlalpan|
-em1|IUSACELL|192.168.|UI|Plantel Viaducto|
-em2|IUSACELL|192.168.|UI|Plantel Hermita|
-em3|IUSACELL|192.168.|UI|Plantel Xola|
-em5|IUSACELL|192.168.|UI|Plantel Xola|
+em1|ADMON|10.3.|UI|Plantel Xola|
+em2|IUSACELL|192.168.|UI|Plantel Xola|
+em3|LAB|192.168.|UI|Plantel Xola|
+em5|BSS|192.168.|UI|Plantel Xola|
+em0|BSS|38.123.|UI|Plantel Norte|
+em1|ADMON|10.4.|UI|Plantel Norte|
+em2|LAB|192.168.|UI|Plantel Norte|
+em3|IUSACELL|192.168.|UI|Plantel Norte|
+em0|BBS|170.0.|UI|Plantel Tlanepantla|
+em1|ADMON|10.13.|UI|Plantel Tlanepantla|
+em2|IUSACELL|192.168.|UI|Plantel Tlanepantla|
+em3|LAB|192.168.|UI|Plantel Tlanepantla|
+em5|TELMEX|192.168.|UI|Plantel Tlanepantla|
+em0|BSS|170.0.|UI|Plantel Ermita|
+em1|ADMON|10.16.|UI|Plantel Ermita|
+em2|LAB|192.168.|UI|Plantel Ermita|
+em3|IUSACELL|192.168.|UI|Plantel Ermita|
+em0|BSS|38.123.|UI|Plantel Ciudad Azteca|
+em1|ADMON|10.7.|UI|Plantel Ciudad Azteca|
+em2|IUSACELL|192.168.|UI|Plantel Ciudad Azteca|
+em3|LAB|192.168.|UI|Plantel Ciudad Azteca|

@@ -27,7 +27,6 @@ class AliasesController extends Controller
 		$form = $this ->createForm(AliasesType::class, $alias);
 		$form->handleRequest($request);
 		$u = $this->getUser();
-		$role=$u->getRole();
 		$grupo=$_REQUEST['id'];
 		$ipGrupos = $this->ipInterfaces($grupo);
 		$grupo_plantel=$u->getGrupo();

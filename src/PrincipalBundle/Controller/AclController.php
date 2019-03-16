@@ -28,28 +28,17 @@ class AclController extends Controller
 		$form = $this ->createForm(AclType::class, $acl);
 		$form->handleRequest($request);
 		$u = $this->getUser();
-		$role=$u->getRole();
-		if($role == 'ROLE_SUPERUSER')
-		{
-			$id=$_REQUEST['id'];
-			$ipGrupos = $this->ipGrupos($id);
-		}
-		else
-		{
-			$id=$u->getGrupo();
-			$ipGrupos = $this->ipGrupos($id);
-		}
+		$grupo=$_REQUEST['id'];
+		$ipGrupos = $this->ipInterfaces($grupo);
+		$grupo_plantel=$u->getGrupo();
 		if($form->isSubmitted() && $form->isValid())
 		{
-			$ubicacion = $_REQUEST['ubicacion'];
+			#$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
 			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $id);
 			if(count($verificarNombre)==0)
 			{
-				if($role == 'ROLE_SUPERUSER')
-					$acl->setGrupo($id);
-				if($role == 'ROLE_ADMINISTRATOR')
-					$acl->setGrupo($u->getGrupo());
+				$acl->setGrupo($grupo_plantel);
 				$array_target_rule = $_POST['target_rule'];
 				if(count(array_unique($array_target_rule)) === 1)
 				{
@@ -80,7 +69,7 @@ class AclController extends Controller
 			else
 				echo '<script> alert("The name of alias that you are trying to register already exists try again.");window.history.go(-1);</script>';
 		}
-		if(isset($_POST['solicitar']))
+		/*if(isset($_POST['solicitar']))
 		{
 			$ubicacion = $_POST['ubicacion'];
 			$target = $this->recuperarNombreTarget($ubicacion, $id);
@@ -90,10 +79,15 @@ class AclController extends Controller
 				'ipGrupos'=>$ipGrupos,
 				'ubicacion'=>$ubicacion
 			));
-		}
-		return $this->render('@Principal/acl/solicitudAcl.html.twig', array(
-				'ipGrupos'=>$ipGrupos
-			));
+		}*/
+		$ubicacion = $_POST['ubicacion'];
+		$target = $this->recuperarNombreTarget($grupo, $grupo_plantel);
+		return $this->render('@Principal/acl/registroAcl.html.twig', array(
+			'form'=>$form->createView(),
+			'ipGrupos'=>$ipGrupos,
+			'grupo'=>$grupo,
+			'target'=>$target,
+		));
 	}
 
 	# Funcion para recuperar nombre por id #
@@ -115,6 +109,18 @@ class AclController extends Controller
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
 		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+
+	private function ipInterfaces($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM interfaces WHERE descripcion = '$grupo'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
@@ -189,6 +195,7 @@ class AclController extends Controller
 		if(isset($_POST['solicitar']))
 		{
 			#$u = $this->getUser();
+			$ubicacion = $_POST['ubicacion'];
 			if($u != null)
 			{
 		        #$role=$u->getRole();
@@ -199,21 +206,24 @@ class AclController extends Controller
 		        	#$id=$_REQUEST['id'];
 					$acl = $this->recuperarTodoAclGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/acl/listaAcl.html.twig', array(
-						"acl"=>$acl
+						"acl"=>$acl,
+						'ubicacion'=>$ubicacion
 					));
 		        }
 		        if($role == "ROLE_ADMINISTRATOR")
 		        {
 		        	$acl = $this->recuperarTodoAclGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/acl/listaAcl.html.twig', array(
-						"acl"=>$acl
+						"acl"=>$acl,
+						'ubicacion'=>$ubicacion
 					));
 		        }
 		        if($role == "ROLE_USER")
 		        {
 		        	$acl = $this->recuperarTodoAclGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/acl/listaAcl.html.twig', array(
-						"acl"=>$acl
+						"acl"=>$acl,
+						'ubicacion'=>$ubicacion
 					));
 		        }
 		    }
