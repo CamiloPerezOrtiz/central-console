@@ -35,7 +35,7 @@ class AclController extends Controller
 		{
 			#$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
-			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $id);
+			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo_plantel);
 			if(count($verificarNombre)==0)
 			{
 				$acl->setGrupo($grupo_plantel);
@@ -51,7 +51,7 @@ class AclController extends Controller
 					$acl->setTargetRule($target_rule." all [ all]");
 					$acl->setTargetRulesList($target_rule);
 				}
-				$acl->setUbicacion($ubicacion);
+				$acl->setUbicacion($grupo);
 				$em->persist($acl);
 				$flush=$em->flush();
 				if($flush == null)
@@ -80,7 +80,7 @@ class AclController extends Controller
 				'ubicacion'=>$ubicacion
 			));
 		}*/
-		$ubicacion = $_POST['ubicacion'];
+		//$ubicacion = $_POST['ubicacion'];
 		$target = $this->recuperarNombreTarget($grupo, $grupo_plantel);
 		return $this->render('@Principal/acl/registroAcl.html.twig', array(
 			'form'=>$form->createView(),

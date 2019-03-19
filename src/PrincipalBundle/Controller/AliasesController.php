@@ -64,25 +64,22 @@ class AliasesController extends Controller
 					$stmt2->execute($params2);
 				};
 				unlink("arreglo.txt");
-				if($stmt == null)
+				if($stmt2 == null)
+				{
+					$estatus="Problems with the server try later.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+				}
+				else
 				{
 					$estatus="Successfully registration.";
 					$this->session->getFlashBag()->add("estatus",$estatus);
 					return $this->redirectToRoute("gruposAliases");
 				}
-				else
-				{
-					$estatus="Problems with the server try later.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
-				}
 			}
 			else
-			{
-				$estatus="The name of alias that you are trying to register already exists try again.";
-				$this->session->getFlashBag()->add("estatus",$estatus);
-			}
+				echo '<script>alert("The name you are trying to register already exists. Try again.");window.history.go(-1);</script>';
 		}
-		$ubicacion = $_POST['ubicacion'];
+		#$ubicacion = $_POST['ubicacion'];
 		return $this->render('@Principal/aliases/registroAliases.html.twig', array(
 			'form'=>$form->createView(),
 			'ipGrupos'=>$ipGrupos,
@@ -99,7 +96,7 @@ class AliasesController extends Controller
 			'SELECT u.nombre
 				FROM PrincipalBundle:Aliases u
 				WHERE  u.nombre = :nombre
-				AND u.grupo = :grupo'
+				AND u.ubicacion = :grupo'
 		)->setParameter('nombre', $nombre)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;

@@ -72,10 +72,7 @@ class TargetController extends Controller
 				}
 			}
 			else
-			{
-				$estatus="The name of alias that you are trying to register already exists try again.";
-				$this->session->getFlashBag()->add("estatus",$estatus);
-			}
+				echo '<script>alert("The name you are trying to register already exists. Try again.");window.history.go(-1);</script>';
 		}
 		return $this->render('@Principal/target/registroTarget.html.twig', array(
 			'form'=>$form->createView(),

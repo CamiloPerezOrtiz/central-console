@@ -53,6 +53,7 @@
                                         <div class="col-xs-12">
                                             {{ form_label(form.nombre) }}
                                             <footer class="small">The name of the alias may only consist of the characters "a-z, A-Z, 0-9.</footer>
+                                            <footer class="small">The name must be at least 3 characters, maximum 15.</footer>
                                             {{ form_widget(form.nombre) }}
                                             <span class="text-danger">{{ form_errors(form.nombre) }}</span>
                                         </div>
@@ -90,7 +91,7 @@
                                         <label>Host(s)</label> 
                                         <footer class="small">
                                             Enter as many hosts as desired. Hosts must be specified by their IP address or fully qualified domain name.
-                                            Example 125
+                                            Example 1.125
                                         </footer>
                                     </div>
                                     <div id="network" style="display: none;">
@@ -148,9 +149,11 @@
                             Instructions
                         </div>
                         <div class="panel-body small">
-                            Select the IP (LAN interface) to which it applies. <br><br>
-                            Write the name of the new Aliases, remember that the name must be unique so it can not be repeated. <br><br>
-                            Write the last acts of the IP address. 
+                            - Select the interface to apply changes. <br><br>
+                            - Write the name for the new Alias, remember that the name can not be repeated. <br><br>
+                            - Select the type of Alias. <br><br>
+                            - Write the last two octets of the IP. <br><br>
+                            - The description fields are not necessary.
                         </div>
                     </div>
                 </div>
