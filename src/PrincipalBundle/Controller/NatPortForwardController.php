@@ -33,44 +33,16 @@ class NatPortForwardController extends Controller
 		$form = $this ->createForm(NatPortForwardType::class, $nat);
 		$form->handleRequest($request);
 		$u = $this->getUser();
-		$role=$u->getRole();
-		if($role == 'ROLE_SUPERUSER')
-		{
-			$id=$_REQUEST['id'];
-			$nat->setGrupo($id);
-			$ipGrupos = $this->ipGrupos($id);
-		}
-		if($role == 'ROLE_ADMINISTRATOR')
-		{
-			$nat->setGrupo($u->getGrupo());
-			$id=$u->getGrupo();
-			$ipGrupos = $this->ipGrupos($id);
-		}
+		$ubicacion=$_REQUEST['id'];
+		$interfaces_equipo = $this->informacion_interfaces($ubicacion);
+		$grupo=$u->getGrupo();
 		if($form->isSubmitted() && $form->isValid())
 		{
-			$ubicacion = $_REQUEST['ubicacion'];
+			$ubicacion_equipo = $_REQUEST['id'];
+			$nat->setGrupo($grupo);
 			$em = $this->getDoctrine()->getEntityManager();
-			//$mask = $_POST['mask'];
-			/*if($mask == "32")
-				$nat->setSourceAdvancedAdressMask($form->get("sourceAdvancedAdressMask")->getData());
-			elseif($mask <= "31")
-			{
-				$address = $form->get("sourceAdvancedAdressMask")->getData();
-				$adress_mask = $address . "/" . $mask; 
-				$nat->setSourceAdvancedAdressMask($adress_mask);
-			}*/
-			/**/
-			/*$maskDestination = $_POST['maskDestination'];
-			if($maskDestination == "32")
-				$nat->setdestinationAdressMask($form->get("destinationAdressMask")->getData());
-			elseif($maskDestination <= "31")
-			{
-				$address = $form->get("destinationAdressMask")->getData();
-				$adress_mask = $address . "/" . $maskDestination; 
-				$nat->setdestinationAdressMask($adress_mask);
-			}*/
 			$nat->setInterface($_POST['interface']);
-			$nat->setUbicacion($ubicacion);
+			$nat->setUbicacion($ubicacion_equipo);
 			$em->persist($nat);
 			$flush=$em->flush();
 			if($flush == null)
@@ -82,17 +54,10 @@ class NatPortForwardController extends Controller
 			else
 				echo '<script> alert("The name of alias that you are trying to register already exists try again.");window.history.go(-1);</script>';
 		}
-		if(isset($_POST['solicitar']))
-		{
-			$ubicacion = $_POST['ubicacion'];
-			return $this->render('@Principal/natPortForward/registroNatPortForward.html.twig', array(
-				'form'=>$form->createView(),
-				'ubicacion'=>$ubicacion
-			));
-		}
-
-		return $this->render('@Principal/natPortForward/solicitudNatPort.html.twig', array(
-			'ipGrupos'=>$ipGrupos
+		return $this->render('@Principal/natPortForward/registroNatPortForward.html.twig', array(
+			'form'=>$form->createView(),
+			'ubicacion'=>$ubicacion,
+			'interfaces_equipo'=>$interfaces_equipo
 		));
 	}
 
@@ -101,6 +66,18 @@ class NatPortForwardController extends Controller
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
 		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+
+	private function informacion_interfaces($ubicacion)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM interfaces WHERE descripcion = '$ubicacion'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
@@ -160,20 +137,17 @@ class NatPortForwardController extends Controller
 		}
 		if(isset($_POST['solicitar']))
 		{
-			#$u = $this->getUser();
+			$ubicacion = $_POST['ubicacion'];
 			if($u != null)
 			{
-		        #$role=$u->getRole();
-		        #$grupo=$u->getGrupo();
-		        $ubicacion = $_REQUEST['ubicacion'];
 		        if($role == "ROLE_SUPERUSER")
 		        {
-		        	#$id=$_REQUEST['id'];
 					$nat = $this->recuperarTodoNatPortGrupo($grupo, $ubicacion);
 					$natOne = $this->recuperarOneToOneGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
 						"nat"=>$nat,
-						"natOne"=>$natOne
+						"natOne"=>$natOne,
+						'ubicacion'=>$ubicacion
 					));
 		        }
 		        if($role == "ROLE_ADMINISTRATOR")
@@ -182,7 +156,8 @@ class NatPortForwardController extends Controller
 		        	$natOne = $this->recuperarOneToOneGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
 						"nat"=>$nat,
-						"natOne"=>$natOne
+						"natOne"=>$natOne,
+						'ubicacion'=>$ubicacion
 					));
 		        }
 		        if($role == "ROLE_USER")
@@ -191,7 +166,8 @@ class NatPortForwardController extends Controller
 		        	$natOne = $this->recuperarOneToOneGrupo($grupo, $ubicacion);
 					return $this->render('@Principal/natPortForward/listaNat.html.twig', array(
 						"nat"=>$nat,
-						"natOne"=>$natOne
+						"natOne"=>$natOne,
+						'ubicacion'=>$ubicacion
 					));
 		        }
 		    }
@@ -302,32 +278,16 @@ class NatPortForwardController extends Controller
 		$form = $this ->createForm(NatOneToOneType::class, $nat);
 		$form->handleRequest($request);
 		$u = $this->getUser();
-		$role=$u->getRole();
-		if($role == 'ROLE_SUPERUSER')
-		{
-			$id=$_REQUEST['id'];
-			$nat->setGrupo($id);
-			$ipGrupos = $this->ipGrupos($id);
-		}
-		if($role == 'ROLE_ADMINISTRATOR')
-		{
-			$nat->setGrupo($u->getGrupo());
-			$id=$u->getGrupo();
-			$ipGrupos = $this->ipGrupos($id);
-		}
+		$ubicacion=$_REQUEST['id'];
+		$interfaces_equipo = $this->informacion_interfaces($ubicacion);
+		$grupo=$u->getGrupo();
 		if($form->isSubmitted() && $form->isValid())
 		{
-			$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
-			if($role == 'ROLE_SUPERUSER')
-			{
-				$id=$_REQUEST['id'];
-				$nat->setGrupo($id);
-			}
-			if($role == 'ROLE_ADMINISTRATOR')
-				$nat->setGrupo($u->getGrupo());
+			$ubicacion_equipo = $_REQUEST['id'];
+			$nat->setGrupo($grupo);
 			$nat->setInterface($_POST['interface']);
-			$nat->setUbicacion($ubicacion);
+			$nat->setUbicacion($ubicacion_equipo);
 			$em->persist($nat);
 			$flush=$em->flush();
 			if($flush == null)
@@ -339,16 +299,10 @@ class NatPortForwardController extends Controller
 			else
 				echo '<script> alert("The name of alias that you are trying to register already exists try again.");window.history.go(-1);</script>';
 		}
-		if(isset($_POST['solicitar']))
-		{
-			$ubicacion = $_POST['ubicacion'];
-			return $this->render('@Principal/natPortForward/registroNatOneToOne.html.twig', array(
-				'form'=>$form->createView(),
-				'ubicacion'=>$ubicacion
-			));
-		}
-		return $this->render('@Principal/natPortForward/solicitudNatOne.html.twig', array(
-			'ipGrupos'=>$ipGrupos
+		return $this->render('@Principal/natPortForward/registroNatOneToOne.html.twig', array(
+			'form'=>$form->createView(),
+			'ubicacion'=>$ubicacion,
+			'interfaces_equipo'=>$interfaces_equipo
 		));
 	}
 
@@ -752,7 +706,7 @@ class NatPortForwardController extends Controller
 					$contenido .= "\t\t</onetoone>\n";
 				}
 				$contenido .= "\t</nat>";
-				$archivo = fopen("$conf.xml", 'w');
+				$archivo = fopen("$ips.xml", 'w');
 				fwrite($archivo, $contenido);
 				fclose($archivo);
 				#change_to_do#
@@ -761,7 +715,7 @@ class NatPortForwardController extends Controller
 				fclose($change_to_do);
 				$changetodo = "change_to_do.txt";
 				# Mover el archivo a la carpeta #
-				$archivoConfig = "conf.xml";
+				$archivoConfig = "$ips.xml";
 				$serv = '/var/www/html/central-console/web/clients/Ejemplo_2/';
 				$destinoConfig = $serv . $ips;
 				$res = $destinoConfig . "/conf.xml";
@@ -776,7 +730,7 @@ class NatPortForwardController extends Controller
 		}
 		$id=$_REQUEST['id'];
 		$grupos = $this->ipGruposSolo($id);
-		return $this->render("@Principal/natPortForward/aplicarCambios.html.twig", array(
+		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
 			"grupos"=>$grupos
 		));
 	}
@@ -785,7 +739,7 @@ class NatPortForwardController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM grupos WHERE descripcion = '$grupo'";
+		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);

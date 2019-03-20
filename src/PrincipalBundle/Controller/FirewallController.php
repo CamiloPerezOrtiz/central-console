@@ -36,9 +36,7 @@ class FirewallController extends Controller
 				));
 	        }
 	        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
-	        {
 	        	return $this->redirectToRoute("listaFirewallWan");
-	        }
 	    }
 	}
 
@@ -46,11 +44,7 @@ class FirewallController extends Controller
 	private function recuperarTodosGrupos()
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT DISTINCT g.nombre
-				FROM PrincipalBundle:Grupos g
-				ORDER BY g.nombre ASC'
-		);
+		$query = $em->createQuery('SELECT DISTINCT g.nombre FROM PrincipalBundle:Grupos g ORDER BY g.nombre ASC');
 		$grupos = $query->getResult();
 		return $grupos;
 	}
@@ -62,41 +56,14 @@ class FirewallController extends Controller
 		$form = $this ->createForm(FirewallLanType::class, $firewall);
 		$form->handleRequest($request);
 		$u = $this->getUser();
-		$role=$u->getRole();
-		if($role == 'ROLE_SUPERUSER')
-		{
-			$id=$_REQUEST['id'];
-			$firewall->setGrupo($id);
-			$ipGrupos = $this->ipGrupos($id);
-		}
-		if($role == 'ROLE_ADMINISTRATOR')
-		{
-			$firewall->setGrupo($u->getGrupo());
-			$id=$u->getGrupo();
-			$ipGrupos = $this->ipGrupos($id);
-		}
+		$ubicacion=$_REQUEST['id'];
+		$interfaces_equipo = $this->informacion_interfaces($ubicacion);
+		$grupo=$u->getGrupo();
 		if($form->isSubmitted() && $form->isValid())
 		{
-			$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
-			$mask = $_POST['mask'];
-			if($mask == "32")
-				$firewall->setSourceAddresMask($form->get("sourceAddresMask")->getData());
-			elseif($mask <= "31")
-			{
-				$address = $form->get("sourceAddresMask")->getData();
-				$adress_mask = $address . "/" . $mask; 
-				$firewall->setSourceAddresMask($adress_mask);
-			}
-			$maskDestifirewallion = $_POST['maskDestifirewall'];
-			if($maskDestifirewallion == "32")
-				$firewall->setDestinationAddresMask($form->get("destinationAddresMask")->getData());
-			elseif($maskDestifirewallion <= "31")
-			{
-				$address = $form->get("destinationAddresMask")->getData();
-				$adress_mask = $address . "/" . $maskDestifirewallion; 
-				$firewall->setDestinationAddresMask($adress_mask);
-			}
+			$ubicacion = $_REQUEST['ubicacion'];
+			$firewall->setGrupo($grupo);
 			$icm = $_POST['icmp_subtypes'];
 			$firewall->setInterface($_POST['interface']);
 			$firewall->setIcmSubtypes(implode(",",$icm));
@@ -112,17 +79,10 @@ class FirewallController extends Controller
 			else
 				echo '<script> alert("The name of alias that you are trying to register already exists try again.");window.history.go(-1);</script>';
 		}
-		if(isset($_POST['solicitar']))
-		{
-			$ubicacion = $_POST['ubicacion'];
-			return $this->render('@Principal/firewall/registroFirewallWan.html.twig', array(
-				'form'=>$form->createView(),
-				'ubicacion'=>$ubicacion
-			));
-		}
-
-		return $this->render('@Principal/firewall/solicitudFirewallWan.html.twig', array(
-			'ipGrupos'=>$ipGrupos
+		return $this->render('@Principal/firewall/registroFirewallWan.html.twig', array(
+			'form'=>$form->createView(),
+			'ubicacion'=>$ubicacion,
+			'interfaces_equipo'=>$interfaces_equipo
 		));
 		
 	}
@@ -132,6 +92,18 @@ class FirewallController extends Controller
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
 		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+
+	private function informacion_interfaces($ubicacion)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM interfaces WHERE descripcion = '$ubicacion'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
@@ -156,19 +128,19 @@ class FirewallController extends Controller
 		}
 		if(isset($_POST['solicitar']))
 		{
-			#$u = $this->getUser();
+			$ubicacion = $_POST['ubicacion'];
+			$interfaces_equipo = $this->informacion_interfaces($ubicacion);
 			if($u != null)
 			{
-		        #$role=$u->getRole();
-		        #$grupo=$u->getGrupo();
 		        $ubicacion = $_REQUEST['ubicacion'];
 		        if($role == "ROLE_SUPERUSER")
 		        {
-		        	$id=$_REQUEST['id'];
 					$firewallWan = $this->recuperarTodoFirewallWanPortGrupo($grupo, $ubicacion);
 					#$natOne = $this->recuperarOneToOneGrupo($id);
 					return $this->render('@Principal/firewall/listaFirewall.html.twig', array(
 						"firewallWan"=>$firewallWan,
+						'ubicacion'=>$ubicacion,
+						'interfaces_equipo'=>$interfaces_equipo
 						#"natOne"=>$natOne
 					));
 		        }
@@ -178,6 +150,8 @@ class FirewallController extends Controller
 		        	#$natOne = $this->recuperarOneToOneGrupo($grupo);
 					return $this->render('@Principal/firewall/listaFirewall.html.twig', array(
 						"firewallWan"=>$firewallWan,
+						'ubicacion'=>$ubicacion,
+						'interfaces_equipo'=>$interfaces_equipo
 						#"natOne"=>$natOne
 					));
 		        }
@@ -187,7 +161,9 @@ class FirewallController extends Controller
 		        	#$natOne = $this->recuperarOneToOneGrupo($grupo);
 					return $this->render('@Principal/firewall/listaFirewall.html.twig', array(
 						"firewallWan"=>$firewallWan,
-						#"natOne"=>$natOne
+						#"natOne"=>$natOn,
+						'ubicacion'=>$ubicacion,
+						'interfaces_equipo'=>$interfaces_equipo
 					));
 		        }
 		    }
@@ -202,7 +178,7 @@ class FirewallController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM firewall_lan WHERE grupo ='$grupo' AND ubicacion = '$ubicacion' ORDER BY posicion";
+		$query = "SELECT * FROM firewall_lan WHERE grupo ='$grupo' AND ubicacion = '$ubicacion'  ORDER BY posicion";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);

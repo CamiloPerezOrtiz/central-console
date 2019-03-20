@@ -35,10 +35,11 @@
                                     <small class="blockquote-footer">
                                         Choose which interface this rule applies to. In most cases "WAN" is specified.
                                     </small>
-                                    <select class="form-control input-sm" name="interface">
-                                        <option value="wan">WAN</option>
-                                        <option value="lan">LAN</option>
-                                    </select>  
+                                    <select class="form-control input-sm" name="interface" id="interface">
+                                        {% for interface in interfaces_equipo %}
+                                            <option value="{{ interface.interfaz }}">{{ interface.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                 <hr>
                                 <div class="form-group">   

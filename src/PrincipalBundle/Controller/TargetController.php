@@ -272,7 +272,7 @@ class TargetController extends Controller
 				fclose($change_to_do);
 				$changetodo = "change_to_do.txt";
 				# Mover el archivo a la carpeta #
-				$archivoConfig = "conf.xml";
+				$archivoConfig = "$ips.xml";
 				$serv = '/var/www/html/central-console/web/clients/Ejemplo_2/';
 				$destinoConfig = $serv . $ips;
 				$res = $destinoConfig . "/conf.xml";

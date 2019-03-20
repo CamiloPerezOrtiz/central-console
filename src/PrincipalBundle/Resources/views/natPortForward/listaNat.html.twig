@@ -26,13 +26,14 @@
                             <div class="tab-content">
                                 <div id="home" class="container tab-pane active"><br>
                                     {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                        <a href="{{path ('registroNatPortForward') }}">
-                                            <button type="button" class="btn btn-success">
-                                                Add Port forward <i class="fas fa-search-plus"></i>
-                                            </button>
-                                        </a>
-                                    <br><br>
-                                    {% endif %} 
+                                        {% set ubicacion = ubicacion %}
+                                            <a href="{{path('registroNatPortForward',{'id': ubicacion })}}">
+                                                <button type="button" class="btn btn-success">
+                                                    Add Port forward
+                                                </button>
+                                            </a>
+                                            <br><br>
+                                    {% endif %}
                                     <div class="table-responsive">
                                         <table class="table table-sm table-striped table-bordered table-hover text-center small">
                                             <thead class="small">
@@ -417,12 +418,13 @@
                                 </div>
                                 <div id="menu1" class="container tab-pane fade"><br>
                                     {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                        <a href="{{path ('registroNatOneToOne') }}">
-                                            <button type="button" class="btn btn-success">
-                                                Add 1:1 <i class="fas fa-search-plus"></i>
-                                            </button>
-                                        </a>
-                                    <br><br>
+                                        {% set ubicacion = ubicacion %}
+                                            <a href="{{path('registroNatOneToOne',{'id': ubicacion })}}">
+                                                <button type="button" class="btn btn-success">
+                                                    Add 1:1
+                                                </button>
+                                            </a>
+                                            <br><br>
                                     {% endif %}
                                     <div class="table-responsive">
                                         <table class="table table-sm table-striped table-bordered table-hover text-center small">
@@ -531,7 +533,7 @@
                                    When you click on save button you are saving the acl groups list. <br><br>
                                     <div class="form-group">
                                         {% if nat == true %} 
-                                            <a href="{{path('crearXMLNat',{id:nat[0]['ubicacion']})}}">
+                                            <a href="{{path('crearXMLNat',{id:nat[0]['grupo']})}}">
                                             <button type="button" class="btn btn-success">
                                                 <b>  Save nat list <i class="fas fa-save"></i></b>
                                             </button>

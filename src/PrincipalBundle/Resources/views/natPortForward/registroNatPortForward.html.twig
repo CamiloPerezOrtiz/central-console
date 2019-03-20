@@ -36,8 +36,9 @@
                                         Choose which interface this rule applies to. In most cases "WAN" is specified.
                                     </small><br><br>
                                     <select class="form-control input-sm" name="interface" id="interface">
-                                        <option value="wan">WAN</option>
-                                        <option value="lan">LAN</option>
+                                        {% for interface in interfaces_equipo %}
+                                            <option value="{{ interface.interfaz }}">{{ interface.nombre }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <hr>
