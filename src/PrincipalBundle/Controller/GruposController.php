@@ -47,17 +47,11 @@ class GruposController extends Controller
 		$filas=file('informacion.txt'); 
 		foreach($filas as $value)
 		{
-			list($ip, $primer_octeto, $segundo_octeto, $tercer_octeto, $cuarto_octeto, $mascara, $interfaz, $nombre, $descripcion) = explode("|", $value);
-			'ip: '.$ip.'<br/>'; 
-			'primer_octeto: '.$primer_octeto.'<br/>';
-			'segundo_octeto: '.$segundo_octeto.'<br/>'; 
-			'tercer_octeto: '.$tercer_octeto.'<br/>';
-			'cuarto_octeto: '.$cuarto_octeto.'<br/>';
-			'mascara: '.$mascara.'<br/>'; 
-			'interfaz: '.$interfaz.'<br/>';
+			list($ip, $nombre, $descripcion) = explode("|", $value);
+			'ip: '.$ip.'<br/>';
 			'nombre: '.$nombre.'<br/>';
 			'descripcion: '.$descripcion.'<br/><br/>';
-			$query = "INSERT INTO grupos VALUES (nextval('grupos_id_seq'),'$ip','$primer_octeto','$segundo_octeto','$tercer_octeto','$cuarto_octeto','$mascara','$interfaz','$nombre','$descripcion')";
+			$query = "INSERT INTO grupos VALUES (nextval('grupos_id_seq'),'$ip','$nombre','$descripcion')";
 			$stmt = $db->prepare($query);
 			$params =array();
 			$stmt->execute($params);
@@ -82,13 +76,14 @@ class GruposController extends Controller
 		$archivo_interfaces=file('interfaces.txt'); 
 		foreach($archivo_interfaces as $archivo_interfas)
 		{
-			list($interfaz, $nombre, $ip, $grupo, $descripcion) = explode("|", $archivo_interfas);
-			'interfaz: '.$interfaz.'<br/>'; 
+			list($interfaz, $tipo, $nombre, $ip, $grupo, $descripcion) = explode("|", $archivo_interfas);
+			'interfaz: '.$interfaz.'<br/>';
+			'tipo: '.$tipo.'<br/>'; 
 			'nombre: '.$nombre.'<br/>'; 
 			'ip: '.$ip.'<br/>';
 			'grupo: '.$grupo.'<br/>';
 			'descripcion: '.$descripcion.'<br/><br/>';
-			$query_interfaces = "INSERT INTO interfaces VALUES (nextval('interfaces_id_seq'),'$interfaz','$nombre','$ip','$grupo','$descripcion')";
+			$query_interfaces = "INSERT INTO interfaces VALUES (nextval('interfaces_id_seq'),'$interfaz','$tipo','$nombre','$ip','$grupo','$descripcion')";
 			$stmt_interfaces = $db->prepare($query_interfaces);
 			$params_interfaces =array();
 			$stmt_interfaces->execute($params_interfaces);

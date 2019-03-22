@@ -129,41 +129,54 @@ class FirewallController extends Controller
 		if(isset($_POST['solicitar']))
 		{
 			$ubicacion = $_POST['ubicacion'];
+			$recuperar_interfaces = $this->recuperar_interfaces($ubicacion);
+			return $this->render('@Principal/firewall/solicitudFirewallWan.html.twig', array(
+				'recuperar_interfaces'=>$recuperar_interfaces,
+				'ubicacion'=>$ubicacion,
+			));
+		}
+		if(isset($_POST['solicitar_interfaz']))
+		{
+			$interfaz = $_POST['interfaz'];
+			$ubicacion = $_POST['ubicacion'];
 			$interfaces_equipo = $this->informacion_interfaces($ubicacion);
 			if($u != null)
 			{
 		        $ubicacion = $_REQUEST['ubicacion'];
 		        if($role == "ROLE_SUPERUSER")
 		        {
-					$firewallWan = $this->recuperarTodoFirewallWanPortGrupo($grupo, $ubicacion);
+					$firewallWan = $this->recuperarTodoFirewallWanPortGrupo($grupo, $ubicacion, $interfaz);
 					#$natOne = $this->recuperarOneToOneGrupo($id);
 					return $this->render('@Principal/firewall/listaFirewall.html.twig', array(
 						"firewallWan"=>$firewallWan,
 						'ubicacion'=>$ubicacion,
-						'interfaces_equipo'=>$interfaces_equipo
+						'interfaces_equipo'=>$interfaces_equipo,
+						'interfaz'=>$interfaz,
 						#"natOne"=>$natOne
 					));
 		        }
 		        if($role == "ROLE_ADMINISTRATOR")
 		        {
-		        	$firewallWan = $this->recuperarTodoFirewallWanPortGrupo($grupo, $ubicacion);
+		        	$firewallWan = $this->recuperarTodoFirewallWanPortGrupo($grupo, $ubicacion, $interfaz);
 		        	#$natOne = $this->recuperarOneToOneGrupo($grupo);
 					return $this->render('@Principal/firewall/listaFirewall.html.twig', array(
 						"firewallWan"=>$firewallWan,
 						'ubicacion'=>$ubicacion,
-						'interfaces_equipo'=>$interfaces_equipo
+						'interfaces_equipo'=>$interfaces_equipo,
+						'interfaz'=>$interfaz,
 						#"natOne"=>$natOne
 					));
 		        }
 		        if($role == "ROLE_USER")
 		        {
-		        	$firewallWan = $this->recuperarTodoFirewallWanPortGrupo($grupo, $ubicacion);
+		        	$firewallWan = $this->recuperarTodoFirewallWanPortGrupo($grupo, $ubicacion, $interfaz);
 		        	#$natOne = $this->recuperarOneToOneGrupo($grupo);
 					return $this->render('@Principal/firewall/listaFirewall.html.twig', array(
 						"firewallWan"=>$firewallWan,
 						#"natOne"=>$natOn,
 						'ubicacion'=>$ubicacion,
-						'interfaces_equipo'=>$interfaces_equipo
+						'interfaces_equipo'=>$interfaces_equipo,
+						'interfaz'=>$interfaz,
 					));
 		        }
 		    }
@@ -173,12 +186,24 @@ class FirewallController extends Controller
 		));
 	}
 
-	# Funcion para recuperar los todos los aliases #
-	private function recuperarTodoFirewallWanPortGrupo($grupo, $ubicacion)
+	private function recuperar_interfaces($ubicacion)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM firewall_lan WHERE grupo ='$grupo' AND ubicacion = '$ubicacion'  ORDER BY posicion";
+		$query = "SELECT interfaz, nombre FROM interfaces WHERE descripcion = '$ubicacion'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$nat=$stmt->fetchAll();
+		return $nat;
+	}
+
+	# Funcion para recuperar los todos los aliases #
+	private function recuperarTodoFirewallWanPortGrupo($grupo, $ubicacion, $interfaz)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT * FROM firewall_lan WHERE grupo ='$grupo' AND ubicacion = '$ubicacion' AND interface = '$interfaz'  ORDER BY posicion";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);

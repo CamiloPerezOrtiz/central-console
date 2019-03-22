@@ -40,25 +40,6 @@ class NatPortForwardType extends AbstractType
                 "label"=>"Source ",
                 "required"=>false
             ))
-            ->add('sourceAdvancedType',ChoiceType::class, array(
-                "label"=>"Type ",
-                "required"=>true,
-                "attr"=>array(
-                    "class"=>"form-control input-sm"
-                ),
-                'choices' => array(
-                    'Any' => 'any',
-                    'Single host or alias' => 'single',
-                    'Network' => 'network',
-                    'PPPoE clients' => 'pppoe',
-                    'L2TP clients' => 'l2tp',
-                    'WAN net' => 'wan',
-                    'WAN address' => 'wanip',
-                    'LAN net' => 'lan',
-                    'LAN address' => 'lanip'
-                ),
-                'data' => 'any'
-            ))
             ->add('sourceAdvancedAdressMask',TextType::class,array(
                 "label"=>"Address ",
                 "required"=>false,
@@ -236,26 +217,6 @@ class NatPortForwardType extends AbstractType
             ->add('destinationInvertMatch',CheckboxType::class,array(
                 "label"=>"Destination ",
                 "required"=>false
-            ))
-            ->add('destinationType',ChoiceType::class, array(
-                "label"=>"Type: ",
-                "required"=>true,
-                "attr"=>array(
-                    "class"=>"form-control input-sm"
-                ),
-                'choices' => array(
-                    'Any' => 'any',
-                    'Single host or alias' => 'single',
-                    'Network' => 'network',
-                    'This firewall (self)' => '(self)',
-                    'PPPoE clients' => 'pppoe',
-                    'L2TP' => 'l2tp',
-                    'WAN net' => 'wan',
-                    'WAN address' => 'wanip',
-                    'LAN net' => 'lan',
-                    'LAN address' => 'lanip'
-                ),
-                'data' => 'wanip'
             ))
             ->add('destinationAdressMask',TextType::class,array(
                 "label"=>"Address ",

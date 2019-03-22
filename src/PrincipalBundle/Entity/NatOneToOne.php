@@ -64,6 +64,13 @@ class NatOneToOne
     private $internalAdressMask;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="maskinternal", type="integer", nullable=true)
+     */
+    private $maskinternal;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="destination", type="boolean")
@@ -83,6 +90,13 @@ class NatOneToOne
      * @ORM\Column(name="destination_adress_mask", type="string", length=25, nullable=true)
      */
     private $destinationAdressMask;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="maskDestination", type="integer", nullable=true)
+     */
+    private $maskDestination;
 
     /**
      * @var string
@@ -248,7 +262,7 @@ class NatOneToOne
      *
      * @param string $internalAdressMask
      *
-     * @return NatPortForward
+     * @return NatOneToOne
      */
     public function setInternalAdressMask($internalAdressMask)
     {
@@ -265,6 +279,30 @@ class NatOneToOne
     public function getInternalAdressMask()
     {
         return $this->internalAdressMask;
+    }
+
+    /**
+     * Set maskinternal
+     *
+     * @param int $maskinternal
+     *
+     * @return NatOneToOne
+     */
+    public function setMaskinternal($maskinternal)
+    {
+        $this->maskinternal = $maskinternal;
+
+        return $this;
+    }
+
+    /**
+     * Get maskinternal
+     *
+     * @return int
+     */
+    public function getMaskinternal()
+    {
+        return $this->maskinternal;
     }
 
     /**
@@ -320,7 +358,7 @@ class NatOneToOne
      *
      * @param string $destinationAdressMask
      *
-     * @return NatPortForward
+     * @return NatOneToOne
      */
     public function setDestinationAdressMask($destinationAdressMask)
     {
@@ -337,6 +375,30 @@ class NatOneToOne
     public function getDestinationAdressMask()
     {
         return $this->destinationAdressMask;
+    }
+
+    /**
+     * Set maskDestination
+     *
+     * @param int $maskDestination
+     *
+     * @return NatOneToOne
+     */
+    public function setMaskDestination($maskDestination)
+    {
+        $this->maskDestination = $maskDestination;
+
+        return $this;
+    }
+
+    /**
+     * Get maskDestination
+     *
+     * @return int
+     */
+    public function getMaskDestination()
+    {
+        return $this->maskDestination;
     }
 
     /**

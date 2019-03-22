@@ -37,7 +37,7 @@
                                     </small>
                                     <select class="form-control input-sm" name="interface" id="interface">
                                         {% for interface in interfaces_equipo %}
-                                            <option value="{{ interface.interfaz }}">{{ interface.nombre }}</option>
+                                            <option value="{{ interface.tipo }}">{{ interface.nombre }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -63,8 +63,18 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="form-group">   
-                                            {{ form_widget(form.internalIpType, { 'id': 'internalIpType' }) }}
+                                        <div class="form-group">
+                                            <select class="form-control input-sm" id="internalIpType" name="internalIpType">
+                                                <option value="any" selected>Any</option>
+                                                <option value="single">Single host</option>
+                                                <option value="network">Network</option>
+                                                <option value="pppoe">PPPoE clients</option>
+                                                <option value="l2tp">L2TP clients</option>
+                                                {% for interface in interfaces_equipo %}
+                                                    <option value="{{ interface.tipo }}">{{ interface.nombre }} net</option>
+                                                    <option value="{{ interface.tipo }}ip">{{ interface.nombre }} address</option>
+                                                {% endfor %}
+                                            </select>
                                             <span class="help-block">Type</span>
                                         </div>
                                     </div>
@@ -72,11 +82,7 @@
                                         <div class="input-group">
                                             {{ form_widget(form.internalAdressMask, { 'id': 'internalAdressMask' }) }}
                                             <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                            <select class="form-control input-sm" name="maskInternal" id="maskInternal"> 
-                                                {% for i in 32..1 %}
-                                                    <option value="{{ i }}">{{ i }}</option>
-                                                {% endfor %}
-                                            </select>
+                                            {{ form_widget(form.maskinternal, { 'id': 'maskInternal' }) }}
                                         </div>
                                         <span class="help-block">Address/mask</span>
                                     </div>
@@ -103,8 +109,18 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-group">   
-                                        {{ form_widget(form.destinationType, { 'id': 'destinationType' }) }}
+                                    <div class="form-group">
+                                        <select class="form-control input-sm" id="destinationType" name="destinationType">
+                                            <option value="any" selected>Any</option>
+                                            <option value="single">Single host or alias</option>
+                                            <option value="network">Network</option>
+                                            <option value="pppoe">PPPoE clients</option>
+                                            <option value="l2tp">L2TP clients</option>
+                                            {% for interface in interfaces_equipo %}
+                                                <option value="{{ interface.tipo }}">{{ interface.nombre }}</option>
+                                                <option value="{{ interface.tipo }}ip">{{ interface.nombre }} address</option>
+                                            {% endfor %}
+                                        </select>
                                         <span class="help-block">Type</span>
                                     </div>
                                 </div>
@@ -112,11 +128,7 @@
                                     <div class="input-group">
                                         {{ form_widget(form.destinationAdressMask, { 'id': 'destinationAdressMask' }) }}
                                         <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                        <select class="form-control input-sm" name="maskDestination" id="maskDestination"> 
-                                            {% for i in 32..1 %}
-                                                <option value="{{ i }}">{{ i }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ form_widget(form.maskDestination, { 'id': 'maskDestination' }) }}
                                     </div>
                                     <span class="help-block">Address/mask</span>
                                 </div>

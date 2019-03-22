@@ -56,6 +56,14 @@ CREATE TABLE grupos(
 	descripcion TEXT DEFAULT NULL
 );
 
+-- Tabla de grupos 
+CREATE TABLE grupos(
+	id INT PRIMARY KEY NOT NULL,
+	ip VARCHAR(15) NOT NULL,
+	nombre VARCHAR(50) NOT NULL,
+	descripcion TEXT DEFAULT NULL
+);
+
 CREATE TABLE usuarios(
 	id INT PRIMARY KEY NOT NULL,
 	nombre VARCHAR(20) NOT NULL,
@@ -118,6 +126,7 @@ CREATE TABLE interfaces(
 	id INT PRIMARY KEY NOT NULL,
 	interfaz VARCHAR(20) NOT NULL,
 	nombre VARCHAR(20) NOT NULL,
+	tipo VARCHAR(20) NOT NULL,
 	ip VARCHAR(50) NOT NULL,
 	grupo VARCHAR(50) NOT NULL,
 	descripcion VARCHAR(50) NOT NULL
@@ -182,9 +191,11 @@ CREATE TABLE nat_one_to_one(
 	internal_ip BOOLEAN DEFAULT FALSE,
 	internal_ip_type VARCHAR(25) DEFAULT NULL,
 	internal_adress_mask VARCHAR(25) DEFAULT NULL,
+	maskinternal VARCHAR(25) DEFAULT NULL,
 	destination BOOLEAN DEFAULT FALSE,
 	destination_type VARCHAR(25) DEFAULT NULL,
 	destination_adress_mask VARCHAR(25) DEFAULT NULL,
+	maskdestination VARCHAR(25) DEFAULT NULL,
 	descripcion VARCHAR(25) DEFAULT NULL,
 	nat_reflection VARCHAR(25) DEFAULT NULL,
 	grupo VARCHAR(50) DEFAULT NULL,

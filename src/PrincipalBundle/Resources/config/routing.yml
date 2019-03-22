@@ -232,9 +232,9 @@ eliminarFirewallWan:
     path:     /eliminarFirewallWan/{id} 
     defaults: { _controller: PrincipalBundle:Firewall:eliminarFirewallWan }
 
-crearXMLFirewallWan:
-    path:     /crearXMLFirewallWan/{id}
-    defaults: { _controller: PrincipalBundle:Firewall:crearXMLFirewallWan }
+crearXMLFirewall:
+    path:     /crearXMLFirewall
+    defaults: { _controller: PrincipalBundle:Firewall:crearXMLFirewall }
 
 aplicarXMLFirewallWan:
     path:     /aplicarXMLFirewallWan/{id}

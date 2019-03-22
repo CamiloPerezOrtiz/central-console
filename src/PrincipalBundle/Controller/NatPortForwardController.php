@@ -41,6 +41,8 @@ class NatPortForwardController extends Controller
 			$ubicacion_equipo = $_REQUEST['id'];
 			$nat->setGrupo($grupo);
 			$em = $this->getDoctrine()->getEntityManager();
+			$nat->setSourceAdvancedType($_POST['sourceAdvancedType']);
+			$nat->setDestinationType($_POST['destinationType']);
 			$nat->setInterface($_POST['interface']);
 			$nat->setUbicacion($ubicacion_equipo);
 			$em->persist($nat);
@@ -77,7 +79,7 @@ class NatPortForwardController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM interfaces WHERE descripcion = '$ubicacion'";
+		$query = "SELECT * FROM interfaces WHERE descripcion = '$ubicacion' ORDER BY id";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
@@ -287,6 +289,8 @@ class NatPortForwardController extends Controller
 			$ubicacion_equipo = $_REQUEST['id'];
 			$nat->setGrupo($grupo);
 			$nat->setInterface($_POST['interface']);
+			$nat->setInternalIpType($_POST['internalIpType']);
+			$nat->setDestinationType($_POST['destinationType']);
 			$nat->setUbicacion($ubicacion_equipo);
 			$em->persist($nat);
 			$flush=$em->flush();
@@ -319,7 +323,7 @@ class NatPortForwardController extends Controller
 			$nat->setInterface($_POST['interface']);
 			$em->persist($nat);
 			$flush=$em->flush();
-			return $this->redirectToRoute("gruposTarget");
+			return $this->redirectToRoute("gruposNat");
 		}
 		return $this->render('@Principal/natPortForward/editarNatOneToOne.html.twig', array(
 			'form'=>$form->createView()
@@ -395,6 +399,18 @@ class NatPortForwardController extends Controller
 							$contenido .= "\t\t\t\t<network>lan</network>\n";
 						if($nat['source_advanced_type'] === "lanip")
 							$contenido .= "\t\t\t\t<network>lanip</network>\n";
+						if($nat['source_advanced_type'] === "opt1")
+							$contenido .= "\t\t\t\t<network>opt1</network>\n";
+						if($nat['source_advanced_type'] === "opt1ip")
+							$contenido .= "\t\t\t\t<network>opt1ip</network>\n";
+						if($nat['source_advanced_type'] === "opt2")
+							$contenido .= "\t\t\t\t<network>opt2</network>\n";
+						if($nat['source_advanced_type'] === "opt2ip")
+							$contenido .= "\t\t\t\t<network>opt2ip</network>\n";
+						if($nat['source_advanced_type'] === "opt3")
+							$contenido .= "\t\t\t\t<network>opt3</network>\n";
+						if($nat['source_advanced_type'] === "opt3ip")
+							$contenido .= "\t\t\t\t<network>opt3ip</network>\n";
 						# Campo Source Invert match. #
 						if($nat['source_advanced_invert_match'] === true)
 							$contenido .= "\t\t\t\t<not></not>\n";
@@ -502,6 +518,8 @@ class NatPortForwardController extends Controller
 							$contenido .= "\t\t\t\t<any></any>\n";
 						if($nat['destination_type'] === "single")
 							$contenido .= "\t\t\t\t<address>" . $nat['destination_adress_mask'] . "</address>\n";
+						if($nat['destination_type'] === "(self)")
+							$contenido .= "\t\t\t\t<address>" . $nat['destination_type'] . "</address>\n";
 						if($nat['destination_type'] === "network")
 							if ($nat['destination_adress_mask2'] == 32) 
 								$contenido .= "\t\t\t\t<network>" . $nat['destination_adress_mask'] . "</network>\n";
@@ -519,6 +537,18 @@ class NatPortForwardController extends Controller
 							$contenido .= "\t\t\t\t<network>lan</network>\n";
 						if($nat['destination_type'] === "lanip")
 							$contenido .= "\t\t\t\t<network>lanip</network>\n";
+						if($nat['destination_type'] === "opt1")
+							$contenido .= "\t\t\t\t<network>opt1</network>\n";
+						if($nat['destination_type'] === "opt1ip")
+							$contenido .= "\t\t\t\t<network>opt1ip</network>\n";
+						if($nat['destination_type'] === "opt2")
+							$contenido .= "\t\t\t\t<network>opt2</network>\n";
+						if($nat['destination_type'] === "opt2ip")
+							$contenido .= "\t\t\t\t<network>opt2ip</network>\n";
+						if($nat['destination_type'] === "opt3")
+							$contenido .= "\t\t\t\t<network>opt3</network>\n";
+						if($nat['destination_type'] === "opt3ip")
+							$contenido .= "\t\t\t\t<network>opt3ip</network>\n";
 						# Campo destination Invert match. #
 						if($nat['destination_invert_match'] === true)
 						{
@@ -624,6 +654,11 @@ class NatPortForwardController extends Controller
 						}
 					$contenido .= "\t\t\t</destination>\n";
 					$contenido .= "\t\t\t<protocol>" . $nat['protocolo'] . "</protocol>\n";
+					$contenido .= "\t\t\t<target>" . $nat['redirect_target_ip'] . "</target>\n";
+					if($nat['redirect_target_port'] === '')
+						$contenido .= "\t\t\t<local-port>" . $nat['redirect_target_port_custom'] . "</local-port>\n";
+					else
+						$contenido .= "\t\t\t<local-port>" . $nat['redirect_target_port'] . "</local-port>\n";
 					# Interface #
 				    $contenido .= "\t\t\t<interface>" . $nat['interface'] . "</interface>\n";
 				    # Description #

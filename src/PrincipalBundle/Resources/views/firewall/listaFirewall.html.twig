@@ -15,329 +15,318 @@
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
-                            <ul class="nav nav-tabs">
-                                {% for interfas in interfaces_equipo %}
-                                    <li class="{% if interfas.interfaz == 'em0' %} active {% else %} nav-item {% endif %}">
-                                        <a class="nav-link {% if interfas.interfaz == 'em0' %} active {% endif %}" data-toggle="tab" href="#{{interfas.nombre}}">{{interfas.nombre}}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
                             <div class="tab-content">
-                                {% for interfas in interfaces_equipo %}
-                                    <div id="{{interfas.nombre}}" class="container tab-pane {% if interfas.interfaz == 'em0' %} active {% else %} fade {% endif %}"><br>
-                                        {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                            {% set ubicacion = ubicacion %}
-                                                <a href="{{path('registroFirewallWan',{'id': ubicacion })}}">
+                                {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
+                                    {% set ubicacion = ubicacion %}
+                                        <a href="{{path('registroFirewallWan',{'id': ubicacion })}}">
+                                            <button type="button" class="btn btn-success">
+                                                Add a new rule
+                                            </button>
+                                        </a>
+                                        <br><br>
+                                {% endif %}
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped table-bordered table-hover text-center small">
+                                        <div class="col-md-12">
+                                            {% for msg in app.session.flashbag().get('estatus') %}
+                                                <div class="alert alert-info" aria-label="Close">
+                                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                    <strong>Info!</strong> {{ msg }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        <thead>
+                                            <tr>
+                                                <th>Disabled</th>                         
+                                                <th>Protocol</th>
+                                                <th>Source</th>
+                                                <th>Port</th>
+                                                <th>Destination</th>
+                                                <th>Port</th>
+                                                <th>Description</th>
+                                                {% if app.user.role == 'ROLE_SUPERUSE' or app.user.role == 'ROLE_ADMINISTRATO' %}
+                                                    <th>Operations</th>
+                                                {% endif %}                                 
+                                            </tr>
+                                        </thead>
+                                        <tbody class="row_position">
+                                            {% for firewall_wan in firewallWan %}
+                                                <tr id="{{ firewall_wan.id }}" style="cursor: all-scroll;">
+                                                    <td>
+                                                        {% if firewall_wan.estatus == true %} On {% else %} Off {% endif %}
+                                                    </td>
+                                                    <td>{{ firewall_wan.protocolo|upper }}</td>
+                                                    <td>
+                                                        {% if firewall_wan.source_type == "any" %} 
+                                                            *
+                                                        {% elseif firewall_wan.source_type == "network" %}
+                                                            {{ firewall_wan.source_addres_mask }}
+                                                        {% elseif firewall_wan.source_type == "pppoe" %}
+                                                            PPPoE
+                                                        {% elseif firewall_wan.source_type == "l2tp" %}
+                                                            L2TP clients
+                                                        {% elseif firewall_wan.source_type == "wan" %}
+                                                            WAN net
+                                                        {% elseif firewall_wan.source_type == "wanip" %}
+                                                            WAN address
+                                                        {% elseif firewall_wan.source_type == "lan" %}
+                                                            LAN net
+                                                        {% elseif firewall_wan.source_type == "lanip" %}
+                                                            LAN address
+                                                        {% else %} 
+                                                            {{ firewall_wan.source_type }} 
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if firewall_wan.source_port_range_from == "any" %} 
+                                                            *
+                                                        {% elseif firewall_wan.source_port_range_from == '5999' %}
+                                                            5999 (CVSup)  
+                                                        {% elseif firewall_wan.source_port_range_from == '53' %}
+                                                            53 (DNS)  
+                                                        {% elseif firewall_wan.source_port_range_from == '21' %}
+                                                            21 (FTP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '3000' %}
+                                                            3000 (HBCI)  
+                                                        {% elseif firewall_wan.source_port_range_from == '80' %}
+                                                            80 (HTTP) 
+                                                        {% elseif firewall_wan.source_port_range_from == '443' %}
+                                                            443 (HTTPS)  
+                                                        {% elseif firewall_wan.source_port_range_from == '143' %}
+                                                            143 (ICQ)  
+                                                        {% elseif firewall_wan.source_port_range_from == '113' %}
+                                                            113 (IMAP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '993' %}
+                                                            993 (IMAP/S)  
+                                                        {% elseif firewall_wan.source_port_range_from == '4500' %}
+                                                            4500 (IPsec NAT-T)
+                                                        {% elseif firewall_wan.source_port_range_from == '500' %}
+                                                            500 (ISAKMP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '1701' %}
+                                                            1701 (L2TP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '389' %}
+                                                            389 (LDAP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '1755' %}
+                                                            1755 (MMS/TCP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '7000' %}
+                                                            7000 (MMS/UDP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '445' %}
+                                                            445 (MS DS)  
+                                                        {% elseif firewall_wan.source_port_range_from == '3389' %}
+                                                            3389 (MS RDP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '1512' %}
+                                                            1512 (MS WINS) 
+                                                        {% elseif firewall_wan.source_port_range_from == '1863' %}
+                                                            1863 (MSN)  
+                                                        {% elseif firewall_wan.source_port_range_from == '119' %}
+                                                            119 (NNTP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '123' %}
+                                                            123 (NTP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '138' %}
+                                                            138 (NetBIOS-DGM)  
+                                                        {% elseif firewall_wan.source_port_range_from == '137' %}
+                                                            137 (NetBIOS-NS)
+                                                        {% elseif firewall_wan.source_port_range_from == '139' %}
+                                                            139 (NetBIOS-SSN)  
+                                                        {% elseif firewall_wan.source_port_range_from == '1194' %}
+                                                            1194 (OpenVPN)  
+                                                        {% elseif firewall_wan.source_port_range_from == '110' %}
+                                                            110 (POP3)
+                                                        {% elseif firewall_wan.source_port_range_from == '995' %}
+                                                            995 (POP3/S)  
+                                                        {% elseif firewall_wan.source_port_range_from == '1723' %}
+                                                            1723 (PPTP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '1812' %}
+                                                            1812 (RADIUS)  
+                                                        {% elseif firewall_wan.source_port_range_from == '1813' %}
+                                                            1813 (RADIUS accounting)  
+                                                        {% elseif firewall_wan.source_port_range_from == '5004' %}
+                                                            5004 (RTP) 
+                                                        {% elseif firewall_wan.source_port_range_from == '5060' %}
+                                                            5060 (SIP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '25' %}
+                                                            25 (SMTP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '465' %}
+                                                            465 (SMTP/S)  
+                                                        {% elseif firewall_wan.source_port_range_from == '161' %}
+                                                            161 (SNMP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '162' %}
+                                                            162 (SNMP-Trap)
+                                                        {% elseif firewall_wan.source_port_range_from == '22' %}
+                                                            22 (SSH)  
+                                                        {% elseif firewall_wan.source_port_range_from == '3478' %}
+                                                            3478 (STUN)  
+                                                        {% elseif firewall_wan.source_port_range_from == '587' %}
+                                                            587 (SUBMISSION)  
+                                                        {% elseif firewall_wan.source_port_range_from == '3544' %}
+                                                            3544 (Teredo)
+                                                        {% elseif firewall_wan.source_port_range_from == '23' %}
+                                                            23 (Telnet)  
+                                                        {% elseif firewall_wan.source_port_range_from == '69' %}
+                                                            69 (TFTP)  
+                                                        {% elseif firewall_wan.source_port_range_from == '5900' %}
+                                                            5900 (VNC)  
+                                                        {% else %}
+                                                            {% if firewall_wan.source_port_range_custom == firewall_wan.source_port_range_custom_to %}
+                                                                {{ firewall_wan.source_port_range_custom }}
+                                                            {% else %}
+                                                                {{ firewall_wan.source_port_range_custom }} - {{ firewall_wan.source_port_range_custom_to }}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if firewall_wan.destination_type == "any" %} 
+                                                            *
+                                                        {% elseif firewall_wan.destination_type == "network" %}
+                                                            {{ firewall_wan.destination_addres_mask }}
+                                                        {% elseif firewall_wan.destination_type == "pppoe" %}
+                                                            PPPoE
+                                                        {% elseif firewall_wan.destination_type == "l2tp" %}
+                                                            L2TP clients
+                                                        {% elseif firewall_wan.destination_type == "wan" %}
+                                                            WAN net
+                                                        {% elseif firewall_wan.destination_type == "wanip" %}
+                                                            WAN address
+                                                        {% elseif firewall_wan.destination_type == "lan" %}
+                                                            LAN net
+                                                        {% elseif firewall_wan.destination_type == "lanip" %}
+                                                            LAN address
+                                                        {% elseif firewall_wan.destination_type == "(self)" %}
+                                                            This Firewall
+                                                        {% else %} 
+                                                            {{ firewall_wan.destination_type }} 
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if firewall_wan.destination_port_range_from == "any" %} 
+                                                            *
+                                                        {% elseif firewall_wan.destination_port_range_from == '5999' %}
+                                                            5999 (CVSup)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '53' %}
+                                                            53 (DNS)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '21' %}
+                                                            21 (FTP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '3000' %}
+                                                            3000 (HBCI)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '80' %}
+                                                            80 (HTTP) 
+                                                        {% elseif firewall_wan.destination_port_range_from == '443' %}
+                                                            443 (HTTPS)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '143' %}
+                                                            143 (ICQ)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '113' %}
+                                                            113 (IMAP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '993' %}
+                                                            993 (IMAP/S)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '4500' %}
+                                                            4500 (IPsec NAT-T)
+                                                        {% elseif firewall_wan.destination_port_range_from == '500' %}
+                                                            500 (ISAKMP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '1701' %}
+                                                            1701 (L2TP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '389' %}
+                                                            389 (LDAP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '1755' %}
+                                                            1755 (MMS/TCP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '7000' %}
+                                                            7000 (MMS/UDP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '445' %}
+                                                            445 (MS DS)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '3389' %}
+                                                            3389 (MS RDP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '1512' %}
+                                                            1512 (MS WINS) 
+                                                        {% elseif firewall_wan.destination_port_range_from == '1863' %}
+                                                            1863 (MSN)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '119' %}
+                                                            119 (NNTP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '123' %}
+                                                            123 (NTP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '138' %}
+                                                            138 (NetBIOS-DGM)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '137' %}
+                                                            137 (NetBIOS-NS)
+                                                        {% elseif firewall_wan.destination_port_range_from == '139' %}
+                                                            139 (NetBIOS-SSN)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '1194' %}
+                                                            1194 (OpenVPN)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '110' %}
+                                                            110 (POP3)
+                                                        {% elseif firewall_wan.destination_port_range_from == '995' %}
+                                                            995 (POP3/S)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '1723' %}
+                                                            1723 (PPTP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '1812' %}
+                                                            1812 (RADIUS)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '1813' %}
+                                                            1813 (RADIUS accounting)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '5004' %}
+                                                            5004 (RTP) 
+                                                        {% elseif firewall_wan.destination_port_range_from == '5060' %}
+                                                            5060 (SIP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '25' %}
+                                                            25 (SMTP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '465' %}
+                                                            465 (SMTP/S)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '161' %}
+                                                            161 (SNMP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '162' %}
+                                                            162 (SNMP-Trap)
+                                                        {% elseif firewall_wan.destination_port_range_from == '22' %}
+                                                            22 (SSH)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '3478' %}
+                                                            3478 (STUN)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '587' %}
+                                                            587 (SUBMISSION)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '3544' %}
+                                                            3544 (Teredo)
+                                                        {% elseif firewall_wan.destination_port_range_from == '23' %}
+                                                            23 (Telnet)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '69' %}
+                                                            69 (TFTP)  
+                                                        {% elseif firewall_wan.destination_port_range_from == '5900' %}
+                                                            5900 (VNC)  
+                                                        {% else %}
+                                                            {% if firewall_wan.destination_port_range_custom == firewall_wan.destination_port_range_custom_to %}
+                                                                {{ firewall_wan.destination_port_range_custom }}
+                                                            {% else %}
+                                                                {{ firewall_wan.destination_port_range_custom }} - {{ firewall_wan.destination_port_range_custom_to }}
+                                                            {% endif %}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ firewall_wan.descripcion }}</td>
+                                                    {% if app.user.role == 'ROLE_SUPERUSE' or app.user.role == 'ROLE_ADMINISTRATO' %}
+                                                        <td>
+                                                            <a href="{{ path('editarAcl',{id:firewall_wan.id}) }}">
+                                                                    <i class="fas fa-pencil-alt"></i>
+                                                            </a>
+                                                            <a href="{{ path('eliminarAcl',{id:firewall_wan.id}) }}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                            </a>
+                                                        </td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
+                                        <br>
+                                        <div class="card-header bg-dark text-white">Save the configuration</div>
+                                        <br>
+                                        <div class="panel-body text-center">
+                                            When you click on save button you are saving the acl groups list. <br><br>
+                                            <div class="form-group">
+                                                {% if firewallWan == true %} 
+                                                    <a href="{{path('crearXMLFirewall',{id:nat[0]['grupo']})}}">
                                                     <button type="button" class="btn btn-success">
-                                                        Add {{interfas.nombre}}
+                                                        <b>  In process <i class="fas fa-save"></i></b>
                                                     </button>
                                                 </a>
-                                                <br><br>
-                                        {% endif %}
-                                        <div class="table-responsive">
-                                            <table class="table table-sm table-striped table-bordered table-hover text-center small">
-                                                <div class="col-md-12">
-                                                    {% for msg in app.session.flashbag().get('estatus') %}
-                                                        <div class="alert alert-info" aria-label="Close">
-                                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                                            <strong>Info!</strong> {{ msg }}
-                                                        </div>
-                                                    {% endfor %}
-                                                </div>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Disabled</th>                         
-                                                        <th>Protocol</th>
-                                                        <th>Source</th>
-                                                        <th>Port</th>
-                                                        <th>Destination</th>
-                                                        <th>Port</th>
-                                                        <th>Description</th>
-                                                        {% if app.user.role == 'ROLE_SUPERUSE' or app.user.role == 'ROLE_ADMINISTRATO' %}
-                                                            <th>Operations</th>
-                                                        {% endif %}                                 
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="row_position">
-                                                    {% for firewall_wan in firewallWan %}
-                                                        <tr id="{{ firewall_wan.id }}" style="cursor: all-scroll;">
-                                                            <td>
-                                                                {% if firewall_wan.estatus == true %} On {% else %} Off {% endif %}
-                                                            </td>
-                                                            <td>{{ firewall_wan.protocolo|upper }}</td>
-                                                            <td>
-                                                                {% if firewall_wan.source_type == "any" %} 
-                                                                    *
-                                                                {% elseif firewall_wan.source_type == "network" %}
-                                                                    {{ firewall_wan.source_addres_mask }}
-                                                                {% elseif firewall_wan.source_type == "pppoe" %}
-                                                                    PPPoE
-                                                                {% elseif firewall_wan.source_type == "l2tp" %}
-                                                                    L2TP clients
-                                                                {% elseif firewall_wan.source_type == "wan" %}
-                                                                    WAN net
-                                                                {% elseif firewall_wan.source_type == "wanip" %}
-                                                                    WAN address
-                                                                {% elseif firewall_wan.source_type == "lan" %}
-                                                                    LAN net
-                                                                {% elseif firewall_wan.source_type == "lanip" %}
-                                                                    LAN address
-                                                                {% else %} 
-                                                                    {{ firewall_wan.source_type }} 
-                                                                {% endif %}
-                                                            </td>
-                                                            <td>
-                                                                {% if firewall_wan.source_port_range_from == "any" %} 
-                                                                    *
-                                                                {% elseif firewall_wan.source_port_range_from == '5999' %}
-                                                                    5999 (CVSup)  
-                                                                {% elseif firewall_wan.source_port_range_from == '53' %}
-                                                                    53 (DNS)  
-                                                                {% elseif firewall_wan.source_port_range_from == '21' %}
-                                                                    21 (FTP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '3000' %}
-                                                                    3000 (HBCI)  
-                                                                {% elseif firewall_wan.source_port_range_from == '80' %}
-                                                                    80 (HTTP) 
-                                                                {% elseif firewall_wan.source_port_range_from == '443' %}
-                                                                    443 (HTTPS)  
-                                                                {% elseif firewall_wan.source_port_range_from == '143' %}
-                                                                    143 (ICQ)  
-                                                                {% elseif firewall_wan.source_port_range_from == '113' %}
-                                                                    113 (IMAP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '993' %}
-                                                                    993 (IMAP/S)  
-                                                                {% elseif firewall_wan.source_port_range_from == '4500' %}
-                                                                    4500 (IPsec NAT-T)
-                                                                {% elseif firewall_wan.source_port_range_from == '500' %}
-                                                                    500 (ISAKMP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '1701' %}
-                                                                    1701 (L2TP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '389' %}
-                                                                    389 (LDAP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '1755' %}
-                                                                    1755 (MMS/TCP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '7000' %}
-                                                                    7000 (MMS/UDP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '445' %}
-                                                                    445 (MS DS)  
-                                                                {% elseif firewall_wan.source_port_range_from == '3389' %}
-                                                                    3389 (MS RDP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '1512' %}
-                                                                    1512 (MS WINS) 
-                                                                {% elseif firewall_wan.source_port_range_from == '1863' %}
-                                                                    1863 (MSN)  
-                                                                {% elseif firewall_wan.source_port_range_from == '119' %}
-                                                                    119 (NNTP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '123' %}
-                                                                    123 (NTP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '138' %}
-                                                                    138 (NetBIOS-DGM)  
-                                                                {% elseif firewall_wan.source_port_range_from == '137' %}
-                                                                    137 (NetBIOS-NS)
-                                                                {% elseif firewall_wan.source_port_range_from == '139' %}
-                                                                    139 (NetBIOS-SSN)  
-                                                                {% elseif firewall_wan.source_port_range_from == '1194' %}
-                                                                    1194 (OpenVPN)  
-                                                                {% elseif firewall_wan.source_port_range_from == '110' %}
-                                                                    110 (POP3)
-                                                                {% elseif firewall_wan.source_port_range_from == '995' %}
-                                                                    995 (POP3/S)  
-                                                                {% elseif firewall_wan.source_port_range_from == '1723' %}
-                                                                    1723 (PPTP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '1812' %}
-                                                                    1812 (RADIUS)  
-                                                                {% elseif firewall_wan.source_port_range_from == '1813' %}
-                                                                    1813 (RADIUS accounting)  
-                                                                {% elseif firewall_wan.source_port_range_from == '5004' %}
-                                                                    5004 (RTP) 
-                                                                {% elseif firewall_wan.source_port_range_from == '5060' %}
-                                                                    5060 (SIP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '25' %}
-                                                                    25 (SMTP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '465' %}
-                                                                    465 (SMTP/S)  
-                                                                {% elseif firewall_wan.source_port_range_from == '161' %}
-                                                                    161 (SNMP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '162' %}
-                                                                    162 (SNMP-Trap)
-                                                                {% elseif firewall_wan.source_port_range_from == '22' %}
-                                                                    22 (SSH)  
-                                                                {% elseif firewall_wan.source_port_range_from == '3478' %}
-                                                                    3478 (STUN)  
-                                                                {% elseif firewall_wan.source_port_range_from == '587' %}
-                                                                    587 (SUBMISSION)  
-                                                                {% elseif firewall_wan.source_port_range_from == '3544' %}
-                                                                    3544 (Teredo)
-                                                                {% elseif firewall_wan.source_port_range_from == '23' %}
-                                                                    23 (Telnet)  
-                                                                {% elseif firewall_wan.source_port_range_from == '69' %}
-                                                                    69 (TFTP)  
-                                                                {% elseif firewall_wan.source_port_range_from == '5900' %}
-                                                                    5900 (VNC)  
-                                                                {% else %}
-                                                                    {% if firewall_wan.source_port_range_custom == firewall_wan.source_port_range_custom_to %}
-                                                                        {{ firewall_wan.source_port_range_custom }}
-                                                                    {% else %}
-                                                                        {{ firewall_wan.source_port_range_custom }} - {{ firewall_wan.source_port_range_custom_to }}
-                                                                    {% endif %}
-                                                                {% endif %}
-                                                            </td>
-                                                            <td>
-                                                                {% if firewall_wan.destination_type == "any" %} 
-                                                                    *
-                                                                {% elseif firewall_wan.destination_type == "network" %}
-                                                                    {{ firewall_wan.destination_addres_mask }}
-                                                                {% elseif firewall_wan.destination_type == "pppoe" %}
-                                                                    PPPoE
-                                                                {% elseif firewall_wan.destination_type == "l2tp" %}
-                                                                    L2TP clients
-                                                                {% elseif firewall_wan.destination_type == "wan" %}
-                                                                    WAN net
-                                                                {% elseif firewall_wan.destination_type == "wanip" %}
-                                                                    WAN address
-                                                                {% elseif firewall_wan.destination_type == "lan" %}
-                                                                    LAN net
-                                                                {% elseif firewall_wan.destination_type == "lanip" %}
-                                                                    LAN address
-                                                                {% elseif firewall_wan.destination_type == "(self)" %}
-                                                                    This Firewall
-                                                                {% else %} 
-                                                                    {{ firewall_wan.destination_type }} 
-                                                                {% endif %}
-                                                            </td>
-                                                            <td>
-                                                                {% if firewall_wan.destination_port_range_from == "any" %} 
-                                                                    *
-                                                                {% elseif firewall_wan.destination_port_range_from == '5999' %}
-                                                                    5999 (CVSup)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '53' %}
-                                                                    53 (DNS)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '21' %}
-                                                                    21 (FTP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '3000' %}
-                                                                    3000 (HBCI)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '80' %}
-                                                                    80 (HTTP) 
-                                                                {% elseif firewall_wan.destination_port_range_from == '443' %}
-                                                                    443 (HTTPS)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '143' %}
-                                                                    143 (ICQ)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '113' %}
-                                                                    113 (IMAP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '993' %}
-                                                                    993 (IMAP/S)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '4500' %}
-                                                                    4500 (IPsec NAT-T)
-                                                                {% elseif firewall_wan.destination_port_range_from == '500' %}
-                                                                    500 (ISAKMP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '1701' %}
-                                                                    1701 (L2TP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '389' %}
-                                                                    389 (LDAP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '1755' %}
-                                                                    1755 (MMS/TCP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '7000' %}
-                                                                    7000 (MMS/UDP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '445' %}
-                                                                    445 (MS DS)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '3389' %}
-                                                                    3389 (MS RDP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '1512' %}
-                                                                    1512 (MS WINS) 
-                                                                {% elseif firewall_wan.destination_port_range_from == '1863' %}
-                                                                    1863 (MSN)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '119' %}
-                                                                    119 (NNTP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '123' %}
-                                                                    123 (NTP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '138' %}
-                                                                    138 (NetBIOS-DGM)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '137' %}
-                                                                    137 (NetBIOS-NS)
-                                                                {% elseif firewall_wan.destination_port_range_from == '139' %}
-                                                                    139 (NetBIOS-SSN)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '1194' %}
-                                                                    1194 (OpenVPN)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '110' %}
-                                                                    110 (POP3)
-                                                                {% elseif firewall_wan.destination_port_range_from == '995' %}
-                                                                    995 (POP3/S)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '1723' %}
-                                                                    1723 (PPTP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '1812' %}
-                                                                    1812 (RADIUS)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '1813' %}
-                                                                    1813 (RADIUS accounting)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '5004' %}
-                                                                    5004 (RTP) 
-                                                                {% elseif firewall_wan.destination_port_range_from == '5060' %}
-                                                                    5060 (SIP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '25' %}
-                                                                    25 (SMTP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '465' %}
-                                                                    465 (SMTP/S)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '161' %}
-                                                                    161 (SNMP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '162' %}
-                                                                    162 (SNMP-Trap)
-                                                                {% elseif firewall_wan.destination_port_range_from == '22' %}
-                                                                    22 (SSH)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '3478' %}
-                                                                    3478 (STUN)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '587' %}
-                                                                    587 (SUBMISSION)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '3544' %}
-                                                                    3544 (Teredo)
-                                                                {% elseif firewall_wan.destination_port_range_from == '23' %}
-                                                                    23 (Telnet)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '69' %}
-                                                                    69 (TFTP)  
-                                                                {% elseif firewall_wan.destination_port_range_from == '5900' %}
-                                                                    5900 (VNC)  
-                                                                {% else %}
-                                                                    {% if firewall_wan.destination_port_range_custom == firewall_wan.destination_port_range_custom_to %}
-                                                                        {{ firewall_wan.destination_port_range_custom }}
-                                                                    {% else %}
-                                                                        {{ firewall_wan.destination_port_range_custom }} - {{ firewall_wan.destination_port_range_custom_to }}
-                                                                    {% endif %}
-                                                                {% endif %}
-                                                            </td>
-                                                            <td>{{ firewall_wan.descripcion }}</td>
-                                                            {% if app.user.role == 'ROLE_SUPERUSE' or app.user.role == 'ROLE_ADMINISTRATO' %}
-                                                                <td>
-                                                                    <a href="{{ path('editarAcl',{id:firewall_wan.id}) }}">
-                                                                            <i class="fas fa-pencil-alt"></i>
-                                                                    </a>
-                                                                    <a href="{{ path('eliminarAcl',{id:firewall_wan.id}) }}">
-                                                                            <i class="fas fa-trash-alt"></i>
-                                                                    </a>
-                                                                </td>
-                                                            {% endif %}
-                                                        </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                            </table>
-                                            {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
-                                                <br>
-                                                <div class="card-header bg-dark text-white">Save the configuration</div>
-                                                <br>
-                                                <div class="panel-body text-center">
-                                                    When you click on save button you are saving the acl groups list. <br><br>
-                                                    <div class="form-group">
-                                                        {% if firewallWan == true %} 
-                                                            <a href="#">
-                                                            <button type="button" class="btn btn-success">
-                                                                <b>  In process <i class="fas fa-save"></i></b>
-                                                            </button>
-                                                        </a>
-                                                        {% endif %} 
-                                                    </div>
-                                                </div>
-                                            {% endif %}
+                                                {% endif %} 
+                                            </div>
                                         </div>
-                                    </div>
-                                {% endfor %}
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
