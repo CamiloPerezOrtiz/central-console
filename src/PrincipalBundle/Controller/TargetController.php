@@ -88,7 +88,7 @@ class TargetController extends Controller
 			'SELECT u.nombre
 				FROM PrincipalBundle:Target u
 				WHERE  u.nombre = :nombre
-				AND u.grupo = :grupo'
+				AND u.ubicacion = :grupo'
 		)->setParameter('nombre', $nombre)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;

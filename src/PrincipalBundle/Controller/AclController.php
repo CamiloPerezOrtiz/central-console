@@ -33,24 +33,15 @@ class AclController extends Controller
 		$grupo_plantel=$u->getGrupo();
 		if($form->isSubmitted() && $form->isValid())
 		{
-			#$ubicacion = $_REQUEST['ubicacion'];
 			$em = $this->getDoctrine()->getEntityManager();
 			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo_plantel);
 			if(count($verificarNombre)==0)
 			{
 				$acl->setGrupo($grupo_plantel);
 				$array_target_rule = $_POST['target_rule'];
-				if(count(array_unique($array_target_rule)) === 1)
-				{
-					$acl->setTargetRule("all [ all]");
-				 	$acl->setTargetRulesList("all [ all]");
-				}
-				else
-				{
 					$target_rule = implode(" ",$_POST['target_rule']);
 					$acl->setTargetRule($target_rule." all [ all]");
 					$acl->setTargetRulesList($target_rule);
-				}
 				$acl->setUbicacion($grupo);
 				$em->persist($acl);
 				$flush=$em->flush();
@@ -67,20 +58,8 @@ class AclController extends Controller
 				}
 			}
 			else
-				echo '<script> alert("The name of alias that you are trying to register already exists try again.");window.history.go(-1);</script>';
+				echo '<script> alert("The name of acl that you are trying to register already exists try again.");window.history.go(-1);</script>';
 		}
-		/*if(isset($_POST['solicitar']))
-		{
-			$ubicacion = $_POST['ubicacion'];
-			$target = $this->recuperarNombreTarget($ubicacion, $id);
-			return $this->render('@Principal/acl/registroAcl.html.twig', array(
-				'form'=>$form->createView(),
-				"target"=>$target,
-				'ipGrupos'=>$ipGrupos,
-				'ubicacion'=>$ubicacion
-			));
-		}*/
-		//$ubicacion = $_POST['ubicacion'];
 		$target = $this->recuperarNombreTarget($grupo, $grupo_plantel);
 		return $this->render('@Principal/acl/registroAcl.html.twig', array(
 			'form'=>$form->createView(),
@@ -98,7 +77,7 @@ class AclController extends Controller
 			'SELECT u.nombre
 				FROM PrincipalBundle:Acl u
 				WHERE  u.nombre = :nombre
-				AND u.grupo = :grupo'
+				AND u.ubicacion = :grupo'
 		)->setParameter('nombre', $nombre)->setParameter('grupo', $grupo);
 		$datos = $query->getResult();
 		return $datos;
@@ -260,17 +239,9 @@ class AclController extends Controller
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$array_target_rule = $_POST['target_rule'];
-			if(count(array_unique($array_target_rule)) === 1)
-			{
-				$acl->setTargetRule("all [ all]");
-			 	$acl->setTargetRulesList("all [ all]");
-			}
-			else
-			{
-				$target_rule = implode(" ",$_POST['target_rule']);
-				$acl->setTargetRule($target_rule." all [ all]");
-				$acl->setTargetRulesList($target_rule);
-			}
+			$target_rule = implode(" ",$_POST['target_rule']);
+			$acl->setTargetRule($target_rule." all [ all]");
+			$acl->setTargetRulesList($target_rule);
 			$em->persist($acl);
 			$flush=$em->flush();
 			return $this->redirectToRoute("gruposAcl");

@@ -721,21 +721,21 @@
                                                             {% endif %}
                                                         </td>
                                                         <td>
-                                                            {% if natOTO.internal_ip_type == 'any' %}
+                                                            {% if natOTO.destination_type == 'any' %}
                                                                 {% if natOTO.destination == true %}
                                                                     !*
                                                                 {% else %}
                                                                     *
                                                                 {% endif %}
                                                             {% endif %}
-                                                            {% if natOTO.internal_ip_type == 'single' %}
+                                                            {% if natOTO.destination_type == 'single' %}
                                                                 {% if natOTO.destination == true %}
                                                                     !{{ natOTO.destination_adress_mask }}
                                                                 {% else %}
                                                                     {{ natOTO.destination_adress_mask }}
                                                                 {% endif %}
                                                             {% endif %}
-                                                            {% if natOTO.internal_ip_type == 'network' %}
+                                                            {% if natOTO.destination_type == 'network' %}
                                                                 {% if natOTO.maskdestination == 32 %}
                                                                     {% if natOTO.internal_ip == true %}
                                                                         !{{ natOTO.destination_adress_mask }}
@@ -750,48 +750,85 @@
                                                                     {% endif %}
                                                                 {% endif %}
                                                             {% endif %}
-                                                            {% if natOTO.internal_ip_type == 'pppoe' %}
+                                                            {% if natOTO.destination_type == 'pppoe' %}
                                                                 {% if natOTO.destination == true %}
                                                                     !PPPoE clients
                                                                 {% else %}
                                                                     PPPoE clients
                                                                 {% endif %}
                                                             {% endif %}
-                                                            {% if natOTO.internal_ip_type == 'l2tp' %}
+                                                            {% if natOTO.destination_type == 'l2tp' %}
                                                                 {% if natOTO.destination == true %}
                                                                     !L2TP clients
                                                                 {% else %}
                                                                     L2TP clients
                                                                 {% endif %}
                                                             {% endif %}
-                                                            {% if natOTO.internal_ip_type == 'wan' %}
+                                                            {% if natOTO.destination_type == 'wan' %}
                                                                 {% if natOTO.destination == true %}
                                                                     !WAN net
                                                                 {% else %}
                                                                     WAN net
                                                                 {% endif %}
                                                             {% endif %}
-                                                            {% if natOTO.internal_ip_type == 'wanip' %}
+                                                            {% if natOTO.destination_type == 'wanip' %}
                                                                 {% if natOTO.destination == true %}
                                                                     !WAN address
                                                                 {% else %}
                                                                     WAN address
                                                                 {% endif %}
                                                             {% endif %}
-                                                            {% if natOTO.internal_ip_type == 'lan' %}
+                                                            {% if natOTO.destination_type == 'lan' %}
                                                                 {% if natOTO.destination == true %}
                                                                     !LAN net
                                                                 {% else %}
                                                                     LAN net
                                                                 {% endif %}
                                                             {% endif %}
-                                                            {% if natOTO.internal_ip_type == 'lanip' %}
+                                                            {% if natOTO.destination_type == 'lanip' %}
                                                                 {% if natOTO.destination == true %}
                                                                     !LAN address
                                                                 {% else %}
                                                                     LAN address
                                                                 {% endif %}
+                                                            {% elseif natOTO.destination_type == "opt1" %}
+                                                                {% if natOTO.internal_ip == true %}
+                                                                    !OPT1 net
+                                                                {% else %} 
+                                                                    OPT1 net
+                                                                {% endif %}  
+                                                            {% elseif natOTO.destination_type == "opt1ip" %}
+                                                                {% if natOTO.internal_ip == true %}
+                                                                    !OPT1IP address
+                                                                {% else %} 
+                                                                    OPT1IP address
+                                                                {% endif %}  
+                                                            {% elseif natOTO.destination_type == "opt2" %}
+                                                                {% if natOTO.internal_ip == true %}
+                                                                    !OPT2 net
+                                                                {% else %} 
+                                                                    OPT2 net
+                                                                {% endif %} 
+                                                            {% elseif natOTO.destination_type == "opt2ip" %}
+                                                                {% if natOTO.internal_ip == true %}
+                                                                    !OPT2IP address
+                                                                {% else %} 
+                                                                    OPT2IP address
+                                                                {% endif %} 
+                                                            {% elseif natOTO.destination_type == "opt3" %}
+                                                                {% if natOTO.internal_ip == true %}
+                                                                    !OPT3 net
+                                                                {% else %} 
+                                                                    OPT3 net
+                                                                {% endif %}
+                                                            {% elseif natOTO.destination_type == "opt3ip" %}
+                                                                {% if natOTO.internal_ip == true %}
+                                                                    !OPT3IP address
+                                                                {% else %} 
+                                                                    OPT3IP address
+                                                                {% endif %}
                                                             {% endif %}
+
                                                         </td>
                                                         <td>
                                                             {{ natOTO.descripcion }}

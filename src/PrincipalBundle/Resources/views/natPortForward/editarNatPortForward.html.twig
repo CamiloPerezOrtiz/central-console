@@ -12,7 +12,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            Register nat port forward
+                            Edit NAT port forward
                         </div>
                         <div class="panel-body small">
                             <div class="form-row">
@@ -36,8 +36,13 @@
                                         Choose which interface this rule applies to. In most cases "WAN" is specified.
                                     </small><br><br>
                                     <select class="form-control input-sm" name="interface" id="interface">
-                                        <option value="wan">WAN</option>
-                                        <option value="lan">LAN</option>
+                                        {% for interface in interfaces_equipo %}
+                                            <option value="{{ interface.tipo }}" 
+                                                {% for obtener_interfaz in obtener_datos_nat_port_forward %}
+                                                    {% if interface.tipo == obtener_interfaz.interface %} selected {% endif %}
+                                                {% endfor %}
+                                            >{{ interface.nombre }}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                                 <hr>
@@ -63,18 +68,40 @@
                                             {{ form_widget(form.sourceAdvancedInvertMatch) }} <br><small>Invert match.</small>
                                         </div>
                                         <div class="col-sm-4">
-                                            {{ form_widget(form.sourceAdvancedType, { 'id': 'sourceAdvancedType' }) }}
+                                            <select class="form-control input-sm" id="sourceAdvancedType" name="sourceAdvancedType">
+                                                {% for obtener_source_type in obtener_datos_nat_port_forward %}
+                                                    <option value="any" 
+                                                        {% if obtener_source_type.source_advanced_type == "any" %} selected {% endif %} 
+                                                    >Any</option>
+                                                    <option value="single" 
+                                                        {% if obtener_source_type.source_advanced_type == "single" %} selected {% endif %} 
+                                                    >Single host or alias</option>
+                                                    <option value="network" 
+                                                        {% if obtener_source_type.source_advanced_type == "network" %} selected {% endif %} 
+                                                    >Network</option>
+                                                    <option value="pppoe" 
+                                                        {% if obtener_source_type.source_advanced_type == "pppoe" %} selected {% endif %} 
+                                                    >PPPoE clients</option>
+                                                    <option value="l2tp" 
+                                                        {% if obtener_source_type.source_advanced_type == "l2tp" %} selected {% endif %} 
+                                                    >L2TP clients</option>
+                                                    {% for interface in interfaces_equipo %}
+                                                        <option value="{{ interface.tipo }}" 
+                                                            {% if obtener_source_type.source_advanced_type == interface.tipo %} selected {% endif %} 
+                                                        >{{ interface.nombre }} net</option>
+                                                        <option value="{{ interface.tipo }}ip" 
+                                                            {% if obtener_source_type.source_advanced_type == interface.tipo~"ip" %} selected {% endif %} 
+                                                        >{{ interface.nombre }} address</option>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            </select>
                                             <span class="help-block">Type</span>
                                         </div>
                                         <div class="col-sm-5">
                                             <div class="input-group">
                                                 {{ form_widget(form.sourceAdvancedAdressMask, { 'id': 'sourceAdvancedAdressMask' }) }}
                                                 <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                                <select class="form-control input-sm" name="mask" id="mask"> 
-                                                    {% for i in 32..1 %}
-                                                        <option value="{{ i }}">{{ i }}</option>
-                                                    {% endfor %}
-                                                </select>
+                                                {{ form_widget(form.sourceAdvancedAdressMask1, { 'id': 'mask' }) }}
                                             </div>
                                             <span class="help-block">Address/mask</span>
                                         </div>
@@ -130,7 +157,36 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">   
-                                            {{ form_widget(form.destinationType, { 'id': 'destinationType' }) }}
+                                            <select class="form-control input-sm" id="destinationType" name="destinationType">
+                                                {% for obtener_destination_type in obtener_datos_nat_port_forward %}
+                                                    <option value="any" 
+                                                        {% if obtener_destination_type.destination_type  == "any" %} selected {% endif %} 
+                                                    >Any</option>
+                                                    <option value="single" 
+                                                        {% if obtener_destination_type.destination_type  == "single" %} selected {% endif %} 
+                                                    >Single host or alias</option>
+                                                    <option value="network" 
+                                                        {% if obtener_destination_type.destination_type  == "network" %} selected {% endif %} 
+                                                    >Network</option>
+                                                    <option value="(self)" 
+                                                        {% if obtener_destination_type.destination_type  == "(self)" %} selected {% endif %} 
+                                                    >This firewall (self)</option>
+                                                    <option value="pppoe" 
+                                                        {% if obtener_destination_type.destination_type  == "pppoe" %} selected {% endif %} 
+                                                    >PPPoE clients</option>
+                                                    <option value="l2tp" 
+                                                        {% if obtener_destination_type.destination_type  == "l2tp" %} selected {% endif %} 
+                                                    >L2TP clients</option>
+                                                    {% for interface in interfaces_equipo %}
+                                                        <option value="{{ interface.tipo }}" 
+                                                            {% if obtener_destination_type.destination_type  == interface.tipo %} selected {% endif %} 
+                                                        >{{ interface.nombre }} net</option>
+                                                        <option value="{{ interface.tipo }}ip" 
+                                                            {% if obtener_destination_type.destination_type  == interface.tipo~"ip" %} selected {% endif %} 
+                                                        >{{ interface.nombre }} address</option>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            </select>
                                             <span class="help-block">Type</span>
                                         </div>
                                     </div>
@@ -138,11 +194,7 @@
                                         <div class="input-group">
                                             {{ form_widget(form.destinationAdressMask, { 'id': 'destinationAdressMask' }) }}
                                             <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                            <select class="form-control input-sm" name="maskDestination" id="maskDestination"> 
-                                                {% for i in 32..1 %}
-                                                    <option value="{{ i }}">{{ i }}</option>
-                                                {% endfor %}
-                                            </select>
+                                            {{ form_widget(form.destinationAdressMask2, { 'id': 'maskDestination' }) }}
                                         </div>
                                         <span class="help-block">Address/mask</span>
                                     </div>
@@ -331,6 +383,30 @@
                     $("#sourceAdvancedAdressMask").hide();
                     $("#mask").hide();
                 break;
+                case "opt1":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt1ip":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt2":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt2ip":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt3":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt3ip":
+                    $("#sourceAdvancedAdressMask").hide();
+                    $("#mask").hide();
+                break;
             }
         }).change();
     });
@@ -409,6 +485,10 @@
                     $("#destinationAdressMask").show();
                     $("#maskDestination").show();
                 break;
+                case "(self)":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
                 case "pppoe":
                     $("#destinationAdressMask").hide();
                     $("#maskDestination").hide();
@@ -430,6 +510,30 @@
                     $("#maskDestination").hide();
                 break;
                 case "lanip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt1":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt1ip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt2":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt2ip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt3":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt3ip":
                     $("#destinationAdressMask").hide();
                     $("#maskDestination").hide();
                 break;

@@ -189,6 +189,20 @@ class FirewallLan
      */
     private $ubicacion;
 
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="source_advanced_adress_mask1", type="integer", nullable=true)
+     */
+    private $sourceAdvancedAdressMask1;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="destination_adress_mask2", type="integer")
+     */
+    private $destinationAdressMask2;
+
 
     /**
      * Get id
@@ -774,6 +788,54 @@ class FirewallLan
     public function getUbicacion()
     {
         return $this->ubicacion;
+    }
+
+    /**
+     * Set sourceAdvancedAdressMask1
+     *
+     * @param string $sourceAdvancedAdressMask1
+     *
+     * @return FirewallLan
+     */
+    public function setSourceAdvancedAdressMask1($sourceAdvancedAdressMask1)
+    {
+        $this->sourceAdvancedAdressMask1 = $sourceAdvancedAdressMask1;
+
+        return $this;
+    }
+
+    /**
+     * Get sourceAdvancedAdressMask1
+     *
+     * @return string
+     */
+    public function getSourceAdvancedAdressMask1()
+    {
+        return $this->sourceAdvancedAdressMask1;
+    }
+
+    /**
+     * Set destinationAdressMask2
+     *
+     * @param string $destinationAdressMask2
+     *
+     * @return firewallLan
+     */
+    public function setDestinationAdressMask2($destinationAdressMask2)
+    {
+        $this->destinationAdressMask2 = $destinationAdressMask2;
+
+        return $this;
+    }
+
+    /**
+     * Get destinationAdressMask2
+     *
+     * @return int
+     */
+    public function getDestinationAdressMask2()
+    {
+        return $this->destinationAdressMask2;
     }
 }
 

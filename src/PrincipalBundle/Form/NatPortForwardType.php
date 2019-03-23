@@ -323,7 +323,7 @@ class NatPortForwardType extends AbstractType
             ))
             ->add('destinationRangeCustom',TextType::class,array(
                 "label"=>"Custom ",
-                "required"=>false,
+                "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control input-sm"
                 )
@@ -385,14 +385,14 @@ class NatPortForwardType extends AbstractType
             ))
             ->add('destinationRangeCustomToPort',TextType::class,array(
                 "label"=>"Custom ",
-                "required"=>false,
+                "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control input-sm"
                 )
             ))
             ->add('redirectTargetIp',TextType::class,array(
                 "label"=>"Redirect target IP ",
-                "required"=>false,
+                "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control input-sm"
                 )
@@ -454,7 +454,7 @@ class NatPortForwardType extends AbstractType
             ))
             ->add('redirectTargetPortCustom',TextType::class,array(
                 "label"=>"Custom",
-                "required"=>false,
+                "required"=>true,
                 "attr"=>array(
                     "class"=>"form-control input-sm"
                 )

@@ -28,24 +28,6 @@ class NatOneToOneEditType extends AbstractType
                 )
             ))
             ->add('internalIp')
-            ->add('internalIpType',ChoiceType::class, array(
-                "label"=>"Type ",
-                "required"=>true,
-                "attr"=>array(
-                    "class"=>"form-control input-sm"
-                ),
-                'choices' => array(
-                    'Any' => 'any',
-                    'Single host or alias' => 'single',
-                    'Network' => 'network',
-                    'L2TP' => 'l2tp',
-                    'PPPoE clients' => 'pppoe',
-                    'WAN net' => 'wan',
-                    'WAN address' => 'wanip',
-                    'LAN net' => 'lan',
-                    'LAN address' => 'lanip'
-                ),
-            ))
             ->add('internalAdressMask',TextType::class,array(
                 "label"=>"Address ",
                 "required"=>false,
@@ -53,31 +35,95 @@ class NatOneToOneEditType extends AbstractType
                     "class"=>"form-control input-sm"
                 )
             ))
-            ->add('destination')
-            ->add('destinationType',ChoiceType::class, array(
-                "label"=>"Type ",
-                "required"=>true,
+            ->add('maskinternal',ChoiceType::class, array(
+                "required"=>false,
                 "attr"=>array(
                     "class"=>"form-control input-sm"
                 ),
                 'choices' => array(
-                    'Any' => 'any',
-                    'Single host or alias' => 'single',
-                    'Network' => 'network',
-                    'L2TP' => 'l2tp',
-                    'PPPoE clients' => 'pppoe',
-                    'WAN' => 'wan',
-                    'WAN address' => 'wanip',
-                    'LAN' => 'lan',
-                    'LAN address' => 'lanip'
+                    '32' => '32',
+                    '31' => '31',
+                    '30' => '30',
+                    '29' => '29',
+                    '28' => '28',
+                    '27' => '27',
+                    '26' => '26',
+                    '25' => '25',
+                    '24' => '24',
+                    '23' => '23',
+                    '22' => '22',
+                    '21' => '21',
+                    '20' => '20',
+                    '19' => '19',
+                    '18' => '18',
+                    '17' => '17',
+                    '16' => '16',
+                    '15' => '15',
+                    '14' => '14',
+                    '13' => '13',
+                    '12' => '12',
+                    '11' => '11',
+                    '10' => '10',
+                    '9' => '9',
+                    '8' => '8',
+                    '7' => '7',
+                    '6' => '6',
+                    '5' => '5',
+                    '4' => '4',
+                    '3' => '3',
+                    '2' => '2',
+                    '1' => '1'
                 ),
+                'data' => '32'
             ))
+            ->add('destination')
             ->add('destinationAdressMask',TextType::class,array(
                 "label"=>"Address ",
                 "required"=>false,
                 "attr"=>array(
                     "class"=>"form-control input-sm"
                 )
+            ))
+            ->add('maskDestination',ChoiceType::class, array(
+                "required"=>false,
+                "attr"=>array(
+                    "class"=>"form-control input-sm"
+                ),
+                'choices' => array(
+                    '32' => '32',
+                    '31' => '31',
+                    '30' => '30',
+                    '29' => '29',
+                    '28' => '28',
+                    '27' => '27',
+                    '26' => '26',
+                    '25' => '25',
+                    '24' => '24',
+                    '23' => '23',
+                    '22' => '22',
+                    '21' => '21',
+                    '20' => '20',
+                    '19' => '19',
+                    '18' => '18',
+                    '17' => '17',
+                    '16' => '16',
+                    '15' => '15',
+                    '14' => '14',
+                    '13' => '13',
+                    '12' => '12',
+                    '11' => '11',
+                    '10' => '10',
+                    '9' => '9',
+                    '8' => '8',
+                    '7' => '7',
+                    '6' => '6',
+                    '5' => '5',
+                    '4' => '4',
+                    '3' => '3',
+                    '2' => '2',
+                    '1' => '1'
+                ),
+                'data' => '32'
             ))
             ->add('descripcion',TextType::class,array(
                 "label"=>"Description    ",

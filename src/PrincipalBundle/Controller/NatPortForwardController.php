@@ -54,7 +54,7 @@ class NatPortForwardController extends Controller
 				return $this->redirectToRoute("gruposNat");
 			}
 			else
-				echo '<script> alert("The name of alias that you are trying to register already exists try again.");window.history.go(-1);</script>';
+				echo '<script> alert("Problems with the server try later.");window.history.go(-1);</script>';
 		}
 		return $this->render('@Principal/natPortForward/registroNatPortForward.html.twig', array(
 			'form'=>$form->createView(),
@@ -213,35 +213,45 @@ class NatPortForwardController extends Controller
 		$form = $this->createForm(NatPortForwardEditType::class,$nat);
 		$u = $this->getUser();
 		$role=$u->getRole();
+		$ubicacion=$nat->getUbicacion();
 		$form->handleRequest($request);
+		$interfaces_equipo = $this->informacion_interfaces($ubicacion);
+		$obtener_datos_nat_port_forward = $this->obtener_datos_nat_port_forward($id);
 		if($form->isSubmitted() && $form->isValid())
 		{
+
 			$nat->setInterface($_POST['interface']);
+			$nat->setSourceAdvancedType($_POST['sourceAdvancedType']);
+			$nat->setDestinationType($_POST['destinationType']);
 			$em->persist($nat);
-			$mask = $_POST['mask'];
-			if($mask == "32")
-				$nat->setSourceAdvancedAdressMask($form->get("sourceAdvancedAdressMask")->getData());
-			elseif($mask <= "31")
-			{
-				$address = $form->get("sourceAdvancedAdressMask")->getData();
-				$adress_mask = $address . "/" . $mask; 
-				$nat->setSourceAdvancedAdressMask($adress_mask);
-			}
-			$maskDestination = $_POST['maskDestination'];
-			if($maskDestination == "32")
-				$nat->setdestinationAdressMask($form->get("destinationAdressMask")->getData());
-			elseif($maskDestination <= "31")
-			{
-				$address = $form->get("destinationAdressMask")->getData();
-				$adress_mask = $address . "/" . $maskDestination; 
-				$nat->setdestinationAdressMask($adress_mask);
-			}
 			$flush=$em->flush();
+			if($flush == null)
+			{
+				$estatus="Successfully update.";
+				$this->session->getFlashBag()->add("estatus",$estatus);
+				return $this->redirectToRoute("gruposNat");
+			}
+			else
+				echo '<script> alert("Problems with the server try later.");window.history.go(-1);</script>';
 			return $this->redirectToRoute("gruposNat");
 		}
 		return $this->render('@Principal/natPortForward/editarNatPortForward.html.twig', array(
-			'form'=>$form->createView()
+			'form'=>$form->createView(),
+			'interfaces_equipo'=>$interfaces_equipo,
+			'obtener_datos_nat_port_forward'=>$obtener_datos_nat_port_forward
 		));
+	}
+
+	private function obtener_datos_nat_port_forward($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$db = $em->getConnection();
+		$query = "SELECT interface, source_advanced_type, destination_type FROM nat_port_forward WHERE id = '$id'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$interface=$stmt->fetchAll();
+		return $interface;
 	}
 
 	# Funcion para eliminar un target #
@@ -318,16 +328,35 @@ class NatPortForwardController extends Controller
 		$u = $this->getUser();
 		$role=$u->getRole();
 		$form->handleRequest($request);
+		$ubicacion=$nat->getUbicacion();
+		$interfaces_equipo = $this->informacion_interfaces($ubicacion);
+		$obtener_datos_nat_one_to_one = $this->obtener_datos_nat_one_to_one($id);
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$nat->setInterface($_POST['interface']);
+			$nat->setInternalIpType($_POST['internalIpType']);
+			$nat->setDestinationType($_POST['destinationType']);
 			$em->persist($nat);
 			$flush=$em->flush();
 			return $this->redirectToRoute("gruposNat");
 		}
 		return $this->render('@Principal/natPortForward/editarNatOneToOne.html.twig', array(
-			'form'=>$form->createView()
+			'form'=>$form->createView(),
+			'interfaces_equipo'=>$interfaces_equipo,
+			'obtener_datos_nat_one_to_one'=>$obtener_datos_nat_one_to_one
 		));
+	}
+
+	private function obtener_datos_nat_one_to_one($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$db = $em->getConnection();
+		$query = "SELECT interface, internal_ip_type, destination_type FROM nat_one_to_one WHERE id = '$id'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$interface=$stmt->fetchAll();
+		return $interface;
 	}
 
 	# Funcion para eliminar un target #
@@ -383,10 +412,12 @@ class NatPortForwardController extends Controller
 						if($nat['source_advanced_type'] === "single")
 							$contenido .= "\t\t\t\t<address>" . $nat['source_advanced_adress_mask'] . "</address>\n";
 						if($nat['source_advanced_type'] === "network")
+						{
 							if ($nat['source_advanced_adress_mask1'] == 32) 
 								$contenido .= "\t\t\t\t<network>" . $nat['source_advanced_adress_mask'] . "</network>\n";
 							else
 								$contenido .= "\t\t\t\t<network>" . $nat['source_advanced_adress_mask'] . "/" . $nat['source_advanced_adress_mask1'] . "</network>\n";
+						}
 						if($nat['source_advanced_type'] === "pppoe")
 							$contenido .= "\t\t\t\t<network>pppoe</network>\n";
 						if($nat['source_advanced_type'] === "l2tp")
@@ -521,10 +552,12 @@ class NatPortForwardController extends Controller
 						if($nat['destination_type'] === "(self)")
 							$contenido .= "\t\t\t\t<address>" . $nat['destination_type'] . "</address>\n";
 						if($nat['destination_type'] === "network")
+						{
 							if ($nat['destination_adress_mask2'] == 32) 
 								$contenido .= "\t\t\t\t<network>" . $nat['destination_adress_mask'] . "</network>\n";
 							else
 								$contenido .= "\t\t\t\t<network>" . $nat['destination_adress_mask'] . "/" . $nat['destination_adress_mask2'] . "</network>\n";
+						}
 						if($nat['destination_type'] === "pppoe")
 							$contenido .= "\t\t\t\t<network>pppoe</network>\n";
 						if($nat['destination_type'] === "l2tp")
@@ -696,7 +729,12 @@ class NatPortForwardController extends Controller
 						if($natone['internal_ip_type'] === "single")
 							$contenido .= "\t\t\t\t<address>" . $natone['internal_adress_mask'] . "</address>\n";
 						if($natone['internal_ip_type'] === "network")
-							$contenido .= "\t\t\t\t<address>" . $natone['internal_adress_mask'] . "</address>\n";
+						{
+							if ($natone['maskinternal'] == 32) 
+								$contenido .= "\t\t\t\t<address>" . $natone['internal_adress_mask'] . "</address>\n";
+							else
+								$contenido .= "\t\t\t\t<address>" . $natone['internal_adress_mask'] . "/" . $natone['maskinternal'] . "</address>\n";
+						}
 						if($natone['internal_ip_type'] === "pppoe")
 							$contenido .= "\t\t\t\t<network>pppoe</network>\n";
 						if($natone['internal_ip_type'] === "l2tp")
@@ -709,6 +747,18 @@ class NatPortForwardController extends Controller
 							$contenido .= "\t\t\t\t<network>lan</network>\n";
 						if($natone['internal_ip_type'] === "lanip")
 							$contenido .= "\t\t\t\t<network>lanip</network>\n";
+						if($natone['internal_ip_type'] === "opt1")
+							$contenido .= "\t\t\t\t<network>opt1</network>\n";
+						if($natone['internal_ip_type'] === "opt1ip")
+							$contenido .= "\t\t\t\t<network>opt1ip</network>\n";
+						if($natone['internal_ip_type'] === "opt2")
+							$contenido .= "\t\t\t\t<network>opt2</network>\n";
+						if($natone['internal_ip_type'] === "opt2ip")
+							$contenido .= "\t\t\t\t<network>opt2ip</network>\n";
+						if($natone['internal_ip_type'] === "opt3")
+							$contenido .= "\t\t\t\t<network>opt3</network>\n";
+						if($natone['internal_ip_type'] === "opt3ip")
+							$contenido .= "\t\t\t\t<network>opt3ip</network>\n";
 						# Not Invert the sense of the match #
 						if($natone['internal_ip'] === true)
 							$contenido .= "\t\t\t\t<not></not>\n";
@@ -721,7 +771,12 @@ class NatPortForwardController extends Controller
 						if($natone['destination_type'] === "single")
 							$contenido .= "\t\t\t\t<address>" . $natone['destination_adress_mask'] . "</address>\n";
 						if($natone['destination_type'] === "network")
-							$contenido .= "\t\t\t\t<address>" . $natone['destination_adress_mask'] . "</address>\n";
+						{
+							if ($natone['maskdestination'] == 32) 
+								$contenido .= "\t\t\t\t<address>" . $natone['destination_adress_mask'] . "</address>\n";
+							else
+								$contenido .= "\t\t\t\t<address>" . $natone['destination_adress_mask'] . "/" . $natone['maskdestination'] . "</address>\n";
+						}
 						if($natone['destination_type'] === "pppoe")
 							$contenido .= "\t\t\t\t<network>pppoe</network>\n";
 						if($natone['destination_type'] === "l2tp")
@@ -734,6 +789,18 @@ class NatPortForwardController extends Controller
 							$contenido .= "\t\t\t\t<network>lan</network>\n";
 						if($natone['destination_type'] === "lanip")
 							$contenido .= "\t\t\t\t<network>lanip</network>\n";
+						if($natone['destination_type'] === "opt1")
+							$contenido .= "\t\t\t\t<network>opt1</network>\n";
+						if($natone['destination_type'] === "opt1ip")
+							$contenido .= "\t\t\t\t<network>opt1ip</network>\n";
+						if($natone['destination_type'] === "opt2")
+							$contenido .= "\t\t\t\t<network>opt2</network>\n";
+						if($natone['destination_type'] === "opt2ip")
+							$contenido .= "\t\t\t\t<network>opt2ip</network>\n";
+						if($natone['destination_type'] === "opt3")
+							$contenido .= "\t\t\t\t<network>opt3</network>\n";
+						if($natone['destination_type'] === "opt3ip")
+							$contenido .= "\t\t\t\t<network>opt3ip</network>\n";
 						# Not Invert the sense of the match #
 						if($natone['destination'] === true)
 							$contenido .= "\t\t\t\t<not></not>\n";

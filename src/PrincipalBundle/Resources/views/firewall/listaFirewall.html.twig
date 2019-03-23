@@ -44,7 +44,7 @@
                                                 <th>Destination</th>
                                                 <th>Port</th>
                                                 <th>Description</th>
-                                                {% if app.user.role == 'ROLE_SUPERUSE' or app.user.role == 'ROLE_ADMINISTRATO' %}
+                                                {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                     <th>Operations</th>
                                                 {% endif %}                                 
                                             </tr>
@@ -73,6 +73,18 @@
                                                             LAN net
                                                         {% elseif firewall_wan.source_type == "lanip" %}
                                                             LAN address
+                                                        {% elseif firewall_wan.source_type == "opt1" %}
+                                                            OPT1 net
+                                                        {% elseif firewall_wan.source_type == "opt1ip" %}
+                                                            OPT1 address
+                                                        {% elseif firewall_wan.source_type == "opt2" %}
+                                                            OPT2 net
+                                                        {% elseif firewall_wan.source_type == "opt2ip" %}
+                                                            OPT2 address
+                                                        {% elseif firewall_wan.source_type == "opt3" %}
+                                                            OPT3 net
+                                                        {% elseif firewall_wan.source_type == "opt3ip" %}
+                                                            OPT3 address
                                                         {% else %} 
                                                             {{ firewall_wan.source_type }} 
                                                         {% endif %}
@@ -191,6 +203,18 @@
                                                             LAN net
                                                         {% elseif firewall_wan.destination_type == "lanip" %}
                                                             LAN address
+                                                        {% elseif firewall_wan.destination_type == "opt1" %}
+                                                            OPT1 net
+                                                        {% elseif firewall_wan.destination_type == "opt1ip" %}
+                                                            OPT1 address
+                                                        {% elseif firewall_wan.destination_type == "opt2" %}
+                                                            OPT2 net
+                                                        {% elseif firewall_wan.destination_type == "opt2ip" %}
+                                                            OPT2 address
+                                                        {% elseif firewall_wan.destination_type == "opt3" %}
+                                                            OPT3 net
+                                                        {% elseif firewall_wan.destination_type == "opt3ip" %}
+                                                            OPT3 address
                                                         {% elseif firewall_wan.destination_type == "(self)" %}
                                                             This Firewall
                                                         {% else %} 
@@ -295,12 +319,12 @@
                                                         {% endif %}
                                                     </td>
                                                     <td>{{ firewall_wan.descripcion }}</td>
-                                                    {% if app.user.role == 'ROLE_SUPERUSE' or app.user.role == 'ROLE_ADMINISTRATO' %}
+                                                    {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                         <td>
-                                                            <a href="{{ path('editarAcl',{id:firewall_wan.id}) }}">
+                                                            <a href="{{ path('editarFirewallWan',{id:firewall_wan.id}) }}">
                                                                     <i class="fas fa-pencil-alt"></i>
                                                             </a>
-                                                            <a href="{{ path('eliminarAcl',{id:firewall_wan.id}) }}">
+                                                            <a href="{{ path('eliminarFirewallWan',{id:firewall_wan.id}) }}">
                                                                     <i class="fas fa-trash-alt"></i>
                                                             </a>
                                                         </td>
@@ -317,9 +341,9 @@
                                             When you click on save button you are saving the acl groups list. <br><br>
                                             <div class="form-group">
                                                 {% if firewallWan == true %} 
-                                                    <a href="{{path('crearXMLFirewall',{id:nat[0]['grupo']})}}">
+                                                    <a href="{{path('crearXMLFirewall',{id:firewallWan[0]['grupo']})}}">
                                                     <button type="button" class="btn btn-success">
-                                                        <b>  In process <i class="fas fa-save"></i></b>
+                                                       <b>  Save rules list <i class="fas fa-save"></i></b>
                                                     </button>
                                                 </a>
                                                 {% endif %} 

@@ -12,7 +12,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            Edit nat one to one
+                            Register NAT one to one
                         </div>
                         <div class="panel-body small">
                             <div class="form-row">
@@ -35,10 +35,15 @@
                                     <small class="blockquote-footer">
                                         Choose which interface this rule applies to. In most cases "WAN" is specified.
                                     </small>
-                                    <select class="form-control input-sm" name="interface">
-                                        <option value="wan">WAN</option>
-                                        <option value="lan">LAN</option>
-                                    </select>  
+                                    <select class="form-control input-sm" name="interface" id="interface">
+                                        {% for interface in interfaces_equipo %}
+                                            <option value="{{ interface.tipo }}"
+                                                {% for obtener_interfaz in obtener_datos_nat_one_to_one %}
+                                                    {% if interface.tipo == obtener_interfaz.interface %} selected {% endif %}
+                                                {% endfor %}
+                                            >{{ interface.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                 <hr>
                                 <div class="form-group">   
@@ -62,8 +67,34 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="form-group">   
-                                            {{ form_widget(form.internalIpType, { 'id': 'internalIpType' }) }}
+                                        <div class="form-group">
+                                            <select class="form-control input-sm" id="internalIpType" name="internalIpType">
+                                                {% for obtener_internal_ip_type in obtener_datos_nat_one_to_one %}
+                                                    <option value="any"
+                                                        {% if obtener_internal_ip_type.internal_ip_type == "any" %} selected {% endif %}
+                                                    >Any</option>
+                                                    <option value="single"
+                                                        {% if obtener_internal_ip_type.internal_ip_type == "single" %} selected {% endif %}
+                                                    >Single host</option>
+                                                    <option value="network"
+                                                        {% if obtener_internal_ip_type.internal_ip_type == "network" %} selected {% endif %}
+                                                    >Network</option>
+                                                    <option value="pppoe"
+                                                        {% if obtener_internal_ip_type.internal_ip_type == "pppoe" %} selected {% endif %}
+                                                    >PPPoE clients</option>
+                                                    <option value="l2tp"
+                                                        {% if obtener_internal_ip_type.internal_ip_type == "l2tp" %} selected {% endif %}
+                                                    >L2TP clients</option>
+                                                    {% for interface in interfaces_equipo %}
+                                                        <option value="{{ interface.tipo }}"
+                                                            {% if obtener_internal_ip_type.internal_ip_type == interface.tipo %} selected {% endif %}
+                                                        >{{ interface.nombre }} net</option>
+                                                        <option value="{{ interface.tipo }}ip"
+                                                            {% if obtener_internal_ip_type.internal_ip_type == interface.tipo~"ip" %} selected {% endif %}
+                                                        >{{ interface.nombre }} address</option>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            </select>
                                             <span class="help-block">Type</span>
                                         </div>
                                     </div>
@@ -71,11 +102,7 @@
                                         <div class="input-group">
                                             {{ form_widget(form.internalAdressMask, { 'id': 'internalAdressMask' }) }}
                                             <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                            <select class="form-control input-sm" name="maskInternal" id="maskInternal"> 
-                                                {% for i in 32..1 %}
-                                                    <option value="{{ i }}">{{ i }}</option>
-                                                {% endfor %}
-                                            </select>
+                                            {{ form_widget(form.maskinternal, { 'id': 'maskInternal' }) }}
                                         </div>
                                         <span class="help-block">Address/mask</span>
                                     </div>
@@ -102,8 +129,34 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-group">   
-                                        {{ form_widget(form.destinationType, { 'id': 'destinationType' }) }}
+                                    <div class="form-group">
+                                        <select class="form-control input-sm" id="destinationType" name="destinationType">
+                                            {% for obtener_destination_type in obtener_datos_nat_one_to_one %}
+                                                <option value="any"
+                                                    {% if obtener_destination_type.destination_type  == "any" %} selected {% endif %} 
+                                                >Any</option>
+                                                <option value="single"
+                                                    {% if obtener_destination_type.destination_type  == "single" %} selected {% endif %} 
+                                                >Single host or alias</option>
+                                                <option value="network"
+                                                    {% if obtener_destination_type.destination_type  == "network" %} selected {% endif %} 
+                                                >Network</option>
+                                                <option value="pppoe"
+                                                    {% if obtener_destination_type.destination_type  == "pppoe" %} selected {% endif %} 
+                                                >PPPoE clients</option>
+                                                <option value="l2tp"
+                                                    {% if obtener_destination_type.destination_type  == "l2tp" %} selected {% endif %} 
+                                                >L2TP clients</option>
+                                                {% for interface in interfaces_equipo %}
+                                                    <option value="{{ interface.tipo }}"
+                                                        {% if obtener_destination_type.destination_type  == interface.tipo %} selected {% endif %} 
+                                                    >{{ interface.nombre }}</option>
+                                                    <option value="{{ interface.tipo }}ip"
+                                                        {% if obtener_destination_type.destination_type  == interface.tipo~"ip" %} selected {% endif %} 
+                                                    >{{ interface.nombre }} address</option>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </select>
                                         <span class="help-block">Type</span>
                                     </div>
                                 </div>
@@ -111,11 +164,7 @@
                                     <div class="input-group">
                                         {{ form_widget(form.destinationAdressMask, { 'id': 'destinationAdressMask' }) }}
                                         <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                        <select class="form-control input-sm" name="maskDestination" id="maskDestination"> 
-                                            {% for i in 32..1 %}
-                                                <option value="{{ i }}">{{ i }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ form_widget(form.maskDestination, { 'id': 'maskDestination' }) }}
                                     </div>
                                     <span class="help-block">Address/mask</span>
                                 </div>
@@ -212,6 +261,30 @@
                     $("#internalAdressMask").hide();
                     $("#maskInternal").hide();
                 break;
+                case "opt1":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "opt1ip":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "opt2":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "opt2ip":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "opt3":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
+                case "opt3ip":
+                    $("#internalAdressMask").hide();
+                    $("#maskInternal").hide();
+                break;
             }
         }).change();
     });
@@ -257,6 +330,30 @@
                     $("#maskDestination").hide();
                 break;
                 case "lanip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt1":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt1ip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt2":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt2ip":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt3":
+                    $("#destinationAdressMask").hide();
+                    $("#maskDestination").hide();
+                break;
+                case "opt3ip":
                     $("#destinationAdressMask").hide();
                     $("#maskDestination").hide();
                 break;

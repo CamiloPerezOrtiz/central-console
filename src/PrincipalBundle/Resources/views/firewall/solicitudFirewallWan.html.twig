@@ -27,7 +27,7 @@
                                 <div class="form-group">
                                     <select class="form-control" name="interfaz">
                                         {% for interfaces in recuperar_interfaces %}
-                                            <option value="{{ interfaces.interfaz }}">{{ interfaces.nombre }}</option>
+                                            <option value="{{ interfaces.tipo }}">{{ interfaces.nombre }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>

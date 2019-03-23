@@ -216,6 +216,7 @@ CREATE TABLE firewall_lan(
 	source_invert_match BOOLEAN DEFAULT FALSE,
 	source_type VARCHAR(25) DEFAULT NULL,
 	source_addres_mask VARCHAR(20) DEFAULT NULL,
+	source_advanced_adress_mask1 INT DEFAULT NULL,
 	--hide advanced
 	source_port_range_from VARCHAR(20) DEFAULT NULL,
 	source_port_range_custom VARCHAR(25) DEFAULT NULL,
@@ -225,6 +226,7 @@ CREATE TABLE firewall_lan(
 	destination_invert_match BOOLEAN DEFAULT FALSE,
 	destination_type VARCHAR(25) DEFAULT NULL,
 	destination_addres_mask VARCHAR(20) DEFAULT NULL,
+	destination_adress_mask2 INT DEFAULT NULL,
 	destination_port_range_from VARCHAR(20) DEFAULT NULL,
 	destination_port_range_custom VARCHAR(25) DEFAULT NULL,
 	destination_port_range_to VARCHAR(20) DEFAULT NULL,

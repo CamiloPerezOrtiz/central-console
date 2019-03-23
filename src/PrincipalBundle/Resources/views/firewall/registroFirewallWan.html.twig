@@ -51,7 +51,7 @@
                                     </small><br><br>
                                     <select class="form-control input-sm" name="interface" id="interface">
                                         {% for interface in interfaces_equipo %}
-                                            <option value="{{ interface.interfaz }}">{{ interface.nombre }}</option>
+                                            <option value="{{ interface.tipo }}">{{ interface.nombre }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -125,17 +125,24 @@
                                     {{ form_widget(form.sourceInvertMatch) }}<br><small>Invert match.</small>
                                 </label>
                                 <div class="col-sm-4">
-                                    {{ form_widget(form.sourceType) }}
+                                    <select class="form-control input-sm" id="sourceAdvancedType" name="sourceAdvancedType">
+                                        <option value="any" selected>Any</option>
+                                        <option value="single">Single host or alias</option>
+                                        <option value="network">Network</option>
+                                        <option value="pppoe">PPPoE clients</option>
+                                        <option value="l2tp">L2TP clients</option>
+                                        {% for interface in interfaces_equipo %}
+                                            <option value="{{ interface.tipo }}">{{ interface.nombre }} net</option>
+                                            <option value="{{ interface.tipo }}ip">{{ interface.nombre }} address</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="help-block">Type</span>
                                 </div>
                                 <div class="col-sm-5">
                                     <div class="input-group">
                                         {{ form_widget(form.sourceAddresMask) }}
                                         <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                        <select class="form-control input-sm" name="mask" id="mask"> 
-                                            {% for i in 32..1 %}
-                                                <option value="{{ i }}">{{ i }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ form_widget(form.sourceAdvancedAdressMask1, { 'id': 'mask' }) }}
                                     </div>
                                 </div>
                             </div>
@@ -191,17 +198,27 @@
                                     {{ form_widget(form.destinationInvertMatch) }} <br><small>Invert match.</small>
                                 </label>
                                 <div class="col-sm-4">
-                                    {{ form_widget(form.destinationType) }}
+                                    <div class="form-group">   
+                                        <select class="form-control input-sm" id="destinationType" name="destinationType">
+                                            <option value="any" selected>Any</option>
+                                            <option value="single">Single host or alias</option>
+                                            <option value="network">Network</option>
+                                            <option value="(self)">This firewall (self)</option>
+                                            <option value="pppoe">PPPoE clients</option>
+                                            <option value="l2tp">L2TP clients</option>
+                                            {% for interface in interfaces_equipo %}
+                                                <option value="{{ interface.tipo }}">{{ interface.nombre }} net</option>
+                                                <option value="{{ interface.tipo }}ip">{{ interface.nombre }} address</option>
+                                            {% endfor %}
+                                        </select>
+                                        <span class="help-block">Type</span>
+                                    </div>
                                 </div>
                                 <div class="col-sm-5">
                                     <div class="input-group">
                                         {{ form_widget(form.destinationAddresMask) }}
                                         <span class="input-group-addon input-group-inbetween pfIpMask">/</span>
-                                        <select class="form-control input-sm" name="maskDestifirewall" id="maskDestifirewall"> 
-                                            {% for i in 32..1 %}
-                                                <option value="{{ i }}">{{ i }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ form_widget(form.destinationAdressMask2, { 'id': 'maskDestifirewall' }) }}
                                     </div>
                                 </div>
                             </div>
@@ -338,7 +355,7 @@
     // Source
     $(function() 
     {
-        $("#principalbundle_firewalllan_sourceType").on('change', function() 
+        $("#sourceAdvancedType").on('change', function() 
         {
             var selectValue = $(this).val();
             switch (selectValue) 
@@ -376,6 +393,30 @@
                     $("#mask").hide();
                 break;
                 case "lanip":
+                    $("#principalbundle_firewalllan_sourceAddresMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt1":
+                    $("#principalbundle_firewalllan_sourceAddresMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt1ip":
+                    $("#principalbundle_firewalllan_sourceAddresMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt2":
+                    $("#principalbundle_firewalllan_sourceAddresMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt2ip":
+                    $("#principalbundle_firewalllan_sourceAddresMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt3":
+                    $("#principalbundle_firewalllan_sourceAddresMask").hide();
+                    $("#mask").hide();
+                break;
+                case "opt3ip":
                     $("#principalbundle_firewalllan_sourceAddresMask").hide();
                     $("#mask").hide();
                 break;
@@ -438,7 +479,7 @@
     // Destination
     $(function() 
     {
-        $("#principalbundle_firewalllan_destinationType").on('change', function() 
+        $("#destinationType").on('change', function() 
         {
             var selectValue = $(this).val();
             switch (selectValue) 
@@ -476,6 +517,30 @@
                     $("#maskDestifirewall").hide();
                 break;
                 case "lanip":
+                    $("#principalbundle_firewalllan_destinationAddresMask").hide();
+                    $("#maskDestifirewall").hide();
+                break;
+                case "opt1":
+                    $("#principalbundle_firewalllan_destinationAddresMask").hide();
+                    $("#maskDestifirewall").hide();
+                break;
+                case "opt1ip":
+                    $("#principalbundle_firewalllan_destinationAddresMask").hide();
+                    $("#maskDestifirewall").hide();
+                break;
+                case "opt2":
+                    $("#principalbundle_firewalllan_destinationAddresMask").hide();
+                    $("#maskDestifirewall").hide();
+                break;
+                case "opt2ip":
+                    $("#principalbundle_firewalllan_destinationAddresMask").hide();
+                    $("#maskDestifirewall").hide();
+                break;
+                case "opt3":
+                    $("#principalbundle_firewalllan_destinationAddresMask").hide();
+                    $("#maskDestifirewall").hide();
+                break;
+                case "opt3ip":
                     $("#principalbundle_firewalllan_destinationAddresMask").hide();
                     $("#maskDestifirewall").hide();
                 break;
