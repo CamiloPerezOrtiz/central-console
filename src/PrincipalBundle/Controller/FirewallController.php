@@ -248,10 +248,10 @@ class FirewallController extends Controller
 			{
 				$recuperarTodoDatos = $this->datos_firewall($ips);
 				$contenido = "<?xml version='1.0'?>\n";
-				$contenido .= "\t<rule>\n";
+				$contenido .= "\t<filter>\n";
 				foreach ($recuperarTodoDatos as $firewall) 
 				{
-				    $contenido .= "\t\t<filter>\n";
+				    $contenido .= "\t\t<rule>\n";
 				    	$contenido .= "\t\t\t<id></id>\n";
 				    	# Action #
 				    	if($firewall['action'] === "pass")
@@ -347,96 +347,96 @@ class FirewallController extends Controller
 							}
 							if($firewall['source_port_range_from'] === "5999")
 								$contenido .= "\t\t\t\t<port>5999</port>\n";
-							if($formatos['source_port_range_from'] === "53")
+							if($firewall['source_port_range_from'] === "53")
 								$contenido .= "\t\t\t\t<port>53</port>\n";
-							if($formatos['source_port_range_from'] === "21")
+							if($firewall['source_port_range_from'] === "21")
 								$contenido .= "\t\t\t\t<port>21</port>\n";
-							if($formatos['source_port_range_from'] === "3000")
+							if($firewall['source_port_range_from'] === "3000")
 								$contenido .= "\t\t\t\t<port>3000</port>\n";
-							if($formatos['source_port_range_from'] === "80")
+							if($firewall['source_port_range_from'] === "80")
 								$contenido .= "\t\t\t\t<port>80</port>\n";
-							if($formatos['source_port_range_from'] === "443")
+							if($firewall['source_port_range_from'] === "443")
 								$contenido .= "\t\t\t\t<port>443</port>\n";
-							if($formatos['source_port_range_from'] === "5190")
+							if($firewall['source_port_range_from'] === "5190")
 								$contenido .= "\t\t\t\t<port>5190</port>\n";
-							if($formatos['source_port_range_from'] === "113")
+							if($firewall['source_port_range_from'] === "113")
 								$contenido .= "\t\t\t\t<port>113</port>\n";
-							if($formatos['source_port_range_from'] === "993")
+							if($firewall['source_port_range_from'] === "993")
 								$contenido .= "\t\t\t\t<port>993</port>\n";
-							if($formatos['source_port_range_from'] === "4500")
+							if($firewall['source_port_range_from'] === "4500")
 								$contenido .= "\t\t\t\t<port>4500</port>\n";
-							if($formatos['source_port_range_from'] === "500")
+							if($firewall['source_port_range_from'] === "500")
 								$contenido .= "\t\t\t\t<port>500</port>\n";
-							if($formatos['source_port_range_from'] === "1701")
+							if($firewall['source_port_range_from'] === "1701")
 								$contenido .= "\t\t\t\t<port>1701</port>\n";
-							if($formatos['source_port_range_from'] === "389")
+							if($firewall['source_port_range_from'] === "389")
 								$contenido .= "\t\t\t\t<port>389</port>\n";
-							if($formatos['source_port_range_from'] === "1755")
+							if($firewall['source_port_range_from'] === "1755")
 								$contenido .= "\t\t\t\t<port>1755</port>\n";
-							if($formatos['source_port_range_from'] === "7000")
+							if($firewall['source_port_range_from'] === "7000")
 								$contenido .= "\t\t\t\t<port>7000</port>\n";
-							if($formatos['source_port_range_from'] === "445")
+							if($firewall['source_port_range_from'] === "445")
 								$contenido .= "\t\t\t\t<port>445</port>\n";
-							if($formatos['source_port_range_from'] === "3389")
+							if($firewall['source_port_range_from'] === "3389")
 								$contenido .= "\t\t\t\t<port>3389</port>\n";
-							if($formatos['source_port_range_from'] === "1512")
+							if($firewall['source_port_range_from'] === "1512")
 								$contenido .= "\t\t\t\t<port>1512</port>\n";
-							if($formatos['source_port_range_from'] === "1863")
+							if($firewall['source_port_range_from'] === "1863")
 								$contenido .= "\t\t\t\t<port>1863</port>\n";
-							if($formatos['source_port_range_from'] === "119")
+							if($firewall['source_port_range_from'] === "119")
 								$contenido .= "\t\t\t\t<port>119</port>\n";
-							if($formatos['source_port_range_from'] === "123")
+							if($firewall['source_port_range_from'] === "123")
 								$contenido .= "\t\t\t\t<port>123</port>\n";
-							if($formatos['source_port_range_from'] === "138")
+							if($firewall['source_port_range_from'] === "138")
 								$contenido .= "\t\t\t\t<port>138</port>\n";
-							if($formatos['source_port_range_from'] === "137")
+							if($firewall['source_port_range_from'] === "137")
 								$contenido .= "\t\t\t\t<port>137</port>\n";
-							if($formatos['source_port_range_from'] === "139")
+							if($firewall['source_port_range_from'] === "139")
 								$contenido .= "\t\t\t\t<port>139</port>\n";
-							if($formatos['source_port_range_from'] === "1194")
+							if($firewall['source_port_range_from'] === "1194")
 								$contenido .= "\t\t\t\t<port>1194</port>\n";
-							if($formatos['source_port_range_from'] === "110")
+							if($firewall['source_port_range_from'] === "110")
 								$contenido .= "\t\t\t\t<port>110</port>\n";
-							if($formatos['source_port_range_from'] === "995")
+							if($firewall['source_port_range_from'] === "995")
 								$contenido .= "\t\t\t\t<port>995</port>\n";
-							if($formatos['source_port_range_from'] === "1723")
+							if($firewall['source_port_range_from'] === "1723")
 								$contenido .= "\t\t\t\t<port>1723</port>\n";
-							if($formatos['source_port_range_from'] === "1812")
+							if($firewall['source_port_range_from'] === "1812")
 								$contenido .= "\t\t\t\t<port>1812</port>\n";
-							if($formatos['source_port_range_from'] === "1813")
+							if($firewall['source_port_range_from'] === "1813")
 								$contenido .= "\t\t\t\t<port>1813</port>\n";
-							if($formatos['source_port_range_from'] === "5004")
+							if($firewall['source_port_range_from'] === "5004")
 								$contenido .= "\t\t\t\t<port>5004</port>\n";
-							if($formatos['source_port_range_from'] === "5060")
+							if($firewall['source_port_range_from'] === "5060")
 								$contenido .= "\t\t\t\t<port>5060</port>\n";
-							if($formatos['source_port_range_from'] === "25")
+							if($firewall['source_port_range_from'] === "25")
 								$contenido .= "\t\t\t\t<port>25</port>\n";
-							if($formatos['source_port_range_from'] === "465")
+							if($firewall['source_port_range_from'] === "465")
 								$contenido .= "\t\t\t\t<port>465</port>\n";
-							if($formatos['source_port_range_from'] === "161")
+							if($firewall['source_port_range_from'] === "161")
 								$contenido .= "\t\t\t\t<port>161</port>\n";
-							if($formatos['source_port_range_from'] === "162")
+							if($firewall['source_port_range_from'] === "162")
 								$contenido .= "\t\t\t\t<port>162</port>\n";
-							if($formatos['source_port_range_from'] === "22")
+							if($firewall['source_port_range_from'] === "22")
 								$contenido .= "\t\t\t\t<port>22</port>\n";
-							if($formatos['source_port_range_from'] === "3478")
+							if($firewall['source_port_range_from'] === "3478")
 								$contenido .= "\t\t\t\t<port>3278</port>\n";
-							if($formatos['source_port_range_from'] === "587")
+							if($firewall['source_port_range_from'] === "587")
 								$contenido .= "\t\t\t\t<port>587</port>\n";
-							if($formatos['source_port_range_from'] === "3544")
+							if($firewall['source_port_range_from'] === "3544")
 								$contenido .= "\t\t\t\t<port>3544</port>\n";
-							if($formatos['source_port_range_from'] === "23")
+							if($firewall['source_port_range_from'] === "23")
 								$contenido .= "\t\t\t\t<port>23</port>\n";
-							if($formatos['source_port_range_from'] === "69")
+							if($firewall['source_port_range_from'] === "69")
 								$contenido .= "\t\t\t\t<port>69</port>\n";
-							if($formatos['source_port_range_from'] === "5900")
+							if($firewall['source_port_range_from'] === "5900")
 								$contenido .= "\t\t\t\t<port>5900</port>\n";
-						$contenido .= "\t\t</source>\n";
+						$contenido .= "\t\t\t</source>\n";
 						$contenido .= "\t\t\t<destination>\n";
 							if($firewall['destination_type'] === "any")
 								$contenido .= "\t\t\t\t<any></any>\n";
 							if($firewall['destination_type'] === "single")
-								$contenido .= "\t\t\t\t<address>" . $formatos['destination_addres_mask'] . "</address>\n";
+								$contenido .= "\t\t\t\t<address>" . $firewall['destination_addres_mask'] . "</address>\n";
 							if($firewall['destination_type'] === "single")
 							{
 								if ($firewall['destination_adress_mask2'] == 32) 
@@ -482,105 +482,105 @@ class FirewallController extends Controller
 							}
 							if($firewall['destination_port_range_from'] === "5999")
 								$contenido .= "\t\t\t\t<port>5999</port>\n";
-							if($formatos['destination_port_range_from'] === "53")
+							if($firewall['destination_port_range_from'] === "53")
 								$contenido .= "\t\t\t\t<port>53</port>\n";
-							if($formatos['destination_port_range_from'] === "21")
+							if($firewall['destination_port_range_from'] === "21")
 								$contenido .= "\t\t\t\t<port>21</port>\n";
-							if($formatos['destination_port_range_from'] === "3000")
+							if($firewall['destination_port_range_from'] === "3000")
 								$contenido .= "\t\t\t\t<port>3000</port>\n";
-							if($formatos['destination_port_range_from'] === "80")
+							if($firewall['destination_port_range_from'] === "80")
 								$contenido .= "\t\t\t\t<port>80</port>\n";
-							if($formatos['destination_port_range_from'] === "443")
+							if($firewall['destination_port_range_from'] === "443")
 								$contenido .= "\t\t\t\t<port>443</port>\n";
-							if($formatos['destination_port_range_from'] === "5190")
+							if($firewall['destination_port_range_from'] === "5190")
 								$contenido .= "\t\t\t\t<port>5190</port>\n";
-							if($formatos['destination_port_range_from'] === "113")
+							if($firewall['destination_port_range_from'] === "113")
 								$contenido .= "\t\t\t\t<port>113</port>\n";
-							if($formatos['destination_port_range_from'] === "993")
+							if($firewall['destination_port_range_from'] === "993")
 								$contenido .= "\t\t\t\t<port>993</port>\n";
-							if($formatos['destination_port_range_from'] === "4500")
+							if($firewall['destination_port_range_from'] === "4500")
 								$contenido .= "\t\t\t\t<port>4500</port>\n";
-							if($formatos['destination_port_range_from'] === "500")
+							if($firewall['destination_port_range_from'] === "500")
 								$contenido .= "\t\t\t\t<port>500</port>\n";
-							if($formatos['destination_port_range_from'] === "1701")
+							if($firewall['destination_port_range_from'] === "1701")
 								$contenido .= "\t\t\t\t<port>1701</port>\n";
-							if($formatos['destination_port_range_from'] === "389")
+							if($firewall['destination_port_range_from'] === "389")
 								$contenido .= "\t\t\t\t<port>389</port>\n";
-							if($formatos['destination_port_range_from'] === "1755")
+							if($firewall['destination_port_range_from'] === "1755")
 								$contenido .= "\t\t\t\t<port>1755</port>\n";
-							if($formatos['destination_port_range_from'] === "7000")
+							if($firewall['destination_port_range_from'] === "7000")
 								$contenido .= "\t\t\t\t<port>7000</port>\n";
-							if($formatos['destination_port_range_from'] === "445")
+							if($firewall['destination_port_range_from'] === "445")
 								$contenido .= "\t\t\t\t<port>445</port>\n";
-							if($formatos['destination_port_range_from'] === "3389")
+							if($firewall['destination_port_range_from'] === "3389")
 								$contenido .= "\t\t\t\t<port>3389</port>\n";
-							if($formatos['destination_port_range_from'] === "1512")
+							if($firewall['destination_port_range_from'] === "1512")
 								$contenido .= "\t\t\t\t<port>1512</port>\n";
-							if($formatos['destination_port_range_from'] === "1863")
+							if($firewall['destination_port_range_from'] === "1863")
 								$contenido .= "\t\t\t\t<port>1863</port>\n";
-							if($formatos['destination_port_range_from'] === "119")
+							if($firewall['destination_port_range_from'] === "119")
 								$contenido .= "\t\t\t\t<port>119</port>\n";
-							if($formatos['destination_port_range_from'] === "123")
+							if($firewall['destination_port_range_from'] === "123")
 								$contenido .= "\t\t\t\t<port>123</port>\n";
-							if($formatos['destination_port_range_from'] === "138")
+							if($firewall['destination_port_range_from'] === "138")
 								$contenido .= "\t\t\t\t<port>138</port>\n";
-							if($formatos['destination_port_range_from'] === "137")
+							if($firewall['destination_port_range_from'] === "137")
 								$contenido .= "\t\t\t\t<port>137</port>\n";
-							if($formatos['destination_port_range_from'] === "139")
+							if($firewall['destination_port_range_from'] === "139")
 								$contenido .= "\t\t\t\t<port>139</port>\n";
-							if($formatos['destination_port_range_from'] === "1194")
+							if($firewall['destination_port_range_from'] === "1194")
 								$contenido .= "\t\t\t\t<port>1194</port>\n";
-							if($formatos['destination_port_range_from'] === "110")
+							if($firewall['destination_port_range_from'] === "110")
 								$contenido .= "\t\t\t\t<port>110</port>\n";
-							if($formatos['destination_port_range_from'] === "995")
+							if($firewall['destination_port_range_from'] === "995")
 								$contenido .= "\t\t\t\t<port>995</port>\n";
-							if($formatos['destination_port_range_from'] === "1723")
+							if($firewall['destination_port_range_from'] === "1723")
 								$contenido .= "\t\t\t\t<port>1723</port>\n";
-							if($formatos['destination_port_range_from'] === "1812")
+							if($firewall['destination_port_range_from'] === "1812")
 								$contenido .= "\t\t\t\t<port>1812</port>\n";
-							if($formatos['destination_port_range_from'] === "1813")
+							if($firewall['destination_port_range_from'] === "1813")
 								$contenido .= "\t\t\t\t<port>1813</port>\n";
-							if($formatos['destination_port_range_from'] === "5004")
+							if($firewall['destination_port_range_from'] === "5004")
 								$contenido .= "\t\t\t\t<port>5004</port>\n";
-							if($formatos['destination_port_range_from'] === "5060")
+							if($firewall['destination_port_range_from'] === "5060")
 								$contenido .= "\t\t\t\t<port>5060</port>\n";
-							if($formatos['destination_port_range_from'] === "25")
+							if($firewall['destination_port_range_from'] === "25")
 								$contenido .= "\t\t\t\t<port>25</port>\n";
-							if($formatos['destination_port_range_from'] === "465")
+							if($firewall['destination_port_range_from'] === "465")
 								$contenido .= "\t\t\t\t<port>465</port>\n";
-							if($formatos['destination_port_range_from'] === "161")
+							if($firewall['destination_port_range_from'] === "161")
 								$contenido .= "\t\t\t\t<port>161</port>\n";
-							if($formatos['destination_port_range_from'] === "162")
+							if($firewall['destination_port_range_from'] === "162")
 								$contenido .= "\t\t\t\t<port>162</port>\n";
-							if($formatos['destination_port_range_from'] === "22")
+							if($firewall['destination_port_range_from'] === "22")
 								$contenido .= "\t\t\t\t<port>22</port>\n";
-							if($formatos['destination_port_range_from'] === "3478")
+							if($firewall['destination_port_range_from'] === "3478")
 								$contenido .= "\t\t\t\t<port>3278</port>\n";
-							if($formatos['destination_port_range_from'] === "587")
+							if($firewall['destination_port_range_from'] === "587")
 								$contenido .= "\t\t\t\t<port>587</port>\n";
-							if($formatos['destination_port_range_from'] === "3544")
+							if($firewall['destination_port_range_from'] === "3544")
 								$contenido .= "\t\t\t\t<port>3544</port>\n";
-							if($formatos['destination_port_range_from'] === "23")
+							if($firewall['destination_port_range_from'] === "23")
 								$contenido .= "\t\t\t\t<port>23</port>\n";
-							if($formatos['destination_port_range_from'] === "69")
+							if($firewall['destination_port_range_from'] === "69")
 								$contenido .= "\t\t\t\t<port>69</port>\n";
-							if($formatos['destination_port_range_from'] === "5900")
+							if($firewall['destination_port_range_from'] === "5900")
 								$contenido .= "\t\t\t\t<port>5900</port>\n";
-						$contenido .= "\t\t</destination>\n";
-						if($formatos['estatus'] === true)
+						$contenido .= "\t\t\t</destination>\n";
+						if($firewall['estatus'] === true)
 							$contenido .= "\t\t\t<disabled></disabled>\n";
-						if($formatos['log'] === true)
+						if($firewall['log'] === true)
 							$contenido .= "\t\t\t<log></log>\n";
-						$contenido .= "\t\t\t<descr>" . $formatos['descripcion'] . "</descr>\n";
-				    $contenido .= "\t\t</filter>\n";
+						$contenido .= "\t\t\t<descr>" . $firewall['descripcion'] . "</descr>\n";
+				    $contenido .= "\t\t</rule>\n";
 				}
-				$contenido .= "\t</rule>";
+				$contenido .= "\t</filter>";
 				$archivo = fopen("$ips.xml", 'w');
 				fwrite($archivo, $contenido);
 				fclose($archivo);
 				#change_to_do#
 				$change_to_do = fopen("change_to_do.txt", 'w');
-				fwrite($change_to_do,'nat.py'."\n");
+				fwrite($change_to_do,'firewallrules.py'."\n");
 				fclose($change_to_do);
 				$changetodo = "change_to_do.txt";
 				# Mover el archivo a la carpeta #
@@ -621,7 +621,7 @@ class FirewallController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM nat_port_forward WHERE ubicacion = '$ubicacion' ORDER BY posicion";
+		$query = "SELECT * FROM firewall_lan WHERE ubicacion = '$ubicacion' ORDER BY posicion";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
