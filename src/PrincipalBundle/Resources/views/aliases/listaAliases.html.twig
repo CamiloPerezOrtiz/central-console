@@ -16,13 +16,12 @@
                     <div class="panel-body">
                         <div class="table-responsive">
                             {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                {% set ubicacion = ubicacion %}
-                                    <a href="{{path('registroAliases',{'id': ubicacion })}}">
-                                        <button type="button" class="btn btn-success">
-                                            Add aliases
-                                        </button>
-                                    </a>
-                                    <br><br>
+                                <a href="{{path('registro_aliases',{'id': app.user.grupo })}}">
+                                    <button type="button" class="btn btn-success">
+                                        Add aliases
+                                    </button>
+                                </a>
+                                <br><br>
                             {% endif %}
                             <table class="table table-sm table-striped table-bordered table-hover text-center small" id="dataTables-example">
                                 <div class="col-md-12">

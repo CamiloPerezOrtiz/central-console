@@ -84,6 +84,10 @@ registroAliases:
     path:     /registroAliases 
     defaults: { _controller: PrincipalBundle:Aliases:registroAliases }
 
+registro_aliases:
+    path:     /registro_aliases 
+    defaults: { _controller: PrincipalBundle:Aliases:registro_aliases }
+
 editarAliases:
     path:     /editarAliases/{id} 
     defaults: { _controller: PrincipalBundle:Aliases:editarAliases }

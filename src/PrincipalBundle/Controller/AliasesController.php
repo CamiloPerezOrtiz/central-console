@@ -360,4 +360,123 @@ class AliasesController extends Controller
 		$datos = $query->getResult();
 		return $datos;
 	}
+
+	##############################################################################################################
+	##############################################################################################################
+	##############################################################################################################
+	public function registro_aliasesAction(Request $request)
+	{
+		$alias = new Aliases();
+		$form = $this ->createForm(AliasesType::class, $alias);
+		$form->handleRequest($request);
+		$u = $this->getUser();
+		$grupo=$_REQUEST['id'];
+		$informacion_interfaces_plantel = $this->informacion_interfaces_plantel($grupo);
+		$informacion_interfaces_nombre = $this->informacion_interfaces_nombre($grupo);
+		if($form->isSubmitted() && $form->isValid())
+		{
+			$em = $this->getDoctrine()->getEntityManager();
+			$db = $em->getConnection();
+			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo);
+			if(count($verificarNombre)==0)
+			{
+				# Variables obtenidas en el formulario #
+				$nombre_interfas = $_POST['nombre_interfas'];
+				$nombre = $form->get("nombre")->getData();
+				$descripcion = $form->get("descripcion")->getData();
+				$tipo = $form->get("tipo")->getData();
+				//ip = $_POST['ip'];
+				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
+				$archivo_ip_interfaces=fopen("archivo_ip_interfaces.txt","w") or die("Problemas con el servidor intente mas tarde.");
+				# Consulta para obtener la ip de la interfaz selecionada #
+				foreach($_POST['plantel'] as $plantel_grupo)
+				{
+					$informacion_interfaces_ip = $this->informacion_interfaces_ip($nombre_interfas, $plantel_grupo);
+					# Crear archivo temporal de las IPs #
+					$archivo_ip=fopen("archivo_ip.txt","w") or die("Problemas con el servidor intente mas tarde.");
+					foreach ($informacion_interfaces_ip as $obtener_ip_interfas) 
+					{
+						foreach ($obtener_ip_interfas as $ip_interfas) 
+						{
+							foreach ($_POST['ip_port'] as $octeto_ip)
+							{
+								$ip_completa = $ip_interfas . $octeto_ip . " ";
+								# Guardar IP completa en el archivo temporal #
+								fputs($archivo_ip,$ip_completa);
+							}
+							# Formato para la lectura del archivo temporal #
+							fputs($archivo_ip,"|"."\n");
+							$delimitador=file('archivo_ip.txt');
+							foreach($delimitador as $dem)
+							{
+								list($ip_interfas) = explode('|', $dem);
+							}
+							$formato_delimitador = trim($ip_interfas, " |");
+							$insertar = "INSERT INTO aliases VALUES (nextval('aliases_id_seq'),'$nombre','$descripcion','$tipo','$formato_delimitador','$descripcion_ip_port','$grupo','$plantel_grupo')";
+							$stmt = $db->prepare($insertar);
+							$params =array();
+							$stmt->execute($params);
+						}
+					}
+				}
+				unlink("archivo_ip.txt");
+				if($stmt == null)
+				{
+					$estatus="Problems with the server try later.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+				}
+				else
+				{
+					$estatus="Successfully registration.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+					return $this->redirectToRoute("gruposAliases");
+				}
+			}
+			else
+				echo '<script>alert("The name you are trying to register already exists. Try again.");window.history.go(-1);</script>';
+		}
+		#$ubicacion = $_POST['ubicacion'];
+		return $this->render('@Principal/aliases/registro_aliases.html.twig', array(
+			'form'=>$form->createView(),
+			'informacion_interfaces_plantel'=>$informacion_interfaces_plantel,
+			'informacion_interfaces_nombre'=>$informacion_interfaces_nombre,
+			'grupo'=>$grupo
+		));
+	}
+
+	private function informacion_interfaces_plantel($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT distinct descripcion FROM interfaces WHERE grupo = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+
+	private function informacion_interfaces_nombre($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT distinct nombre FROM interfaces WHERE grupo = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+
+	private function informacion_interfaces_ip($nombre, $plantel)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT distinct ip FROM interfaces WHERE nombre = '$nombre' AND descripcion = '$plantel'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
 }
