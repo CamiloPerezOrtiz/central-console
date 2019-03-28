@@ -1,0 +1,10 @@
+<?xml version='1.0'?>
+	<aliases>
+		<alias>
+			<name>Soporte</name>
+			<type>host</type>
+			<address>10.4.0.1 10.4.0.2 10.4.0.3 10.4.0.4</address>
+			<descr>Area de soporte</descr>
+			<detail> || || ||</detail>
+		</alias>
+	</aliases>

@@ -20,115 +20,8 @@ class AliasesController extends Controller
 		$this->session = new Session();
 	}
 
-	# Funcion para registrar un nuevo aliases #
-	public function registroAliasesAction(Request $request)
-	{
-		$alias = new Aliases();
-		$form = $this ->createForm(AliasesType::class, $alias);
-		$form->handleRequest($request);
-		$u = $this->getUser();
-		$grupo=$_REQUEST['id'];
-		$ipGrupos = $this->ipInterfaces($grupo);
-		$grupo_plantel=$u->getGrupo();
-		if($form->isSubmitted() && $form->isValid())
-		{
-			$em = $this->getDoctrine()->getEntityManager();
-			$db = $em->getConnection();
-			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo);
-			if(count($verificarNombre)==0)
-			{
-				$plantel = $_POST['plantel'];
-				$nombre = $form->get("nombre")->getData();
-				$descripcion = $form->get("descripcion")->getData();
-				$tipo = $form->get("tipo")->getData();
-				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-				$ip = $_POST['ip'];
-				$file=fopen("arreglo.txt","w") or die("Problemas");
-				foreach ($_POST['ip'] as $ips)
-				{
-					foreach ($_POST['ip_port'] as $p) 
-					{
-						$ip_port_res = $ips. $p . " ";
-						fputs($file,$ip_port_res);
-					}
-					fputs($file,"|"."\n");
-					$filas=file('arreglo.txt');
-					foreach($filas as $value)
-					{
-						list($ip) = explode('|', $value);
-					}
-					$res = trim($ip, " |");
-					$query2 = "INSERT INTO aliases VALUES (nextval('aliases_id_seq'),'$nombre','$descripcion','$tipo','$res','$descripcion_ip_port','$grupo_plantel','$plantel')";
-					$stmt2 = $db->prepare($query2);
-					$params2 =array();
-					$stmt2->execute($params2);
-				};
-				unlink("arreglo.txt");
-				if($stmt2 == null)
-				{
-					$estatus="Problems with the server try later.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
-				}
-				else
-				{
-					$estatus="Successfully registration.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
-					return $this->redirectToRoute("gruposAliases");
-				}
-			}
-			else
-				echo '<script>alert("The name you are trying to register already exists. Try again.");window.history.go(-1);</script>';
-		}
-		#$ubicacion = $_POST['ubicacion'];
-		return $this->render('@Principal/aliases/registroAliases.html.twig', array(
-			'form'=>$form->createView(),
-			'ipGrupos'=>$ipGrupos,
-			'grupo'=>$grupo
-		));
-		
-	}
-
-	# Funcion para recuperar nombre por id #
-	private function recuperarNombreId($nombre, $grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.nombre
-				FROM PrincipalBundle:Aliases u
-				WHERE  u.nombre = :nombre
-				AND u.ubicacion = :grupo'
-		)->setParameter('nombre', $nombre)->setParameter('grupo', $grupo);
-		$datos = $query->getResult();
-		return $datos;
-	}
-
-	# Funcion para aplicar cambios #
-	private function ipGrupos($grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-	    $db = $em->getConnection();
-		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
-		$stmt = $db->prepare($query);
-		$params =array();
-		$stmt->execute($params);
-		$grupos=$stmt->fetchAll();
-		return $grupos;
-	}
-
-	private function ipInterfaces($grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-	    $db = $em->getConnection();
-		$query = "SELECT * FROM interfaces WHERE descripcion = '$grupo'";
-		$stmt = $db->prepare($query);
-		$params =array();
-		$stmt->execute($params);
-		$grupos=$stmt->fetchAll();
-		return $grupos;
-	}
-
-	# Funcion para mostrar los grupos #
-	public function gruposAliasesAction()
+	# Funcion para mostrar el nombre de los grupos #
+	public function grupos_aliasesAction()
 	{
 		$u = $this->getUser();
 		if($u != null)
@@ -137,233 +30,17 @@ class AliasesController extends Controller
 	        $grupo=$u->getGrupo();
 	        if($role == "ROLE_SUPERUSER")
 	        {
-	        	$grupos = $this->recuperarTodosGrupos();
-				return $this->render("@Principal/aliases/gruposAliases.html.twig", array(
+	        	$grupos = $this->obtener_grupo_nombre();
+				return $this->render("@Principal/aliases/grupos_aliases.html.twig", array(
 					"grupo"=>$grupos
 				));
 	        }
 	        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
-	        {
-	        	return $this->redirectToRoute("listaAliases");
-	        }
+	        	return $this->redirectToRoute("lista_aliases");
 	    }
 	}
 
-	# Funcion para recuperar el todos los grupos #
-	private function recuperarTodosGrupos()
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT DISTINCT g.nombre
-				FROM PrincipalBundle:Grupos g
-				ORDER BY g.nombre ASC'
-		);
-		$grupos = $query->getResult();
-		return $grupos;
-	}
-
-	# Funcion para mostrar los aliases #
-	public function listaAliasesAction()
-	{
-		$u = $this->getUser();
-		$role=$u->getRole();
-		if($role == 'ROLE_SUPERUSER')
-		{
-			$grupo=$_REQUEST['id'];
-			$ipGrupos = $this->ipGrupos($grupo);
-		}
-		else
-		{
-			$grupo=$u->getGrupo();
-			$ipGrupos = $this->ipGrupos($grupo);
-		}
-		if(isset($_POST['solicitar']))
-		{
-			#$u = $this->getUser();
-			$ubicacion = $_POST['ubicacion'];
-			if($u != null)
-			{
-		        #$role=$u->getRole();
-		        #$grupo=$u->getGrupo();
-		       	$ubicacion = $_REQUEST['ubicacion'];
-		        if($role == "ROLE_SUPERUSER")
-		        {
-		        	#$id=$_REQUEST['id'];
-					$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
-					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-						"aliases"=>$aliases,
-						'ubicacion'=>$ubicacion
-					));
-		        }
-		        if($role == "ROLE_ADMINISTRATOR")
-		        {
-		        	$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
-					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-						"aliases"=>$aliases,
-						'ubicacion'=>$ubicacion
-					));
-		        }
-		        if($role == "ROLE_USER")
-		        {
-		        	$aliases = $this->recuperarTodoAliasesGrupo($grupo, $ubicacion);
-					return $this->render('@Principal/aliases/listaAliases.html.twig', array(
-						"aliases"=>$aliases,
-						'ubicacion'=>$ubicacion
-					));
-		        }
-		    }
-		}
-
-	    return $this->render('@Principal/plantillas/solicitudGrupo.html.twig', array(
-			'ipGrupos'=>$ipGrupos
-		));
-	}
-
-	# Funcion para recuperar los todos los aliases #
-	private function recuperarTodoAliasesGrupo($grupo, $ubicacion)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.ip_port, u.grupo, u.ubicacion
-				FROM PrincipalBundle:Aliases u
-				WHERE  u.grupo = :grupo
-				AND u.ubicacion = :ubicacion'
-		)->setParameter('grupo', $grupo)->setParameter('ubicacion', $ubicacion);
-		$grupoAliases = $query->getResult();
-		return $grupoAliases;
-	}
-
-	public function editarAliasesAction(Request $request, $id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$alias = $em->getRepository("PrincipalBundle:Aliases")->find($id);
-		$form = $this->createForm(AliasesType::class,$alias);
-		$form->handleRequest($request);
-		$recuperarDatosId = $this->recuperarDatosId($id);
-		$ip_port= explode(' ',$recuperarDatosId[0]['ip_port']);
-		$descripcion_ip_port = explode(" ||",$recuperarDatosId[0]['descripcion_ip_port']);
-		if($form->isSubmitted() && $form->isValid())
-		{
-			$ip_port = implode(" ",$_POST['ip_port']);
-			$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-			$alias->setIp_port($ip_port);
-			$alias->setDescripcion_ip_port($descripcion_ip_port);
-			$em->persist($alias);
-			$flush=$em->flush();
-			return $this->redirectToRoute("gruposAliases");
-		}
-		return $this->render("@Principal/aliases/editarAliases.html.twig",array(
-			"form"=>$form->createView(),
-			"ip_port"=>$ip_port,
-			"descripcion_ip_port"=>$descripcion_ip_port
-		));
-	}
-
-	private function recuperarDatosId($id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.ip_port, u.descripcion_ip_port
-				FROM PrincipalBundle:Aliases u
-				WHERE  u.id = :id'
-		)->setParameter('id', $id);
-		$datos = $query->getResult();
-		return $datos;
-	}
-
-	# Funcion para eliminar un aliases #
-	public function eliminarAliasesAction($id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$formato = $em->getRepository("PrincipalBundle:Aliases")->find($id);
-		$em->remove($formato);
-		$flush=$em->flush();
-		if($flush == null)
-			$estatus="Successfully delete registration";
-		else
-			$estatus="Problems with the server try later.";
-		$this->session->getFlashBag()->add("estatus",$estatus);
-		return $this->redirectToRoute("gruposAliases");
-	}
-
-	# Funcion para crear el XML de aliases #
-	public function crearXMLAliasesAction()
-	{
-		if(isset($_POST['enviar']))
-		{
-			//$ubicacion=$_POST['ubicacion'];
-			foreach ($_POST['ip'] as $ips) 
-			{
-				$recuperarTodoDatos = $this->recuperarTodoDatos($ips);
-				$contenido = "<?xml version='1.0'?>\n";
-				$contenido .= "\t<aliases>\n";
-				foreach ($recuperarTodoDatos as $alias) 
-				{
-				    $contenido .= "\t\t<alias>\n";
-				    $contenido .= "\t\t\t<name>" . $alias['nombre'] . "</name>\n";
-				    $contenido .= "\t\t\t<type>" . $alias['tipo'] . "</type>\n";
-				    $contenido .= "\t\t\t<address>" . $alias['ip_port'] . "</address>\n";
-				    $contenido .= "\t\t\t<descr>" . $alias['descripcion'] . "</descr>\n";
-				    $contenido .= "\t\t\t<detail>" . $alias['descripcion_ip_port'] . "</detail>\n";
-				    $contenido .= "\t\t</alias>\n";
-				}
-			    $contenido .= "\t</aliases>";
-				$archivo = fopen("$ips.xml", 'w');
-				fwrite($archivo, $contenido);
-				fclose($archivo);
-				$change_to_do = fopen("change_to_do.txt", 'w');
-				fwrite($change_to_do,'aliases.py'."\n");
-				fclose($change_to_do);
-				$changetodo = "change_to_do.txt";
-				# Mover el archivo a la carpeta #
-				$archivoConfig = "$ips.xml";
-				$serv = '/var/www/html/central-console/web/clients/Ejemplo_2/';
-				$destinoConfig = $serv . $ips;
-				$res = $destinoConfig . "/conf.xml";
-			   	copy($archivoConfig, $res);
-			   	$destinoConfigchange_to_do = $destinoConfig . '/change_to_do.txt';
-			   	copy($changetodo, $destinoConfigchange_to_do);
-				unlink("$ips.xml");
-				unlink("change_to_do.txt");
-			}
-			echo '<script> alert("The configuration has been saved.");</script>';
-		}
-		$id=$_REQUEST['id'];
-		//ubicacion=$_REQUEST['ubicacion'];
-		$grupos = $this->ipGruposSolo($id);
-		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
-			"grupos"=>$grupos
-		));
-	}
-	private function ipGruposSolo($grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-	    $db = $em->getConnection();
-		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
-		$stmt = $db->prepare($query);
-		$params =array();
-		$stmt->execute($params);
-		$grupos=$stmt->fetchAll();
-		return $grupos;
-	}
-
-	# Funcion para recuperar toda la informacion de target #
-	private function recuperarTodoDatos($grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.tipo, u.descripcion, u.ip_port, u.descripcion_ip_port
-				FROM PrincipalBundle:Aliases u
-				WHERE  u.ubicacion = :ubicacion
-				ORDER BY u.id'
-		)->setParameter('ubicacion', $grupo);
-		$datos = $query->getResult();
-		return $datos;
-	}
-
-	##############################################################################################################
-	##############################################################################################################
-	##############################################################################################################
+	# Funcion registro de aliases #
 	public function registro_aliasesAction(Request $request)
 	{
 		$alias = new Aliases();
@@ -429,13 +106,12 @@ class AliasesController extends Controller
 				{
 					$estatus="Successfully registration.";
 					$this->session->getFlashBag()->add("estatus",$estatus);
-					return $this->redirectToRoute("gruposAliases");
+					return $this->redirectToRoute("grupos_aliases");
 				}
 			}
 			else
 				echo '<script>alert("The name you are trying to register already exists. Try again.");window.history.go(-1);</script>';
 		}
-		#$ubicacion = $_POST['ubicacion'];
 		return $this->render('@Principal/aliases/registro_aliases.html.twig', array(
 			'form'=>$form->createView(),
 			'informacion_interfaces_plantel'=>$informacion_interfaces_plantel,
@@ -444,39 +120,230 @@ class AliasesController extends Controller
 		));
 	}
 
+	# Funcion ver lista de aliases #
+	public function lista_aliasesAction()
+	{
+		$u = $this->getUser();
+		$role=$u->getRole();
+		if($role == 'ROLE_SUPERUSER')
+		{
+			$grupo=$_REQUEST['id'];
+			$informacion_grupos_descripcion = $this->informacion_grupos_descripcion($grupo);
+		}
+		else
+		{
+			$grupo=$u->getGrupo();
+			$informacion_grupos_descripcion = $this->informacion_grupos_descripcion($grupo);
+		}
+		if(isset($_POST['solicitar']))
+		{
+			$ubicacion = $_POST['ubicacion'];
+			if($u != null)
+			{
+		        if($role == "ROLE_SUPERUSER")
+		        {
+					$aliases = $this->obtener_datos_grupos($grupo, $ubicacion);
+					return $this->render('@Principal/aliases/lista_aliases.html.twig', array(
+						"aliases"=>$aliases,
+						'ubicacion'=>$ubicacion
+					));
+		        }
+		        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
+		        {
+		        	$aliases = $this->obtener_datos_grupos($grupo, $ubicacion);
+					return $this->render('@Principal/aliases/lista_aliases.html.twig', array(
+						"aliases"=>$aliases,
+						'ubicacion'=>$ubicacion
+					));
+		        }
+		    }
+		}
+
+	    return $this->render('@Principal/plantillas/solicitud_grupo.html.twig', array(
+			'informacion_grupos_descripcion'=>$informacion_grupos_descripcion
+		));
+	}
+
+	public function editar_aliasesAction(Request $request, $id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$alias = $em->getRepository("PrincipalBundle:Aliases")->find($id);
+		$form = $this->createForm(AliasesType::class,$alias);
+		$form->handleRequest($request);
+		$informacion_aliases_ip_descripcion = $this->informacion_aliases_ip_descripcion($id);
+		$ip_port= explode(' ',$informacion_aliases_ip_descripcion[0]['ip_port']);
+		$descripcion_ip_port = explode(" ||",$informacion_aliases_ip_descripcion[0]['descripcion_ip_port']);
+		if($form->isSubmitted() && $form->isValid())
+		{
+			$ip_port = implode(" ",$_POST['ip_port']);
+			$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
+			$alias->setIp_port($ip_port);
+			$alias->setDescripcion_ip_port($descripcion_ip_port);
+			$em->persist($alias);
+			$flush=$em->flush();
+			return $this->redirectToRoute("grupos_aliases");
+		}
+		return $this->render("@Principal/aliases/editar_aliases.html.twig",array(
+			"form"=>$form->createView(),
+			"ip_port"=>$ip_port,
+			"descripcion_ip_port"=>$descripcion_ip_port
+		));
+	}
+
+	public function eliminar_aliasesAction($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$formato = $em->getRepository("PrincipalBundle:Aliases")->find($id);
+		$em->remove($formato);
+		$flush=$em->flush();
+		if($flush == null)
+			$estatus="Successfully delete registration";
+		else
+			$estatus="Problems with the server try later.";
+		$this->session->getFlashBag()->add("estatus",$estatus);
+		return $this->redirectToRoute("grupos_aliases");
+	}
+
+	public function crear_xml_aliasesAction()
+	{
+		if(isset($_POST['enviar']))
+		{
+			foreach ($_POST['ip'] as $ips) 
+			{
+				$obtener_datos_grupos_xml = $this->obtener_datos_grupos_xml($ips);
+				$contenido = "<?xml version='1.0'?>\n";
+				$contenido .= "\t<aliases>\n";
+				foreach ($obtener_datos_grupos_xml as $alias) 
+				{
+				    $contenido .= "\t\t<alias>\n";
+				    $contenido .= "\t\t\t<name>" . $alias['nombre'] . "</name>\n";
+				    $contenido .= "\t\t\t<type>" . $alias['tipo'] . "</type>\n";
+				    $contenido .= "\t\t\t<address>" . $alias['ip_port'] . "</address>\n";
+				    $contenido .= "\t\t\t<descr>" . $alias['descripcion'] . "</descr>\n";
+				    $contenido .= "\t\t\t<detail>" . $alias['descripcion_ip_port'] . "</detail>\n";
+				    $contenido .= "\t\t</alias>\n";
+				}
+			    $contenido .= "\t</aliases>";
+				$archivo = fopen("$ips.xml", 'w');
+				fwrite($archivo, $contenido);
+				fclose($archivo);
+				$change_to_do = fopen("change_to_do.txt", 'w');
+				fwrite($change_to_do,'aliases.py'."\n");
+				fclose($change_to_do);
+				$tipo_python = "change_to_do.txt";
+				# Mover el archivo a la carpeta #
+				$archivo_configuracion = "$ips.xml";
+				$direccion_servidor = '/var/www/html/central-console/web/clients/Ejemplo_2/';
+				$destino_configuracion = $direccion_servidor . $ips;
+				$archivo_xml = $destino_configuracion . "/conf.xml";
+			   	copy($archivo_configuracion, $archivo_xml);
+			   	$archivo_tipo_python = $destino_configuracion . '/change_to_do.txt';
+			   	copy($tipo_python, $archivo_tipo_python);
+				unlink("$ips.xml");
+				unlink("change_to_do.txt");
+			}
+			echo '<script> alert("The configuration has been saved.");</script>';
+		}
+		$id=$_REQUEST['id'];
+		$grupos = $this->informacion_grupos_descripcion($id);
+		return $this->render("@Principal/grupos/aplicar_cambios.html.twig", array(
+			"grupos"=>$grupos
+		));
+	}
+
+	# Area de consultas #
+	# Funcion utilizada en registro_aliases #
 	private function informacion_interfaces_plantel($grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT distinct descripcion FROM interfaces WHERE grupo = '$grupo'";
+		$query = "SELECT DISTINCT descripcion FROM interfaces WHERE grupo = '$grupo'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
 		$grupos=$stmt->fetchAll();
 		return $grupos;
 	}
-
+	# Funcion utilizada en registro_aliases #	
 	private function informacion_interfaces_nombre($grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT distinct nombre FROM interfaces WHERE grupo = '$grupo'";
+		$query = "SELECT DISTINCT nombre FROM interfaces WHERE grupo = '$grupo'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
 		$grupos=$stmt->fetchAll();
 		return $grupos;
 	}
-
+	# Funcion utilizada en registro_aliases #
 	private function informacion_interfaces_ip($nombre, $plantel)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT distinct ip FROM interfaces WHERE nombre = '$nombre' AND descripcion = '$plantel'";
+		$query = "SELECT DISTINCT ip FROM interfaces WHERE nombre = '$nombre' AND descripcion = '$plantel'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
 		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+	# Funcion utilizada en lista_aliases #
+	private function informacion_grupos_descripcion($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT descripcion FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+	# Funcion utilizada en lista_aliases #
+	private function obtener_datos_grupos($grupo, $ubicacion)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.id, u.nombre, u.ip_port, u.grupo, u.ubicacion
+				FROM PrincipalBundle:Aliases u
+				WHERE  u.grupo = :grupo
+				AND u.ubicacion = :ubicacion'
+		)->setParameter('grupo', $grupo)->setParameter('ubicacion', $ubicacion);
+		$grupoAliases = $query->getResult();
+		return $grupoAliases;
+	}
+	# Funcion utilizada en editar_aliases #
+	private function informacion_aliases_ip_descripcion($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.ip_port, u.descripcion_ip_port
+				FROM PrincipalBundle:Aliases u
+				WHERE  u.id = :id'
+		)->setParameter('id', $id);
+		$datos = $query->getResult();
+		return $datos;
+	}
+	# Funcion utilizada en crear_xml_aliases #
+	private function obtener_datos_grupos_xml($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.id, u.nombre, u.tipo, u.descripcion, u.ip_port, u.descripcion_ip_port
+				FROM PrincipalBundle:Aliases u
+				WHERE  u.ubicacion = :ubicacion
+				ORDER BY u.id'
+		)->setParameter('ubicacion', $grupo);
+		$datos = $query->getResult();
+		return $datos;
+	}
+	# Funcion utilizada en grupos_aliases #
+	private function obtener_grupo_nombre()
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery('SELECT DISTINCT g.nombre FROM PrincipalBundle:Grupos g ORDER BY g.nombre ASC');
+		$grupos = $query->getResult();
 		return $grupos;
 	}
 }

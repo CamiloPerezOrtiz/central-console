@@ -52,10 +52,10 @@
                                             <td>{{ alias.ubicacion }}</td>
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
-                                                    <a href="{{ path('editarAliases',{id:alias.id}) }}">
+                                                    <a href="{{ path('editar_aliases',{id:alias.id}) }}">
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                    <a href="{{ path('eliminarAliases',{id:alias.id}) }}">
+                                                    <a href="{{ path('eliminar_aliases',{id:alias.id}) }}">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </td>
@@ -69,11 +69,11 @@
                                     When you click on save button you are saving the aliases list. <br><br>
                                     <div class="form-group">
                                         {% if aliases == true %} 
-                                            <a href="{{path('crearXMLAliases',{id:aliases[0]['grupo']})}}">
-                                            <button type="button" class="btn btn-success">
-                                                <b>  Save aliases list <i class="fas fa-save"></i></b>
-                                            </button>
-                                        </a>
+                                            <a href="{{path('crear_xml_aliases',{id:aliases[0]['grupo']})}}">
+                                                <button type="button" class="btn btn-success">
+                                                    <b>  Save aliases list <i class="fas fa-save"></i></b>
+                                                </button>
+                                            </a>
                                         {% endif %} 
                                     </div>
                                 </div>

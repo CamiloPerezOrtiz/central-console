@@ -76,33 +76,29 @@ aplicarCambios:
 
 # Aliases #
 
-gruposAliases:
-    path:     /gruposAliases 
-    defaults: { _controller: PrincipalBundle:Aliases:gruposAliases }
-
-registroAliases:
-    path:     /registroAliases 
-    defaults: { _controller: PrincipalBundle:Aliases:registroAliases }
+grupos_aliases:
+    path:     /grupos_aliases 
+    defaults: { _controller: PrincipalBundle:Aliases:grupos_aliases }
 
 registro_aliases:
     path:     /registro_aliases 
     defaults: { _controller: PrincipalBundle:Aliases:registro_aliases }
 
-editarAliases:
-    path:     /editarAliases/{id} 
-    defaults: { _controller: PrincipalBundle:Aliases:editarAliases }
+lista_aliases:
+    path:     /lista_aliases 
+    defaults: { _controller: PrincipalBundle:Aliases:lista_aliases }
 
-listaAliases:
-    path:     /listaAliases 
-    defaults: { _controller: PrincipalBundle:Aliases:listaAliases }
+editar_aliases:
+    path:     /editar_aliases/{id} 
+    defaults: { _controller: PrincipalBundle:Aliases:editar_aliases }
 
-eliminarAliases:
-    path:     /eliminarAliases/{id} 
-    defaults: { _controller: PrincipalBundle:Aliases:eliminarAliases }
+eliminar_aliases:
+    path:     /eliminar_aliases/{id} 
+    defaults: { _controller: PrincipalBundle:Aliases:eliminar_aliases }
 
-crearXMLAliases:
-    path:     /crearXMLAliases
-    defaults: { _controller: PrincipalBundle:Aliases:crearXMLAliases }
+crear_xml_aliases:
+    path:     /crear_xml_aliases
+    defaults: { _controller: PrincipalBundle:Aliases:crear_xml_aliases }
 
 # Acl groups #
 
