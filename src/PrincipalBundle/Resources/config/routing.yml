@@ -102,33 +102,29 @@ crear_xml_aliases:
 
 # Acl groups #
 
-gruposAcl:
-    path:     /gruposAcl 
-    defaults: { _controller: PrincipalBundle:Acl:gruposAcl }
+grupos_acl:
+    path:     /grupos_acl 
+    defaults: { _controller: PrincipalBundle:Acl:grupos_acl }
 
-solicitudAcl:
-    path:     /solicitudAcl 
-    defaults: { _controller: PrincipalBundle:Acl:solicitudAcl }
+registro_acl:
+    path:     /registro_acl 
+    defaults: { _controller: PrincipalBundle:Acl:registro_acl }
 
-registroAcl:
-    path:     /registroAcl 
-    defaults: { _controller: PrincipalBundle:Acl:registroAcl }
+lista_acl:
+    path:     /lista_acl 
+    defaults: { _controller: PrincipalBundle:Acl:lista_acl }
 
-editarAcl:
-    path:     /editarAcl/{id} 
-    defaults: { _controller: PrincipalBundle:Acl:editarAcl }
+editar_acl:
+    path:     /editar_acl/{id} 
+    defaults: { _controller: PrincipalBundle:Acl:editar_acl }
 
-listaAcl:
-    path:     /listaAcl 
-    defaults: { _controller: PrincipalBundle:Acl:listaAcl }
+eliminar_acl:
+    path:     /eliminar_acl/{id} 
+    defaults: { _controller: PrincipalBundle:Acl:eliminar_acl }
 
-eliminarAcl:
-    path:     /eliminarAcl/{id} 
-    defaults: { _controller: PrincipalBundle:Acl:eliminarAcl }
-
-crearXMLAcl:
-    path:     /crearXMLAcl
-    defaults: { _controller: PrincipalBundle:Acl:crearXMLAcl }
+crear_xml_acl:
+    path:     /crear_xml_acl
+    defaults: { _controller: PrincipalBundle:Acl:crear_xml_acl }
 
 # Target #
 
@@ -157,6 +153,15 @@ crearXMLTarget:
     defaults: { _controller: PrincipalBundle:Target:crearXMLTarget }
 
 # NatPortForward #
+
+grupos_nat:
+    path:     /grupos_nat
+    defaults: { _controller: PrincipalBundle:NatPortForward:grupos_nat }
+
+registro_nat_port_forward:
+    path:     /registro_nat_port_forward 
+    defaults: { _controller: PrincipalBundle:NatPortForward:registro_nat_port_forward }
+
 
 gruposNat:
     path:     /gruposNat

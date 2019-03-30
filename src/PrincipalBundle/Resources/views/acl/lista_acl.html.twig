@@ -15,9 +15,9 @@
                     </div>
                     <div class="panel-body">
                         <div class="table-responsive">
-                            {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
+                            {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                 {% set ubicacion = ubicacion %}
-                                    <a href="{{path('registroAcl',{'id': ubicacion })}}">
+                                    <a href="{{path('registro_acl',{'id': ubicacion })}}">
                                         <button type="button" class="btn btn-success">
                                             Add ACL group
                                         </button>
@@ -46,7 +46,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for acl_groups in acl %}
+                                    {% for acl_groups in obtener_datos_acl %}
                                         <tr>
                                             <td>
                                                 {% if acl_groups.estatus == true %} On {% else %} Off {% endif %}
@@ -57,10 +57,10 @@
                                             <td>{{ acl_groups.ubicacion }}</td>
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
-                                                    <a href="{{ path('editarAcl',{id:acl_groups.id}) }}">
+                                                    <a href="{{ path('editar_acl',{id:acl_groups.id}) }}">
                                                             <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                    <a href="{{ path('eliminarAcl',{id:acl_groups.id}) }}">
+                                                    <a href="{{ path('eliminar_acl',{id:acl_groups.id}) }}">
                                                             <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </td>
@@ -76,8 +76,8 @@
                                 <div class="panel-body text-center">
                                     When you click on save button you are saving the acl groups list. <br><br>
                                     <div class="form-group">
-                                        {% if acl == true %} 
-                                            <a href="{{path('crearXMLAcl',{id:acl[0]['grupo']})}}">
+                                        {% if obtener_datos_acl == true %} 
+                                            <a href="{{path('crear_xml_acl',{id:obtener_datos_acl[0]['grupo']})}}">
                                             <button type="button" class="btn btn-success">
                                                 <b>  Save ACL groups list <i class="fas fa-save"></i></b>
                                             </button>

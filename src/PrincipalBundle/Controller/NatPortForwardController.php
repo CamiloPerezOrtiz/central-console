@@ -25,8 +25,7 @@ class NatPortForwardController extends Controller
 	{
 		$this->session = new Session();
 	}
-
-	# Funcion para registrar un nuevo aliases #
+	
 	public function registroNatPortForwardAction(Request $request)
 	{
 		$nat = new NatPortForward();

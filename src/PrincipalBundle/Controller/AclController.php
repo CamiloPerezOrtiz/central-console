@@ -21,35 +21,54 @@ class AclController extends Controller
 		$this->session = new Session();
 	}
 
+	# Funcion para mostrar los grupos #
+	public function grupos_aclAction()
+	{
+		$u = $this->getUser();
+		if($u != null)
+		{
+	        $role=$u->getRole();
+	        $grupo=$u->getGrupo();
+	        if($role == "ROLE_SUPERUSER")
+	        {
+	        	$grupos = $this->obtener_grupo_nombre();
+				return $this->render("@Principal/acl/grupos_acl.html.twig", array(
+					"grupo"=>$grupos
+				));
+	        }
+	        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
+	        	return $this->redirectToRoute("lista_acl");
+	    }
+	}
+
 	# Funcion para registrar un nuevo aliases #
-	public function registroAclAction(Request $request)
+	public function registro_aclAction(Request $request)
 	{
 		$acl = new Acl();
 		$form = $this ->createForm(AclType::class, $acl);
 		$form->handleRequest($request);
 		$u = $this->getUser();
-		$grupo=$_REQUEST['id'];
-		$ipGrupos = $this->ipInterfaces($grupo);
-		$grupo_plantel=$u->getGrupo();
+		$plantel=$_REQUEST['id'];
+		$grupo=$u->getGrupo();
+		$recuperar_nombre_target = $this->recuperar_nombre_target($plantel, $grupo);
 		if($form->isSubmitted() && $form->isValid())
 		{
 			$em = $this->getDoctrine()->getEntityManager();
-			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo_plantel);
-			if(count($verificarNombre)==0)
+			$recuperar_nombre = $this->recuperar_nombre($form->get("nombre")->getData(), $plantel);
+			if(count($recuperar_nombre)==0)
 			{
-				$acl->setGrupo($grupo_plantel);
-				$array_target_rule = $_POST['target_rule'];
-					$target_rule = implode(" ",$_POST['target_rule']);
-					$acl->setTargetRule($target_rule." all [ all]");
-					$acl->setTargetRulesList($target_rule);
-				$acl->setUbicacion($grupo);
+				$target_rule = implode(" ",$_POST['target_rule']);
+				$acl->setTargetRule($target_rule." all [ all]");
+				$acl->setTargetRulesList($target_rule);
+				$acl->setGrupo($grupo);
+				$acl->setUbicacion($plantel);
 				$em->persist($acl);
 				$flush=$em->flush();
 				if($flush == null)
 				{
 					$estatus="Successfully registration.";
 					$this->session->getFlashBag()->add("estatus",$estatus);
-					return $this->redirectToRoute("gruposAcl");
+					return $this->redirectToRoute("grupos_acl");
 				}
 				else
 				{
@@ -60,181 +79,45 @@ class AclController extends Controller
 			else
 				echo '<script> alert("The name of acl that you are trying to register already exists try again.");window.history.go(-1);</script>';
 		}
-		$target = $this->recuperarNombreTarget($grupo, $grupo_plantel);
-		return $this->render('@Principal/acl/registroAcl.html.twig', array(
+		return $this->render('@Principal/acl/registro_acl.html.twig', array(
 			'form'=>$form->createView(),
-			'ipGrupos'=>$ipGrupos,
-			'grupo'=>$grupo,
-			'target'=>$target,
+			'plantel'=>$plantel,
+			'recuperar_nombre_target'=>$recuperar_nombre_target,
 		));
 	}
 
-	# Funcion para recuperar nombre por id #
-	private function recuperarNombreId($nombre, $grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.nombre
-				FROM PrincipalBundle:Acl u
-				WHERE  u.nombre = :nombre
-				AND u.ubicacion = :grupo'
-		)->setParameter('nombre', $nombre)->setParameter('grupo', $grupo);
-		$datos = $query->getResult();
-		return $datos;
-	}
-
-	private function ipGrupos($grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-	    $db = $em->getConnection();
-		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
-		$stmt = $db->prepare($query);
-		$params =array();
-		$stmt->execute($params);
-		$grupos=$stmt->fetchAll();
-		return $grupos;
-	}
-
-	private function ipInterfaces($grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-	    $db = $em->getConnection();
-		$query = "SELECT * FROM interfaces WHERE descripcion = '$grupo'";
-		$stmt = $db->prepare($query);
-		$params =array();
-		$stmt->execute($params);
-		$grupos=$stmt->fetchAll();
-		return $grupos;
-	}
-
-	# Funcion para recuperar los todos los aliases #
-	private function recuperarNombreTarget($ubicacion, $grupo)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.descripcion, u.ubicacion
-				FROM PrincipalBundle:Target u
-				WHERE  u.ubicacion = :ubicacion
-				AND u.grupo =:grupo'
-		)->setParameter('ubicacion', $ubicacion)->setParameter('grupo', $grupo);
-		$target = $query->getResult();
-		return $target;
-	}
-
-	# Funcion para mostrar los grupos #
-	public function gruposAclAction()
-	{
-		$u = $this->getUser();
-		if($u != null)
-		{
-	        $role=$u->getRole();
-	        $grupo=$u->getGrupo();
-	        if($role == "ROLE_SUPERUSER")
-	        {
-	        	$grupos = $this->recuperarTodosGrupos();
-				return $this->render("@Principal/acl/gruposAcl.html.twig", array(
-					"grupo"=>$grupos
-				));
-	        }
-	        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
-	        {
-	        	return $this->redirectToRoute("listaAcl");
-	        }
-	    }
-	}
-
-	# Funcion para recuperar el todos los grupos #
-	private function recuperarTodosGrupos()
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT DISTINCT g.nombre
-				FROM PrincipalBundle:Grupos g
-				ORDER BY g.nombre ASC'
-		);
-		$grupos = $query->getResult();
-		return $grupos;
-	}
-
-	# Funcion para mostrar los acl #
-	public function listaAclAction()
+	public function lista_aclAction()
 	{
 		$u = $this->getUser();
 		$role=$u->getRole();
 		if($role == 'ROLE_SUPERUSER')
-		{
 			$grupo=$_REQUEST['id'];
-			$ipGrupos = $this->ipGrupos($grupo);
-		}
 		else
-		{
 			$grupo=$u->getGrupo();
-			$ipGrupos = $this->ipGrupos($grupo);
-		}
+		$informacion_grupos_descripcion = $this->informacion_grupos_descripcion($grupo);
 		if(isset($_POST['solicitar']))
 		{
-			#$u = $this->getUser();
 			$ubicacion = $_POST['ubicacion'];
-			if($u != null)
-			{
-		        #$role=$u->getRole();
-		        #$grupo=$u->getGrupo();
-		        $ubicacion = $_REQUEST['ubicacion'];
-		        if($role == "ROLE_SUPERUSER")
-		        {
-		        	#$id=$_REQUEST['id'];
-					$acl = $this->recuperarTodoAclGrupo($grupo, $ubicacion);
-					return $this->render('@Principal/acl/listaAcl.html.twig', array(
-						"acl"=>$acl,
-						'ubicacion'=>$ubicacion
-					));
-		        }
-		        if($role == "ROLE_ADMINISTRATOR")
-		        {
-		        	$acl = $this->recuperarTodoAclGrupo($grupo, $ubicacion);
-					return $this->render('@Principal/acl/listaAcl.html.twig', array(
-						"acl"=>$acl,
-						'ubicacion'=>$ubicacion
-					));
-		        }
-		        if($role == "ROLE_USER")
-		        {
-		        	$acl = $this->recuperarTodoAclGrupo($grupo, $ubicacion);
-					return $this->render('@Principal/acl/listaAcl.html.twig', array(
-						"acl"=>$acl,
-						'ubicacion'=>$ubicacion
-					));
-		        }
-		    }
+			$obtener_datos_acl = $this->obtener_datos_acl($grupo, $ubicacion);
+			return $this->render('@Principal/acl/lista_acl.html.twig', array(
+				"obtener_datos_acl"=>$obtener_datos_acl,
+				'ubicacion'=>$ubicacion
+			));
 		}
-		return $this->render('@Principal/plantillas/solicitudGrupo.html.twig', array(
-			'ipGrupos'=>$ipGrupos
+		return $this->render('@Principal/plantillas/solicitud_grupo.html.twig', array(
+			'informacion_grupos_descripcion'=>$informacion_grupos_descripcion
 		));
 	}
 
-	# Funcion para recuperar los todos los aliases #
-	private function recuperarTodoAclGrupo($grupo, $ubicacion)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.id, u.estatus, u.nombre, u.descripcion, u.grupo, u.ubicacion
-				FROM PrincipalBundle:Acl u
-				WHERE  u.grupo = :grupo
-				AND u.ubicacion = :ubicacion'
-		)->setParameter('grupo', $grupo)->setParameter('ubicacion', $ubicacion);
-		$acl = $query->getResult();
-		return $acl;
-	}
-
-	public function editarAclAction(Request $request, $id)
+	public function editar_aclAction(Request $request, $id)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$acl = $em->getRepository("PrincipalBundle:Acl")->find($id);
 		$form = $this->createForm(AclEditType::class,$acl);
-		$grupo = $this->recuperarGrupoTarget($id);
-		$target = $this->recuperarNombreTarget($grupo[0]['ubicacion'],$grupo[0]['grupo']);
-		$recuperarDatosId = $this->recuperarDatosId($id);
-		$target_rule= explode(' ',$recuperarDatosId[0]['targetRulesList']);
+		$obtener_grupo_ubicacion_acl = $this->obtener_grupo_ubicacion_acl($id);
+		$target = $this->recuperar_nombre_target($obtener_grupo_ubicacion_acl[0]['ubicacion'],$obtener_grupo_ubicacion_acl[0]['grupo']);
+		$obtener_target_acl = $this->obtener_target_acl($id);
+		$target_rule= explode(' ',$obtener_target_acl[0]['targetRulesList']);
 		$form->handleRequest($request);
 		if($form->isSubmitted() && $form->isValid())
 		{
@@ -244,42 +127,16 @@ class AclController extends Controller
 			$acl->setTargetRulesList($target_rule);
 			$em->persist($acl);
 			$flush=$em->flush();
-			return $this->redirectToRoute("gruposAcl");
+			return $this->redirectToRoute("grupos_acl");
 		}
-		return $this->render('@Principal/acl/editarAcl.html.twig', array(
+		return $this->render('@Principal/acl/editar_acl.html.twig', array(
 			'form'=>$form->createView(),
 			"target"=>$target,
 			"target_rule"=>$target_rule
 		));
 	}
 
-	# Funcion para recuperar los todos los aliases #
-	private function recuperarGrupoTarget($id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.grupo, u.ubicacion
-				FROM PrincipalBundle:Acl u
-				WHERE  u.id = :id'
-		)->setParameter('id', $id);
-		$target = $query->getResult();
-		return $target;
-	}
-
-	private function recuperarDatosId($id)
-	{
-		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.targetRulesList
-				FROM PrincipalBundle:Acl u
-				WHERE  u.id = :id'
-		)->setParameter('id', $id);
-		$datos = $query->getResult();
-		return $datos;
-	}
-
-	# Funcion para eliminar un target #
-	public function eliminarAclAction($id)
+	public function eliminar_aclAction($id)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$formato = $em->getRepository("PrincipalBundle:Acl")->find($id);
@@ -290,19 +147,19 @@ class AclController extends Controller
 		else
 			$estatus="Problems with the server try later.";
 		$this->session->getFlashBag()->add("estatus",$estatus);
-		return $this->redirectToRoute("gruposAcl");
+		return $this->redirectToRoute("grupos_acl");
 	}
 
-	public function crearXMLAclAction()
+	public function crear_xml_aclAction()
 	{
 		if(isset($_POST['enviar']))
 		{
 			foreach ($_POST['ip'] as $ips) 
 			{
-				$recuperarTodoDatos = $this->recuperarTodoDatos($ips);
+				$obtener_datos_grupos_xml = $this->obtener_datos_grupos_xml($ips);
 				$contenido = "<?xml version='1.0'?>\n";
 				$contenido .= "\t<squidguardacl>\n";
-				foreach ($recuperarTodoDatos as $acl) 
+				foreach ($obtener_datos_grupos_xml as $acl) 
 				{
 				    $contenido .= "\t\t\t<config>\n";
 				    $contenido .= "\t\t\t\t<disabled>" . $acl['estatus'] . "</disabled>\n";
@@ -324,53 +181,114 @@ class AclController extends Controller
 				$archivo = fopen("$ips.xml", 'w');
 				fwrite($archivo, $contenido);
 				fclose($archivo);
-				#change_to_do#
 				$change_to_do = fopen("change_to_do.txt", 'w');
 				fwrite($change_to_do,'aclgroups.py'."\n");
 				fclose($change_to_do);
-				$changetodo = "change_to_do.txt";
+				$tipo_python = "change_to_do.txt";
 				# Mover el archivo a la carpeta #
-				$archivoConfig = "$ips.xml";
-				$serv = '/var/www/html/central-console/web/clients/Ejemplo_2/';
-				$destinoConfig = $serv . $ips;
-				$res = $destinoConfig . "/conf.xml";
-			   	if (!copy($archivoConfig, $res)) 
-				    echo "Error al copiar $res...\n";
-			   	$destinoConfigchange_to_do = $destinoConfig . '/change_to_do.txt';
-			   	copy($changetodo, $destinoConfigchange_to_do);
+				$archivo_configuracion = "$ips.xml";
+				$direccion_servidor = '/var/www/html/central-console/web/clients/Ejemplo_2/';
+				$destino_configuracion = $direccion_servidor . $ips;
+				$archivo_xml = $destino_configuracion . "/conf.xml";
+			   	copy($archivo_configuracion, $archivo_xml);
+			   	$archivo_tipo_python = $destino_configuracion . '/change_to_do.txt';
+			   	copy($tipo_python, $archivo_tipo_python);
 				unlink("$ips.xml");
 				unlink("change_to_do.txt");
 			}
 			echo '<script> alert("The configuration has been saved.");</script>';
 		}
 		$id=$_REQUEST['id'];
-		$grupos = $this->ipGruposSolo($id);
-		return $this->render("@Principal/grupos/aplicarCambios.html.twig", array(
+		$grupos = $this->informacion_grupos_descripcion($id);
+		return $this->render("@Principal/grupos/aplicar_cambios.html.twig", array(
 			"grupos"=>$grupos
 		));
 	}
 
-	private function ipGruposSolo($grupo)
+	# Area de consultas #
+	# Funcion utilizada en grupos_acl #
+	private function obtener_grupo_nombre()
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery('SELECT DISTINCT g.nombre FROM PrincipalBundle:Grupos g ORDER BY g.nombre ASC');
+		$grupos = $query->getResult();
+		return $grupos;
+	}
+	# Funcion utilizada en registro_acl #
+	private function informacion_interfaces_plantel($grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 	    $db = $em->getConnection();
-		$query = "SELECT * FROM grupos WHERE nombre = '$grupo'";
+		$query = "SELECT DISTINCT descripcion FROM interfaces WHERE grupo = '$grupo'";
 		$stmt = $db->prepare($query);
 		$params =array();
 		$stmt->execute($params);
 		$grupos=$stmt->fetchAll();
 		return $grupos;
 	}
-
-	# Funcion para recuperar toda la informacion de target #
-	private function recuperarTodoDatos($grupo)
+	# Funcion utilizada en registro_acl #
+	private function recuperar_nombre_target($ubicacion, $grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$query = $em->createQuery(
-			'SELECT u.estatus, u.nombre, u.cliente, u.targetRule, u.notAllowIp, u.redirectMode, u.redirect, u.descripcion, u.log
-				FROM PrincipalBundle:Acl u
-				WHERE  u.ubicacion = :ubicacion'
-		)->setParameter('ubicacion', $grupo);
+			'SELECT u.id, u.nombre, u.descripcion, u.ubicacion FROM PrincipalBundle:Target u WHERE  u.ubicacion = :ubicacion
+				AND u.grupo =:grupo')->setParameter('ubicacion', $ubicacion)->setParameter('grupo', $grupo);
+		$target = $query->getResult();
+		return $target;
+	}
+	# Funcion utilizada en registro_acl #
+	private function recuperar_nombre($nombre, $grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery('SELECT u.nombre FROM PrincipalBundle:Acl u WHERE  u.nombre = :nombre
+				AND u.ubicacion = :grupo')->setParameter('nombre', $nombre)->setParameter('grupo', $grupo);
+		$datos = $query->getResult();
+		return $datos;
+	}
+	# Funcion utilizada en lista_acl #
+	private function informacion_grupos_descripcion($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+	    $db = $em->getConnection();
+		$query = "SELECT descripcion FROM grupos WHERE nombre = '$grupo'";
+		$stmt = $db->prepare($query);
+		$params =array();
+		$stmt->execute($params);
+		$grupos=$stmt->fetchAll();
+		return $grupos;
+	}
+	# Funcion para recuperar los todos los aliases #
+	private function obtener_datos_acl($grupo, $ubicacion)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery(
+			'SELECT u.id, u.estatus, u.nombre, u.descripcion, u.grupo, u.ubicacion FROM PrincipalBundle:Acl u 
+				WHERE  u.grupo = :grupo AND u.ubicacion = :ubicacion')->setParameter('grupo', $grupo)->setParameter('ubicacion', $ubicacion);
+		$acl = $query->getResult();
+		return $acl;
+	}
+	# Funcion utilizada en editar_acl #
+	private function obtener_grupo_ubicacion_acl($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery('SELECT u.grupo, u.ubicacion FROM PrincipalBundle:Acl u WHERE  u.id = :id')->setParameter('id', $id);
+		$target = $query->getResult();
+		return $target;
+	}
+	# Funcion utilizada en editar_acl #
+	private function obtener_target_acl($id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery('SELECT u.targetRulesList FROM PrincipalBundle:Acl u WHERE  u.id = :id')->setParameter('id', $id);
+		$datos = $query->getResult();
+		return $datos;
+	}
+	# Funcion utilizada en crear_xml_acl #
+	private function obtener_datos_grupos_xml($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery('SELECT u.estatus, u.nombre, u.cliente, u.targetRule, u.notAllowIp, u.redirectMode, u.redirect, u.descripcion, u.log
+			FROM PrincipalBundle:Acl u WHERE  u.ubicacion = :ubicacion')->setParameter('ubicacion', $grupo);
 		$datos = $query->getResult();
 		return $datos;
 	}

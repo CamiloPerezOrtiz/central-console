@@ -17,6 +17,52 @@ class GruposController extends Controller
 	{
 		$em = $this->getDoctrine()->getEntityManager();
 		$db = $em->getConnection();
+		# Archivo interfaces #
+		$u = $this->getUser();
+		$role=$u->getRole();
+		if($role == "ROLE_ADMINISTRATOR")
+	    {
+	    	$grupo=$u->getGrupo();
+	    	$grupos = $this->obtener_nombre_grupo($grupo);
+	    	$interfaces = array("wan", "lan", "opt1", "opt2","opt3");
+	    	$interfaces_archivo = fopen("interfaces.txt", "w");
+	    	foreach ($grupos as $equipo_grupos) 
+			{
+				foreach ($equipo_grupos as $equipo) 
+				{
+					$xml = simplexml_load_file("clients/Ejemplo_2/$equipo/info.xml");
+					foreach ($interfaces as $interfaces_equipo) 
+					{
+						$tipo_interfas = $xml->xpath("/interfaces/$interfaces_equipo/if");
+		        		$nombre = $xml->xpath("/interfaces/$interfaces_equipo/descr");
+		        		$ip = $xml->xpath("/interfaces/$interfaces_equipo/ipaddr");
+		        		foreach ($tipo_interfas as $interfas) 
+						{
+							#echo $interfas . "|";
+							fwrite($interfaces_archivo, $interfas."|");
+						}
+						foreach ($nombre as $nombre_interfas) 
+						{
+							fwrite($interfaces_archivo, $nombre_interfas . "|".$interfaces_equipo."|");
+						}
+						foreach ($ip as $ip_equipo) 
+						{
+							$ip_nueva = preg_replace('/\d{1,3}$/', '', $ip_equipo);
+							if($ip_nueva == "dhcp")
+							{
+								fwrite($interfaces_archivo, "192.168.0." . "|UI|".$equipo."|\n");
+							}
+							else
+							{
+								$resultado_ip = $ip_nueva . "|UI|$equipo|\n";
+								fwrite($interfaces_archivo, $resultado_ip);
+							}
+						}
+					}
+				}
+			}
+			fclose($interfaces_archivo);
+	    }
 		# Query para borrar la tabla grupos de la base de datos #
 		$queryDrop = "DELETE FROM grupos";
 		$stmtDrop = $db->prepare($queryDrop);
@@ -56,22 +102,6 @@ class GruposController extends Controller
 			$params =array();
 			$stmt->execute($params);
 			$flush=$em->flush();
-			$serv = "/var/www/html/central-console/web/Groups/$nombre";
-			if(!file_exists($serv))
-			{
-			  mkdir ($serv);
-			  echo "Se ha creado el directorio: " . $serv;
-			} 
-			else 
-			  echo "la ruta: " . $serv . " ya existe ";
-			$ruta = $serv . "/" . $descripcion;
-			if(!file_exists($ruta))
-			{
-			  mkdir ($ruta);
-			  echo "Se ha creado el directorio: " . $ruta;
-			} 
-			else 
-			  echo "la ruta: " . $ruta . " ya existe ";
 		}
 		$archivo_interfaces=file('interfaces.txt'); 
 		foreach($archivo_interfaces as $archivo_interfas)
@@ -92,6 +122,14 @@ class GruposController extends Controller
 		return $this->redirectToRoute("grupos");
 	}
 
+	private function obtener_nombre_grupo($grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery('SELECT g.descripcion FROM PrincipalBundle:Grupos g WHERE g.nombre = :grupo')->setParameter('grupo', $grupo);;
+		$grupos = $query->getResult();
+		return $grupos;
+	}
+
 	# Funcion para mostrar los grupos #
 	public function gruposAction()
 	{
@@ -102,6 +140,45 @@ class GruposController extends Controller
 	        $grupo=$u->getGrupo();
 	        if($role == "ROLE_SUPERUSER")
 	        {
+	        	/*$plantel = array("Plantel_Xola", "Plantel_Ciudad_Azteca", "Plantel_Ermita", "Plantel_Norte");
+	        	$interfaces = array("wan", "lan", "opt1", "opt2","opt3");
+	        	$interfaces_archivo = fopen("interfaces_equipo.txt", "w");
+	        	foreach ($plantel as $equipo) 
+				{
+					$xml = simplexml_load_file("clients/Ejemplo_2/$equipo/info.xml");
+					foreach ($interfaces as $interfaces_equipo) 
+					{
+						$tipo_interfas = $xml->xpath("/interfaces/$interfaces_equipo/if");
+		        		$nombre = $xml->xpath("/interfaces/$interfaces_equipo/descr");
+		        		$ip = $xml->xpath("/interfaces/$interfaces_equipo/ipaddr");
+		        		foreach ($tipo_interfas as $interfas) 
+						{
+							#echo $interfas . "|";
+							fwrite($interfaces_archivo, $interfas."|");
+						}
+						foreach ($nombre as $nombre_interfas) 
+						{
+							#echo $nombre_interfas . "|$interfaces_equipo|";
+							fwrite($interfaces_archivo, $nombre_interfas . "|".$interfaces_equipo."|");
+						}
+						foreach ($ip as $ip_equipo) 
+						{
+							$ip_nueva = preg_replace('/\d{1,3}$/', '', $ip_equipo);
+							if($ip_nueva == "dhcp")
+							{
+								#echo $resultado_ip = "192.168.0." . "|UI|$equipo|\n";
+								fwrite($interfaces_archivo, "192.168.0." . "|UI|".$equipo."|\n");
+							}
+							else
+							{
+								$resultado_ip = $ip_nueva . "|UI|$equipo|\n";
+								fwrite($interfaces_archivo, $resultado_ip);
+							}
+						}
+					}
+				}
+				fclose($interfaces_archivo);
+	        	die();*/
 	        	$grupos = $this->recuperarTodosGrupos();
 				return $this->render("@Principal/grupos/grupos.html.twig", array(
 					"grupo"=>$grupos

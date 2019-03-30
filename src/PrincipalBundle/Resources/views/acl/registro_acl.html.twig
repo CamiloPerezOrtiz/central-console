@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">ACL group location {{grupo}}</h1>
+                <h1 class="page-header">ACL group location {{plantel}}</h1>
             </div>
         </div>
         <div class="row">
@@ -12,7 +12,7 @@
                 <div class="col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            Register ACL group <input type="hidden" name="plantel" value="{{grupo}}">
+                            Register ACL group <input type="hidden" name="plantel" value="{{plantel}}">
                         </div>
                         <div class="panel-body small">
                             <div class="form-row">
@@ -66,7 +66,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for target_categories in target %}
+                                            {% for target_categories in recuperar_nombre_target %}
                                                 <tr>
                                                     <td>
                                                         {{ target_categories.descripcion }} [{{ target_categories.nombre }}]

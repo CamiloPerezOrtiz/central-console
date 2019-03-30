@@ -25,7 +25,7 @@
                             </ul>
                             <div class="tab-content">
                                 <div id="home" class="container tab-pane active"><br>
-                                    {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
+                                    {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                         {% set ubicacion = ubicacion %}
                                             <a href="{{path('registroNatPortForward',{'id': ubicacion })}}">
                                                 <button type="button" class="btn btn-success">
@@ -579,7 +579,7 @@
                                     </div>
                                 </div>
                                 <div id="menu1" class="container tab-pane fade"><br>
-                                    {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
+                                    {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                         {% set ubicacion = ubicacion %}
                                             <a href="{{path('registroNatOneToOne',{'id': ubicacion })}}">
                                                 <button type="button" class="btn btn-success">

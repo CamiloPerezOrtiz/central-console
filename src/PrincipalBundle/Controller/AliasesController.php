@@ -54,20 +54,20 @@ class AliasesController extends Controller
 		{
 			$em = $this->getDoctrine()->getEntityManager();
 			$db = $em->getConnection();
-			$verificarNombre = $this->recuperarNombreId($form->get("nombre")->getData(), $grupo);
-			if(count($verificarNombre)==0)
+			foreach($_POST['plantel'] as $plantel_grupo)
 			{
-				# Variables obtenidas en el formulario #
-				$nombre_interfas = $_POST['nombre_interfas'];
-				$nombre = $form->get("nombre")->getData();
-				$descripcion = $form->get("descripcion")->getData();
-				$tipo = $form->get("tipo")->getData();
-				//ip = $_POST['ip'];
-				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-				$archivo_ip_interfaces=fopen("archivo_ip_interfaces.txt","w") or die("Problemas con el servidor intente mas tarde.");
-				# Consulta para obtener la ip de la interfaz selecionada #
-				foreach($_POST['plantel'] as $plantel_grupo)
+				$recuperar_nombre = $this->recuperar_nombre($form->get("nombre")->getData(), $plantel_grupo);
+				if(count($recuperar_nombre)==0)
 				{
+					# Variables obtenidas en el formulario #
+					$nombre_interfas = $_POST['nombre_interfas'];
+					$nombre = $form->get("nombre")->getData();
+					$descripcion = $form->get("descripcion")->getData();
+					$tipo = $form->get("tipo")->getData();
+					//ip = $_POST['ip'];
+					$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
+					$archivo_ip_interfaces=fopen("archivo_ip_interfaces.txt","w") or die("Problemas con el servidor intente mas tarde.");
+					# Consulta para obtener la ip de la interfaz selecionada #
 					$informacion_interfaces_ip = $this->informacion_interfaces_ip($nombre_interfas, $plantel_grupo);
 					# Crear archivo temporal de las IPs #
 					$archivo_ip=fopen("archivo_ip.txt","w") or die("Problemas con el servidor intente mas tarde.");
@@ -95,22 +95,22 @@ class AliasesController extends Controller
 							$stmt->execute($params);
 						}
 					}
-				}
-				unlink("archivo_ip.txt");
-				if($stmt == null)
-				{
-					$estatus="Problems with the server try later.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
+					unlink("archivo_ip.txt");
+					if($stmt == null)
+					{
+						$estatus="Problems with the server try later.";
+						$this->session->getFlashBag()->add("estatus",$estatus);
+					}
+					else
+					{
+						$estatus="Successfully registration.";
+						$this->session->getFlashBag()->add("estatus",$estatus);
+						return $this->redirectToRoute("grupos_aliases");
+					}
 				}
 				else
-				{
-					$estatus="Successfully registration.";
-					$this->session->getFlashBag()->add("estatus",$estatus);
-					return $this->redirectToRoute("grupos_aliases");
-				}
+					echo '<script>alert("The name you are trying to register already exists in device ' . $plantel_grupo .'. Try again.");</script>';
 			}
-			else
-				echo '<script>alert("The name you are trying to register already exists. Try again.");window.history.go(-1);</script>';
 		}
 		return $this->render('@Principal/aliases/registro_aliases.html.twig', array(
 			'form'=>$form->createView(),
@@ -126,37 +126,18 @@ class AliasesController extends Controller
 		$u = $this->getUser();
 		$role=$u->getRole();
 		if($role == 'ROLE_SUPERUSER')
-		{
 			$grupo=$_REQUEST['id'];
-			$informacion_grupos_descripcion = $this->informacion_grupos_descripcion($grupo);
-		}
 		else
-		{
 			$grupo=$u->getGrupo();
-			$informacion_grupos_descripcion = $this->informacion_grupos_descripcion($grupo);
-		}
+		$informacion_grupos_descripcion = $this->informacion_grupos_descripcion($grupo);
 		if(isset($_POST['solicitar']))
 		{
 			$ubicacion = $_POST['ubicacion'];
-			if($u != null)
-			{
-		        if($role == "ROLE_SUPERUSER")
-		        {
-					$aliases = $this->obtener_datos_grupos($grupo, $ubicacion);
-					return $this->render('@Principal/aliases/lista_aliases.html.twig', array(
-						"aliases"=>$aliases,
-						'ubicacion'=>$ubicacion
-					));
-		        }
-		        if($role == "ROLE_ADMINISTRATOR" or $role == "ROLE_USER")
-		        {
-		        	$aliases = $this->obtener_datos_grupos($grupo, $ubicacion);
-					return $this->render('@Principal/aliases/lista_aliases.html.twig', array(
-						"aliases"=>$aliases,
-						'ubicacion'=>$ubicacion
-					));
-		        }
-		    }
+			$aliases = $this->obtener_datos_aliases($grupo, $ubicacion);
+			return $this->render('@Principal/aliases/lista_aliases.html.twig', array(
+				"aliases"=>$aliases,
+				'ubicacion'=>$ubicacion
+			));
 		}
 
 	    return $this->render('@Principal/plantillas/solicitud_grupo.html.twig', array(
@@ -288,6 +269,15 @@ class AliasesController extends Controller
 		$grupos=$stmt->fetchAll();
 		return $grupos;
 	}
+	# Funcion utilizada en registro_aliases #
+	private function recuperar_nombre($nombre, $grupo)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$query = $em->createQuery('SELECT u.nombre FROM PrincipalBundle:Aliases u WHERE  u.nombre = :nombre
+				AND u.ubicacion = :grupo')->setParameter('nombre', $nombre)->setParameter('grupo', $grupo);
+		$datos = $query->getResult();
+		return $datos;
+	}
 	# Funcion utilizada en lista_aliases #
 	private function informacion_grupos_descripcion($grupo)
 	{
@@ -301,15 +291,11 @@ class AliasesController extends Controller
 		return $grupos;
 	}
 	# Funcion utilizada en lista_aliases #
-	private function obtener_datos_grupos($grupo, $ubicacion)
+	private function obtener_datos_aliases($grupo, $ubicacion)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.ip_port, u.grupo, u.ubicacion
-				FROM PrincipalBundle:Aliases u
-				WHERE  u.grupo = :grupo
-				AND u.ubicacion = :ubicacion'
-		)->setParameter('grupo', $grupo)->setParameter('ubicacion', $ubicacion);
+		$query = $em->createQuery('SELECT u.id, u.nombre, u.ip_port, u.grupo, u.ubicacion FROM PrincipalBundle:Aliases u
+			WHERE  u.grupo = :grupo AND u.ubicacion = :ubicacion')->setParameter('grupo', $grupo)->setParameter('ubicacion', $ubicacion);
 		$grupoAliases = $query->getResult();
 		return $grupoAliases;
 	}
@@ -317,11 +303,7 @@ class AliasesController extends Controller
 	private function informacion_aliases_ip_descripcion($id)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.ip_port, u.descripcion_ip_port
-				FROM PrincipalBundle:Aliases u
-				WHERE  u.id = :id'
-		)->setParameter('id', $id);
+		$query = $em->createQuery('SELECT u.ip_port, u.descripcion_ip_port FROM PrincipalBundle:Aliases u WHERE  u.id = :id')->setParameter('id', $id);
 		$datos = $query->getResult();
 		return $datos;
 	}
@@ -329,12 +311,8 @@ class AliasesController extends Controller
 	private function obtener_datos_grupos_xml($grupo)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$query = $em->createQuery(
-			'SELECT u.id, u.nombre, u.tipo, u.descripcion, u.ip_port, u.descripcion_ip_port
-				FROM PrincipalBundle:Aliases u
-				WHERE  u.ubicacion = :ubicacion
-				ORDER BY u.id'
-		)->setParameter('ubicacion', $grupo);
+		$query = $em->createQuery('SELECT u.id, u.nombre, u.tipo, u.descripcion, u.ip_port, u.descripcion_ip_port
+			FROM PrincipalBundle:Aliases u WHERE  u.ubicacion = :ubicacion ORDER BY u.id')->setParameter('ubicacion', $grupo);
 		$datos = $query->getResult();
 		return $datos;
 	}

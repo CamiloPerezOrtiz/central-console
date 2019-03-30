@@ -16,7 +16,7 @@
                     <div class="panel-body">
                         <div class="table-responsive">
                             <div class="tab-content">
-                                {% if app.user.role == 'ROLE_ADMINISTRATOR' %}
+                                {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                     {% set ubicacion = ubicacion %}
                                         <a href="{{path('registroFirewallWan',{'id': ubicacion })}}">
                                             <button type="button" class="btn btn-success">
