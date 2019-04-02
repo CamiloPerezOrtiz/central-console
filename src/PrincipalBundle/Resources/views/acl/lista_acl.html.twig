@@ -57,11 +57,11 @@
                                             <td>{{ acl_groups.ubicacion }}</td>
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
-                                                    <a href="{{ path('editar_acl',{id:acl_groups.id}) }}">
-                                                            <i class="fas fa-pencil-alt"></i>
+                                                    <a class="btn btn-warning btn-xs" href="{{ path('editar_acl',{id:acl_groups.id}) }}">
+                                                        Edit <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                    <a href="{{ path('eliminar_acl',{id:acl_groups.id}) }}">
-                                                            <i class="fas fa-trash-alt"></i>
+                                                    <a class="btn btn-danger btn-xs" href="{{ path('eliminar_acl',{id:acl_groups.id}) }}">
+                                                        Delete <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </td>
                                             {% endif %}

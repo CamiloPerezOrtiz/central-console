@@ -54,20 +54,20 @@ class AliasesController extends Controller
 		{
 			$em = $this->getDoctrine()->getEntityManager();
 			$db = $em->getConnection();
-			foreach($_POST['plantel'] as $plantel_grupo)
+			$recuperar_nombre = $this->recuperar_nombre($form->get("nombre")->getData(), $grupo);
+			if(count($recuperar_nombre)==0)
 			{
-				$recuperar_nombre = $this->recuperar_nombre($form->get("nombre")->getData(), $plantel_grupo);
-				if(count($recuperar_nombre)==0)
+				# Variables obtenidas en el formulario #
+				$nombre_interfas = $_POST['nombre_interfas'];
+				$nombre = $form->get("nombre")->getData();
+				$descripcion = $form->get("descripcion")->getData();
+				$tipo = $form->get("tipo")->getData();
+				//ip = $_POST['ip'];
+				$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
+				$archivo_ip_interfaces=fopen("archivo_ip_interfaces.txt","w") or die("Problemas con el servidor intente mas tarde.");
+				# Consulta para obtener la ip de la interfaz selecionada #
+				foreach($_POST['plantel'] as $plantel_grupo)
 				{
-					# Variables obtenidas en el formulario #
-					$nombre_interfas = $_POST['nombre_interfas'];
-					$nombre = $form->get("nombre")->getData();
-					$descripcion = $form->get("descripcion")->getData();
-					$tipo = $form->get("tipo")->getData();
-					//ip = $_POST['ip'];
-					$descripcion_ip_port = implode(" ||",$_POST['descripcion_ip_port']);
-					$archivo_ip_interfaces=fopen("archivo_ip_interfaces.txt","w") or die("Problemas con el servidor intente mas tarde.");
-					# Consulta para obtener la ip de la interfaz selecionada #
 					$informacion_interfaces_ip = $this->informacion_interfaces_ip($nombre_interfas, $plantel_grupo);
 					# Crear archivo temporal de las IPs #
 					$archivo_ip=fopen("archivo_ip.txt","w") or die("Problemas con el servidor intente mas tarde.");
@@ -95,22 +95,22 @@ class AliasesController extends Controller
 							$stmt->execute($params);
 						}
 					}
-					unlink("archivo_ip.txt");
-					if($stmt == null)
-					{
-						$estatus="Problems with the server try later.";
-						$this->session->getFlashBag()->add("estatus",$estatus);
-					}
-					else
-					{
-						$estatus="Successfully registration.";
-						$this->session->getFlashBag()->add("estatus",$estatus);
-						return $this->redirectToRoute("grupos_aliases");
-					}
+				}
+				unlink("archivo_ip.txt");
+				if($stmt == null)
+				{
+					$estatus="Problems with the server try later.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
 				}
 				else
-					echo '<script>alert("The name you are trying to register already exists in device ' . $plantel_grupo .'. Try again.");</script>';
+				{
+					$estatus="Successfully registration.";
+					$this->session->getFlashBag()->add("estatus",$estatus);
+					return $this->redirectToRoute("grupos_aliases");
+				}
 			}
+			else
+				echo '<script>alert("The name you are trying to register already exists in device ' . $plantel_grupo .'. Try again.");</script>';
 		}
 		return $this->render('@Principal/aliases/registro_aliases.html.twig', array(
 			'form'=>$form->createView(),

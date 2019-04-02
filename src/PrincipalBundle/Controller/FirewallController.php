@@ -86,7 +86,41 @@ class FirewallController extends Controller
 			'ubicacion'=>$ubicacion,
 			'interfaces_equipo'=>$interfaces_equipo
 		));
-		
+	}
+
+	public function editarFirewallWanAction(Request $request, $id)
+	{
+		$em = $this->getDoctrine()->getEntityManager();
+		$nat = $em->getRepository("PrincipalBundle:FirewallLan")->find($id);
+		$form = $this->createForm(FirewallLanType::class,$nat);
+		$u = $this->getUser();
+		$role=$u->getRole();
+		$ubicacion=$nat->getUbicacion();
+		$form->handleRequest($request);
+		$interfaces_equipo = $this->informacion_interfaces($ubicacion);
+		if($form->isSubmitted() && $form->isValid())
+		{
+
+			$nat->setInterface($_POST['interface']);
+			$nat->setSourceAdvancedType($_POST['sourceAdvancedType']);
+			$nat->setDestinationType($_POST['destinationType']);
+			$em->persist($nat);
+			$flush=$em->flush();
+			if($flush == null)
+			{
+				$estatus="Successfully update.";
+				$this->session->getFlashBag()->add("estatus",$estatus);
+				return $this->redirectToRoute("gruposNat");
+			}
+			else
+				echo '<script> alert("Problems with the server try later.");window.history.go(-1);</script>';
+			return $this->redirectToRoute("gruposNat");
+		}
+		return $this->render('@Principal/firewall/registroFirewallWan.html.twig', array(
+			'form'=>$form->createView(),
+			'ubicacion'=>$ubicacion,
+			'interfaces_equipo'=>$interfaces_equipo
+		));
 	}
 
 	private function ipGrupos($grupo)

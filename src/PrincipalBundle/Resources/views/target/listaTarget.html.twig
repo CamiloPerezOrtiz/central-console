@@ -54,11 +54,11 @@
                                             <td>{{ targets.ubicacion }}</td>
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
-                                                    <a href="{{ path('editarTarget',{id:targets.id}) }}">
-                                                        <i class="fas fa-pencil-alt"></i>
+                                                    <a class="btn btn-warning btn-xs" href="{{ path('editarTarget',{id:targets.id}) }}">
+                                                        Edit <i class="fas fa-pencil-alt"></i>
                                                     </a>
-                                                    <a href="{{ path('eliminarTarget',{id:targets.id}) }}">
-                                                        <i class="fas fa-trash-alt"></i>
+                                                    <a class="btn btn-danger btn-xs" href="{{ path('eliminarTarget',{id:targets.id}) }}">
+                                                        Delete <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </td>
                                             {% endif %}

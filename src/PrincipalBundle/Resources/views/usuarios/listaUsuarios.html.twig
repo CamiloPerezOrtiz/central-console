@@ -100,11 +100,11 @@
                                             {% endif %}
                                             {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                 <td>
-                                                    <a href="{{ path('editarUsuario',{id:usuarios.id}) }}">
-                                                        <i class="fas fa-user-edit"></i>
+                                                    <a class="btn btn-warning btn-xs" href="{{ path('editarUsuario',{id:usuarios.id}) }}">
+                                                        Edit user <i class="fas fa-user-edit"></i>
                                                     </a>
-                                                    <a href="{{ path('eliminarUsuario',{id:usuarios.id}) }}">
-                                                        <i class="fas fa-user-minus"></i>
+                                                    <a class="btn btn-danger btn-xs" href="{{ path('eliminarUsuario',{id:usuarios.id}) }}">
+                                                        Delete user <i class="fas fa-user-minus"></i>
                                                     </a>
                                                 </td>
                                             {% endif %}

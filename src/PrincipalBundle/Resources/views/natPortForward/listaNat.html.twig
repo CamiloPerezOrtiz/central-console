@@ -564,11 +564,11 @@
                                                         <td>{{ natPort.descripcion }}</td>
                                                         {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
                                                             <td>
-                                                                <a href="{{path('editarNatPortForward',{id:natPort.id})}}">
-                                                                    <i class="far fa-edit"></i>
+                                                                <a class="btn btn-warning btn-xs" href="{{path('editarNatPortForward',{id:natPort.id})}}">
+                                                                    Edit <i class="fas fa-pencil-alt"></i>
                                                                 </a>
-                                                                <a href="{{path('eliminarNatPortForward',{id:natPort.id})}}">
-                                                                    <i class="fas fa-times-circle"></i>
+                                                                <a class="btn btn-danger btn-xs" href="{{path('eliminarNatPortForward',{id:natPort.id})}}">
+                                                                    Delete <i class="fas fa-trash-alt"></i>
                                                                 </a>
                                                             </td>
                                                         {% endif %}
@@ -835,11 +835,11 @@
                                                         </td>
                                                         {% if app.user.role == "ROLE_ADMINISTRATOR" or app.user.role == "ROLE_SUPERUSER" %}
                                                             <td>
-                                                                <a href="{{path('editarNatOneToOne',{id:natOTO.id})}}">
-                                                                    <i class="far fa-edit"></i>
+                                                                <a class="btn btn-warning btn-xs" href="{{path('editarNatOneToOne',{id:natOTO.id})}}">
+                                                                    Edit <i class="fas fa-pencil-alt"></i>
                                                                 </a>
-                                                                <a href="{{path('eliminarNatOneToOne',{id:natOTO.id})}}">
-                                                                    <i class="fas fa-times-circle"></i>
+                                                                <a class="btn btn-danger btn-xs" href="{{path('eliminarNatOneToOne',{id:natOTO.id})}}">
+                                                                    Delete <i class="fas fa-trash-alt"></i>
                                                                 </a>
                                                             </td>
                                                         {% endif %}

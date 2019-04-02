@@ -20,7 +20,7 @@ class GruposController extends Controller
 		# Archivo interfaces #
 		$u = $this->getUser();
 		$role=$u->getRole();
-		if($role == "ROLE_ADMINISTRATOR")
+		/*if($role == "ROLE_ADMINISTRATOR")
 	    {
 	    	$grupo=$u->getGrupo();
 	    	$grupos = $this->obtener_nombre_grupo($grupo);
@@ -62,7 +62,7 @@ class GruposController extends Controller
 				}
 			}
 			fclose($interfaces_archivo);
-	    }
+	    }*/
 		# Query para borrar la tabla grupos de la base de datos #
 		$queryDrop = "DELETE FROM grupos";
 		$stmtDrop = $db->prepare($queryDrop);

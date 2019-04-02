@@ -321,11 +321,11 @@
                                                     <td>{{ firewall_wan.descripcion }}</td>
                                                     {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
                                                         <td>
-                                                            <a href="{{ path('editarFirewallWan',{id:firewall_wan.id}) }}">
-                                                                    <i class="fas fa-pencil-alt"></i>
+                                                            <a class="btn btn-warning btn-xs" href="{{ path('editarFirewallWan',{id:firewall_wan.id}) }}">
+                                                                Edit <i class="fas fa-pencil-alt"></i>
                                                             </a>
-                                                            <a href="{{ path('eliminarFirewallWan',{id:firewall_wan.id}) }}">
-                                                                    <i class="fas fa-trash-alt"></i>
+                                                            <a class="btn btn-danger btn-xs" href="{{ path('eliminarFirewallWan',{id:firewall_wan.id}) }}">
+                                                                Delete <i class="fas fa-trash-alt"></i>
                                                             </a>
                                                         </td>
                                                     {% endif %}
