@@ -23,7 +23,7 @@
                                 </a>
                                 <br><br>
                             {% endif %}
-                            <table class="table table-sm table-striped table-bordered table-hover text-center small" id="dataTables-example">
+                            <table class="table table-sm table-striped table-bordered table-hover small" id="dataTables-example">
                                 <div class="col-md-12">
                                     {% for msg in app.session.flashbag().get('estatus') %}
                                         <div class="alert alert-info" aria-label="Close">
@@ -36,30 +36,27 @@
                                     <tr>
                                         <th>Name</th>                         
                                         <th>Values</th>
-                                        <th>Group</th>
-                                        <th>Location</th>
                                         {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                            <th>Operaciones</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
                                         {% endif %}                                 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for alias in aliases %}
+                                    {% for item in xmls %}
                                         <tr>
-                                            <td>{{ alias.nombre }}</td>
-                                            <td>{{ alias.ip_port }}</td>
-                                            <td>{{ alias.grupo }}</td>
-                                            <td>{{ alias.ubicacion }}</td>
-                                            {% if app.user.role == 'ROLE_SUPERUSER' or app.user.role == 'ROLE_ADMINISTRATOR' %}
-                                                <td>
-                                                    <a class="btn btn-warning btn-xs" href="{{ path('editar_aliases',{id:alias.id}) }}">
-                                                       Edit <i class="fas fa-pencil-alt"></i>
-                                                    </a>
-                                                    <a class="btn btn-danger btn-xs" href="{{ path('eliminar_aliases',{id:alias.id}) }}">
-                                                       Delete <i class="fas fa-trash-alt"></i>
-                                                    </a>
-                                                </td>
-                                            {% endif %}
+                                            <td>{{ item.name }}</td>
+                                            <td>{{ item.address }}</td>
+                                            <td>
+                                                <a class="btn btn-warning btn-xs" href="{{ path('editar_aliases',{'id': item.name }) }}">
+                                                    Edit <i class="fas fa-pencil-alt"></i>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-danger btn-xs" href="{{ path('eliminar_aliases',{id:item.name}) }}">
+                                                   Delete <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

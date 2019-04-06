@@ -4,11 +4,11 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Aliases xD</h1>
+                <h1 class="page-header">Aliases</h1>
             </div>
         </div>
         <div class="row">
-            {{ form_start(form) }}
+            <form method="post">
                 <div class="col-md-6">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
@@ -16,38 +16,34 @@
                         </div>
                         <div class="panel-body small">
                             <div class="row">
-                                <div class="col-md-12">
-                                    {% for msg in app.session.flashbag().get('estatus') %}
-                                        <div class="alert alert-info" aria-label="Close">
-                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                            <strong>Info!</strong> {{ msg }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
                                 <div class="col-lg-12">
                                     <div class="form-group row">  
                                         <div class="col-xs-12">
-                                            {{ form_label(form.nombre) }}
+                                            <label>Name</label>
                                             <footer class="small">The name of the alias may only consist of the characters "a-z, A-Z, 0-9.</footer>
-                                            <footer class="small">The name must be at least 3 characters, maximum 15.</footer>
-                                            {{ form_widget(form.nombre) }}
-                                            <span class="text-danger">{{ form_errors(form.nombre) }}</span>
+                                            <input type="text" name="nombre" class="form-control input-sm">
                                         </div>
                                     </div>
                                     <div class="form-group row">   
                                         <div class="col-xs-12">
-                                            {{ form_label(form.descripcion) }}
+                                            <label>Description</label>
                                             <footer class="small">A description may be entered here for administrative reference.</footer>
-                                            {{ form_widget(form.descripcion) }}
-                                            <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                                            <input type="text" name="descripcion" class="form-control input-sm">
                                         </div>
                                     </div>
                                     <div class="form-group row">   
                                         <div class="col-xs-12">
-                                            {{ form_label(form.tipo) }}
+                                            <label>Typr</label>
                                             <footer class="small">A description may be entered here for administrative reference.</footer>
-                                            {{ form_widget(form.tipo) }}
-                                            <span class="text-danger">{{ form_errors(form.tipo) }}</span>
+                                            <select name="tipo" class="form-control input-sm" onChange="mostrar(this.value);">
+                                                <option value="host">Host(s)</option>
+                                                <option value="network">Network(s)</option>
+                                                <option value="port">Port(s)</option>
+                                                <option value="url">URL (IPs)</option>
+                                                <option value="url_ports">URL (Ports)</option>
+                                                <option value="urltable">URL Table (IPs)</option>
+                                                <option value="urltable_ports">URL Table (Ports)</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -142,7 +138,7 @@
                                     </div>
                                     <br>
                                     <div class="form-group">
-                                        {{ form_widget(form.Save) }}
+                                        <button type="submit" name="guardar" class="btn btn-success btn-block btn-sm">Save</button>
                                     </div>
                                 </div>
                             </div> 
@@ -163,7 +159,7 @@
                         </div>
                     </div>
                 </div>
-            {{ form_end(form) }}
+            </form>
         </div>
     </div>
 </div>

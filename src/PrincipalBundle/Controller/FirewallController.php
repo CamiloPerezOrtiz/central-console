@@ -91,26 +91,27 @@ class FirewallController extends Controller
 	public function editarFirewallWanAction(Request $request, $id)
 	{
 		$em = $this->getDoctrine()->getEntityManager();
-		$nat = $em->getRepository("PrincipalBundle:FirewallLan")->find($id);
-		$form = $this->createForm(FirewallLanType::class,$nat);
+		$firewall = $em->getRepository("PrincipalBundle:FirewallLan")->find($id);
+		$form = $this->createForm(FirewallLanType::class,$firewall);
 		$u = $this->getUser();
 		$role=$u->getRole();
-		$ubicacion=$nat->getUbicacion();
+		$ubicacion=$firewall->getUbicacion();
 		$form->handleRequest($request);
 		$interfaces_equipo = $this->informacion_interfaces($ubicacion);
 		if($form->isSubmitted() && $form->isValid())
 		{
-
-			$nat->setInterface($_POST['interface']);
-			$nat->setSourceAdvancedType($_POST['sourceAdvancedType']);
-			$nat->setDestinationType($_POST['destinationType']);
-			$em->persist($nat);
+			$icm = $_POST['icmp_subtypes'];
+			$firewall->setInterface($_POST['interface']);
+			$firewall->setIcmSubtypes(implode(",",$icm));
+			$firewall->setSourceType($_POST['sourceAdvancedType']);
+			$firewall->setDestinationType($_POST['destinationType']);
+			$em->persist($firewall);
 			$flush=$em->flush();
 			if($flush == null)
 			{
 				$estatus="Successfully update.";
 				$this->session->getFlashBag()->add("estatus",$estatus);
-				return $this->redirectToRoute("gruposNat");
+				return $this->redirectToRoute("gruposFirewall");
 			}
 			else
 				echo '<script> alert("Problems with the server try later.");window.history.go(-1);</script>';

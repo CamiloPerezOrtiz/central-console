@@ -89,11 +89,11 @@ lista_aliases:
     defaults: { _controller: PrincipalBundle:Aliases:lista_aliases }
 
 editar_aliases:
-    path:     /editar_aliases/{id} 
+    path:     /editar_aliases
     defaults: { _controller: PrincipalBundle:Aliases:editar_aliases }
 
 eliminar_aliases:
-    path:     /eliminar_aliases/{id} 
+    path:     /eliminar_aliases
     defaults: { _controller: PrincipalBundle:Aliases:eliminar_aliases }
 
 crear_xml_aliases:

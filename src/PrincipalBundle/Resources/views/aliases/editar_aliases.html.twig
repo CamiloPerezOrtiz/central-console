@@ -15,42 +15,37 @@
                     </div>
                     <div class="panel-body small">
                         <div class="row">
-                            {# Mensaje a pantalla de notificacion de algun error #}
-                                <div class="col-md-12">
-                                    {% for msg in app.session.flashbag().get('estatus') %}
-                                        <div class="alert alert-info" aria-label="Close">
-                                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                                            <strong>Info!</strong> {{ msg }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {# Fin de Mensaje #}
                             <div class="col-lg-1">
                             </div>
                             <div class="col-lg-11">
-                                {{ form_start(form) }}
+                                <form method="post">
                                     <div class="form-group row">  
                                         <div class="col-xs-12">
-                                            {{ form_label(form.nombre) }}
+                                            <label>Name</label>
                                             <footer class="small">The name of the alias may only consist of the characters "a-z, A-Z, 0-9.</footer>
-                                            {{ form_widget(form.nombre) }}
-                                            <span class="text-danger">{{ form_errors(form.nombre) }}</span>
+                                            <input type="text" name="nombre" class="form-control input-sm" value="{{ nombre }}">
                                         </div>
                                     </div>
                                     <div class="form-group row">   
                                         <div class="col-xs-12">
-                                            {{ form_label(form.descripcion) }}
+                                            <label>Description</label>
                                             <footer class="small">A description may be entered here for administrative reference.</footer>
-                                            {{ form_widget(form.descripcion) }}
-                                            <span class="text-danger">{{ form_errors(form.descripcion) }}</span>
+                                            <input type="text" name="descripcion" class="form-control input-sm" value="{{ descripcion }}">
                                         </div>
                                     </div>
                                     <div class="form-group row">   
                                         <div class="col-xs-12">
-                                            {{ form_label(form.tipo) }}
+                                            <label>Typr</label>
                                             <footer class="small">A description may be entered here for administrative reference.</footer>
-                                            {{ form_widget(form.tipo) }}
-                                            <span class="text-danger">{{ form_errors(form.tipo) }}</span>
+                                            <select name="tipo" class="form-control input-sm" onChange="mostrar(this.value);">
+                                                <option value="host" {% if tipo == "host" %}selected{% endif %}>Host(s)</option>
+                                                <option value="network" {% if tipo == "network" %}selected{% endif %}>Network(s)</option>
+                                                <option value="port" {% if tipo == "port" %}selected{% endif %}>Port(s)</option>
+                                                <option value="url" {% if tipo == "url" %}selected{% endif %}>URL (IPs)</option>
+                                                <option value="url_ports" {% if tipo == "url_ports" %}selected{% endif %}>URL (Ports)</option>
+                                                <option value="urltable" {% if tipo == "urltable" %}selected{% endif %}>URL Table (IPs)</option>
+                                                <option value="urltable_ports" {% if tipo == "urltable_ports" %}selected{% endif %}>URL Table (Ports)</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -88,7 +83,7 @@
                                                 <label>URL Table (Ports)</label> 
                                                 <footer class="small">Enter a single URL containing a list of Port numbers and/or Port ranges. After saving, the URL will be downloaded. The value after the "/" is the update frequency in days.</footer>
                                             </div>
-                                            <div id="items" class="form-group">
+                                           <div id="items" class="form-group">
                                                 <div class="form-row">
                                                     <div class="col-md-6">  
                                                         {% for array1 in ip_port %}
@@ -110,7 +105,10 @@
                                         <input type="button" id="add" class="col-md-3 btn btn-primary btn-sm" value="Add">
                                     </div>
                                     <br>
-                                {{ form_end(form) }}
+                                    <div class="container-fluid">
+                                        <button type="submit" name="guardar" class="btn btn-success btn-block btn-sm">Save</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
