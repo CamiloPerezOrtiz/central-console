@@ -68,7 +68,8 @@ class AliasesController extends Controller
 
 	public function editar_aliasesAction()
 	{
-		$xml = simplexml_load_file("clients/Ejemplo_2/Plantel_Xola/info_aliases.xml");
+		$plantel=$_POST['plantel'];
+		$xml = simplexml_load_file("clients/Ejemplo_2/$plantel/info_aliases.xml");
 		if(isset($_POST['guardar']))
 		{
 			$ip_port = implode(" ",$_POST['ip_port']);
@@ -86,13 +87,9 @@ class AliasesController extends Controller
 			$xml->asXML('clients/Ejemplo_2/Plantel_Xola/info_aliases.xml');
 			return $this->redirectToRoute("grupos_aliases");
 		}
-		foreach ($_GET['id'] as $id) 
-		{
-			$id;
-		}
 		foreach($xml->alias as $alias)
 		{
-			if($alias->name==$id)
+			if($alias->name== $_POST['valor'] )
 			{
 				$nombre = $alias->name;
 				$descripcion = $alias->descr;
@@ -115,19 +112,16 @@ class AliasesController extends Controller
 
 	public function eliminar_aliasesAction()
 	{
-		foreach ($_GET['id'] as $id) 
-		{
-			$id;
-		}
+		$plantel=$_POST['plantel'];
 		$libreria_dom = new \DOMDocument; 
-	    $libreria_dom->load('clients/Ejemplo_2/Plantel_Norte/info_aliases.xml');
+	    $libreria_dom->load("clients/Ejemplo_2/$plantel/info_aliases.xml");
 	    $aliases = $libreria_dom->documentElement;
 	    $alias = $aliases->getElementsByTagName('alias');
 	    foreach ($alias as $nodo) 
 	    {
 	    	$uri = $nodo->getElementsByTagName('name');
         	$valor = $uri->item(0)->nodeValue;
-	        if($valor == $id)
+	        if($valor == $_POST['valor'])
 	            $aliases->removeChild($nodo);
 	    }
 	    echo $libreria_dom->save('clients/Ejemplo_2/Plantel_Norte/info_aliases.xml');
